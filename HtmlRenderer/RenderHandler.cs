@@ -51,8 +51,6 @@ namespace RainbowMage.HtmlRenderer
         {
         }
 
-        public event EventHandler<RenderEventArgs> Paint;
-
         protected override void OnPaint(CefBrowser browser, CefPaintElementType type, CefRectangle[] dirtyRects, IntPtr buffer, int width, int height)
         {
             renderer.OnPaint(browser, buffer, width, height);

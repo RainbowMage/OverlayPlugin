@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using System.Reflection;
 using System;
 using RainbowMage.HtmlRenderer;
+using System.Drawing;
 
 namespace RainbowMage.OverlayPlugin
 {
@@ -17,6 +18,7 @@ namespace RainbowMage.OverlayPlugin
         System.Timers.Timer timer;
         ListBox log;
         PluginConfig config;
+        bool isFirstLaunch;
 
         static readonly Dictionary<string, string> assemblyTable = new Dictionary<string,string>
         {
@@ -26,51 +28,21 @@ namespace RainbowMage.OverlayPlugin
 
         public void InitPlugin(TabPage pluginScreenSpace, Label pluginStatusText)
         {
+            this.tabPage = pluginScreenSpace;
+            this.label = pluginStatusText;
+            this.log = new ListBox();
+            log.Dock = DockStyle.Fill;
+            this.tabPage.Controls.Add(log);
+
+            SetupAssemblyResolver();
+
             try
             {
-                this.tabPage = pluginScreenSpace;
-                this.label = pluginStatusText;
-                this.log = new ListBox();
-                log.Dock = DockStyle.Fill;
-                this.tabPage.Controls.Add(log);
-
-                //ActGlobals.oFormActMain.KeyDown += (o, e) =>
-                //{
-                //    if (e.Control && e.KeyCode == Keys.O)
-                //    {
-                //        this.overlay.Visible = !this.overlay.Visible;
-                //    }
-                //};
-
-                SetupAssemblyResolver();
-
-                Application.ApplicationExit += (o, e) =>
-                {
-                    Renderer.Shutdown();
-                };
+                Application.ApplicationExit += (o, e) => Renderer.Shutdown();
 
                 LoadConfig();
-
-                var uri = new System.Uri(config.Url);
-                this.overlay = new OverlayForm(uri.AbsoluteUri);
-                this.overlay.Location = config.OverlayPosition;
-                this.overlay.Size = config.OverlaySize;
-                this.overlay.Show();
-
-                timer = new System.Timers.Timer();
-                timer.Interval = 1000;
-                timer.Elapsed += (o, e) =>
-                {
-                    try
-                    {
-                        Update();
-                    }
-                    catch (Exception ex)
-                    {
-                        Log("Error: Update: {0}", ex.ToString());
-                    }
-                };
-                timer.Start();
+                InitializeOverlay();
+                InitializeTimer();
 
                 Log("Initialized.");
                 this.label.Text = "Initialized.";
@@ -81,12 +53,58 @@ namespace RainbowMage.OverlayPlugin
             }
         }
 
+        private void InitializeOverlay()
+        {
+            //var uri = new System.Uri(config.Url);
+            var uri = new System.Uri(System.IO.Path.Combine(GetPluginDirectory(), "resources", "default.html"));
+            this.overlay = new OverlayForm(uri.AbsoluteUri);
+            if (!isFirstLaunch)
+            {
+                this.overlay.Location = config.OverlayPosition;
+                if (!IsOnScreen(this.overlay))
+                {
+                    this.overlay.StartPosition = FormStartPosition.WindowsDefaultLocation;
+                }
+            }
+            else
+            {
+                this.overlay.StartPosition = FormStartPosition.WindowsDefaultLocation;
+            }
+            this.overlay.Size = config.OverlaySize;
+            this.overlay.Renderer.BrowserError += (o, e) =>
+            {
+                Log("Error: Browser: {0}, {1}, {2}", e.ErrorCode, e.ErrorText, e.Url);
+            };
+            this.overlay.Renderer.BrowserLoad += (o, e) =>
+            {
+                Log("Info: Browser: {0}: {1}", e.HttpStatusCode, e.Url);
+            };
+            this.overlay.Show();
+        }
+
+        private void InitializeTimer()
+        {
+            timer = new System.Timers.Timer();
+            timer.Interval = 1000;
+            timer.Elapsed += (o, e) =>
+            {
+                try
+                {
+                    Update();
+                }
+                catch (Exception ex)
+                {
+                    Log("Error: Update: {0}", ex.ToString());
+                }
+            };
+            timer.Start();
+        }
+
         public void DeInitPlugin()
         {
             SaveConfig();
             timer.Stop();
             this.overlay.Close();
-
 
             Log("Finalized.");
             this.label.Text = "Finalized.";
@@ -268,6 +286,7 @@ namespace RainbowMage.OverlayPlugin
                 Log("Creating new config.");
                 config = new PluginConfig();
                 config.Url = System.IO.Path.Combine(GetPluginDirectory(), "resources", "default.html");
+                isFirstLaunch = true;
             }
         }
 
@@ -312,6 +331,22 @@ namespace RainbowMage.OverlayPlugin
         private void Log(string format, params object[] args)
         {
             log.Items.Add(DateTime.Now.ToString() + "|" + string.Format(format, args));
+        }
+
+        public bool IsOnScreen(Form form)
+        {
+            Screen[] screens = Screen.AllScreens;
+            foreach (Screen screen in screens)
+            {
+                Rectangle formRectangle = new Rectangle(form.Left, form.Top, form.Width, form.Height);
+
+                if (screen.WorkingArea.Contains(formRectangle))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

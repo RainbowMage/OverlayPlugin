@@ -10,6 +10,8 @@ namespace RainbowMage.HtmlRenderer
     public class Renderer : IDisposable
     {
         public event EventHandler<RenderEventArgs> Render;
+        public event EventHandler<BrowserErrorEventArgs> BrowserError;
+        public event EventHandler<BrowserLoadEventArgs> BrowserLoad;
 
         public CefBrowser Browser { get; private set; }
         private Client Client { get; set; }
@@ -82,6 +84,22 @@ namespace RainbowMage.HtmlRenderer
             }
         }
 
+        internal void OnError(CefErrorCode errorCode, string errorText, string failedUrl)
+        {
+            if (BrowserError != null)
+            {
+                BrowserError(this, new BrowserErrorEventArgs(errorCode, errorText, failedUrl));
+            }
+        }
+
+        internal void OnLoad(CefBrowser browser, CefFrame frame, int httpStatusCode)
+        {
+            if (BrowserLoad != null)
+            {
+                BrowserLoad(this, new BrowserLoadEventArgs(httpStatusCode, frame.Url));
+            }
+        }
+
         public void Dispose()
         {
             var host = Browser.GetHost();
@@ -125,6 +143,30 @@ namespace RainbowMage.HtmlRenderer
             {
                 CefRuntime.Shutdown();
             }
+        }
+    }
+
+    public class BrowserErrorEventArgs : EventArgs
+    {
+        public CefErrorCode ErrorCode { get; private set; }
+        public string ErrorText { get; private set; }
+        public string Url { get; private set; }
+        public BrowserErrorEventArgs(CefErrorCode errorCode, string errorText, string url)
+        {
+            this.ErrorCode = errorCode;
+            this.ErrorText = errorText;
+            this.Url = url;
+        }
+    }
+
+    public class BrowserLoadEventArgs : EventArgs
+    {
+        public int HttpStatusCode { get; private set; }
+        public string Url { get; private set; }
+        public BrowserLoadEventArgs(int httpStatusCode, string url)
+        {
+            this.HttpStatusCode = httpStatusCode;
+            this.Url = url;
         }
     }
 }

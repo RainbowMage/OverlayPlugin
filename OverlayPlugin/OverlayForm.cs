@@ -40,8 +40,6 @@ namespace RainbowMage.OverlayPlugin
             this.Renderer.Render += renderer_Render;
 
             this.url = url;
-
-            UpdateRender();
         }
 
         public void Reload()
@@ -169,6 +167,7 @@ namespace RainbowMage.OverlayPlugin
 
         private void OverlayForm_Load(object sender, EventArgs e)
         {
+            UpdateRender();
         }
 
         private void OverlayForm_FormClosed(object sender, FormClosedEventArgs e)
