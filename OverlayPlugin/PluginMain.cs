@@ -38,7 +38,14 @@ namespace RainbowMage.OverlayPlugin
 
             try
             {
-                Application.ApplicationExit += (o, e) => Renderer.Shutdown();
+                Application.ApplicationExit += (o, e) =>
+                {
+                    try
+                    {
+                        Renderer.Shutdown();
+                    }
+                    catch { }
+                };
 
                 LoadConfig();
                 InitializeOverlay();
