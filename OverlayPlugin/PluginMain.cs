@@ -104,10 +104,9 @@ namespace RainbowMage.OverlayPlugin
                 Log("Info: Browser: {0}: {1}", e.HttpStatusCode, e.Url);
             };
 
-            if (this.config.IsVisible)
-            {
-                this.Overlay.Show();
-            }
+            this.Overlay.Show();
+
+            this.Overlay.Visible = this.config.IsVisible;
         }
 
         private void InitializeTimer()
@@ -132,17 +131,7 @@ namespace RainbowMage.OverlayPlugin
         {
             this.config.VisibleChanged += (o, e) =>
             {
-                if (e.IsVisible)
-                {
-                    this.Overlay.Show();
-                }
-                else
-                {
-                    if (this.Overlay.IsLoaded)
-                    {
-                        this.Overlay.Hide();
-                    }
-                }
+                this.Overlay.Visible = e.IsVisible;
             };
 
             this.config.ClickThruChanged += (o, e) =>
@@ -381,7 +370,12 @@ namespace RainbowMage.OverlayPlugin
 
         private void Log(string format, params object[] args)
         {
-            this.controlPanel.listLog.Items.Add(DateTime.Now.ToString() + "|" + string.Format(format, args));
+            if (this.controlPanel != null &&
+                this.controlPanel.listLog != null &&
+                this.controlPanel.listLog.Items != null)
+            {
+                this.controlPanel.listLog.Items.Add(DateTime.Now.ToString() + "|" + string.Format(format, args));
+            }
         }
 
         public bool IsOnScreen(Form form)
