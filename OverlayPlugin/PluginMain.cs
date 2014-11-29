@@ -391,7 +391,7 @@ namespace RainbowMage.OverlayPlugin
             {
                 Rectangle formRectangle = new Rectangle(form.Left, form.Top, form.Width, form.Height);
 
-                if (screen.WorkingArea.Contains(formRectangle))
+                if (screen.WorkingArea.IntersectsWith(formRectangle))
                 {
                     return true;
                 }
