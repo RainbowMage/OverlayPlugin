@@ -7,6 +7,7 @@ using System.Reflection;
 using System;
 using RainbowMage.HtmlRenderer;
 using System.Drawing;
+using System.IO;
 
 namespace RainbowMage.OverlayPlugin
 {
@@ -14,11 +15,13 @@ namespace RainbowMage.OverlayPlugin
     {
         TabPage tabPage;
         Label label;
-        OverlayForm overlay;
-        System.Timers.Timer timer;
-        ListBox log;
+        ControlPanel controlPanel;
+
         PluginConfig config;
+        System.Timers.Timer timer;
         bool isFirstLaunch;
+
+        internal OverlayForm Overlay { get; private set; }
 
         static readonly Dictionary<string, string> assemblyTable = new Dictionary<string,string>
         {
@@ -30,26 +33,28 @@ namespace RainbowMage.OverlayPlugin
         {
             this.tabPage = pluginScreenSpace;
             this.label = pluginStatusText;
-            this.log = new ListBox();
-            log.Dock = DockStyle.Fill;
-            this.tabPage.Controls.Add(log);
 
+            // コンフィグ系読み込み
+            LoadConfig();
+            this.controlPanel = new ControlPanel(this, this.config);
+            this.controlPanel.Dock = DockStyle.Fill;
+            this.tabPage.Controls.Add(this.controlPanel);
+
+            // プラグインの配置してあるフォルダを検索するカスタムリゾルバーでアセンブリを解決する
             SetupAssemblyResolver();
 
             try
             {
+                // ACT 終了時に CEF をシャットダウン（ゾンビ化防止）
                 Application.ApplicationExit += (o, e) =>
                 {
-                    try
-                    {
-                        Renderer.Shutdown();
-                    }
+                    try { Renderer.Shutdown(); }
                     catch { }
                 };
 
-                LoadConfig();
                 InitializeOverlay();
                 InitializeTimer();
+                InitializeConfigHandlers();
 
                 Log("Initialized.");
                 this.label.Text = "Initialized.";
@@ -62,31 +67,47 @@ namespace RainbowMage.OverlayPlugin
 
         private void InitializeOverlay()
         {
-            //var uri = new System.Uri(config.Url);
-            var uri = new System.Uri(System.IO.Path.Combine(GetPluginDirectory(), "resources", "default.html"));
-            this.overlay = new OverlayForm(uri.AbsoluteUri);
+            var uri = new System.Uri(config.Url);
+
+            // ローカルファイルの場合はファイルが存在するかチェックし、存在しなければ警告を出力
+            if (uri.Scheme == "file")
+            {
+                if (!File.Exists(uri.LocalPath))
+                {
+                    Log("Warn: InitializeOverlay: Local file {0} is not exist!", uri.LocalPath);
+                }
+            }
+
+            this.Overlay = new OverlayForm(uri.AbsoluteUri);
+
+            // 初回起動または画面外にウィンドウがある場合は、初期表示位置をシステムに設定させる
             if (!isFirstLaunch)
             {
-                this.overlay.Location = config.OverlayPosition;
-                if (!IsOnScreen(this.overlay))
+                this.Overlay.Location = config.OverlayPosition;
+                if (!IsOnScreen(this.Overlay))
                 {
-                    this.overlay.StartPosition = FormStartPosition.WindowsDefaultLocation;
+                    this.Overlay.StartPosition = FormStartPosition.WindowsDefaultLocation;
                 }
             }
             else
             {
-                this.overlay.StartPosition = FormStartPosition.WindowsDefaultLocation;
+                this.Overlay.StartPosition = FormStartPosition.WindowsDefaultLocation;
             }
-            this.overlay.Size = config.OverlaySize;
-            this.overlay.Renderer.BrowserError += (o, e) =>
+            this.Overlay.Size = config.OverlaySize;
+            this.Overlay.IsClickThru = config.IsClickThru;
+            this.Overlay.Renderer.BrowserError += (o, e) =>
             {
                 Log("Error: Browser: {0}, {1}, {2}", e.ErrorCode, e.ErrorText, e.Url);
             };
-            this.overlay.Renderer.BrowserLoad += (o, e) =>
+            this.Overlay.Renderer.BrowserLoad += (o, e) =>
             {
                 Log("Info: Browser: {0}: {1}", e.HttpStatusCode, e.Url);
             };
-            this.overlay.Show();
+
+            if (this.config.IsVisible)
+            {
+                this.Overlay.Show();
+            }
         }
 
         private void InitializeTimer()
@@ -107,11 +128,34 @@ namespace RainbowMage.OverlayPlugin
             timer.Start();
         }
 
+        private void InitializeConfigHandlers()
+        {
+            this.config.VisibleChanged += (o, e) =>
+            {
+                if (e.IsVisible)
+                {
+                    this.Overlay.Show();
+                }
+                else
+                {
+                    if (this.Overlay.IsLoaded)
+                    {
+                        this.Overlay.Hide();
+                    }
+                }
+            };
+
+            this.config.ClickThruChanged += (o, e) =>
+            {
+                this.Overlay.IsClickThru = e.IsClickThru;
+            };
+        }
+
         public void DeInitPlugin()
         {
             SaveConfig();
             timer.Stop();
-            this.overlay.Close();
+            this.Overlay.Close();
 
             Log("Finalized.");
             this.label.Text = "Finalized.";
@@ -191,11 +235,11 @@ namespace RainbowMage.OverlayPlugin
 
             var updateScript = GetUpdateScript(encounterDict, combatantList);
 
-            if (this.overlay != null &&
-                this.overlay.Renderer != null &&
-                this.overlay.Renderer.Browser != null)
+            if (this.Overlay != null &&
+                this.Overlay.Renderer != null &&
+                this.Overlay.Renderer.Browser != null)
             {
-                this.overlay.Renderer.Browser.GetMainFrame().ExecuteJavaScript(updateScript, null, 0);
+                this.Overlay.Renderer.Browser.GetMainFrame().ExecuteJavaScript(updateScript, null, 0);
             }
         }
 
@@ -292,7 +336,7 @@ namespace RainbowMage.OverlayPlugin
                 Log("Error: LoadConfig: {0}", e);
                 Log("Creating new config.");
                 config = new PluginConfig();
-                config.Url = System.IO.Path.Combine(GetPluginDirectory(), "resources", "default.html");
+                config.Url = new Uri(System.IO.Path.Combine(GetPluginDirectory(), "resources", "default.html")).ToString();
                 isFirstLaunch = true;
             }
         }
@@ -301,8 +345,8 @@ namespace RainbowMage.OverlayPlugin
         {
             try
             {
-                config.OverlayPosition = this.overlay.Location;
-                config.OverlaySize = this.overlay.Size;
+                config.OverlayPosition = this.Overlay.Location;
+                config.OverlaySize = this.Overlay.Size;
 
                 config.SaveXml(GetConfigPath());
             }
@@ -337,7 +381,7 @@ namespace RainbowMage.OverlayPlugin
 
         private void Log(string format, params object[] args)
         {
-            log.Items.Add(DateTime.Now.ToString() + "|" + string.Format(format, args));
+            this.controlPanel.listLog.Items.Add(DateTime.Now.ToString() + "|" + string.Format(format, args));
         }
 
         public bool IsOnScreen(Form form)

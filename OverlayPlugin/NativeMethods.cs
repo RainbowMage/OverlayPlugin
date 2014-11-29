@@ -62,5 +62,14 @@ namespace RainbowMage.OverlayPlugin
         [DllImport("gdi32")]
         public static extern bool DeleteObject(
             IntPtr hObject);
+
+        [DllImport("user32.dll")]
+        public static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
+
+        [DllImport("user32.dll")]
+        public static extern int GetWindowLong(IntPtr hWnd, int nIndex);
+
+        public const int GWL_EXSTYLE = -20;
+        public const int WS_EX_TRANSPARENT = 0x00000020;
     }
 }

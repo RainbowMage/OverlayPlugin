@@ -31,6 +31,25 @@ namespace RainbowMage.OverlayPlugin
             }
         }
 
+        private bool isClickThru;
+        public bool IsClickThru
+        { 
+            get
+            {
+                return this.isClickThru;
+            }
+            set
+            {
+                if (this.isClickThru != value)
+                {
+                    this.isClickThru = value;
+                    UpdateMouseClickThru();
+                }
+            }
+        }
+
+        public bool IsLoaded { get; private set; }
+
         public OverlayForm(string url)
         {
             InitializeComponent();
@@ -151,6 +170,41 @@ namespace RainbowMage.OverlayPlugin
         }
         #endregion
 
+        #region Mouse click-thru related
+
+        private void UpdateMouseClickThru()
+        {
+            if (this.IsLoaded)
+            {
+                if (this.isClickThru)
+                {
+                    EnableMouseClickThru();
+                }
+                else
+                {
+                    DisableMouseClickThru();
+                }
+            }
+        }
+
+        private void EnableMouseClickThru()
+        {
+            NativeMethods.SetWindowLong(
+                this.Handle,
+                NativeMethods.GWL_EXSTYLE,
+                NativeMethods.GetWindowLong(this.Handle, NativeMethods.GWL_EXSTYLE) | NativeMethods.WS_EX_TRANSPARENT);
+        }
+
+        private void DisableMouseClickThru()
+        {
+            NativeMethods.SetWindowLong(
+                this.Handle,
+                NativeMethods.GWL_EXSTYLE,
+                NativeMethods.GetWindowLong(this.Handle, NativeMethods.GWL_EXSTYLE) & ~NativeMethods.WS_EX_TRANSPARENT);
+        }
+
+        #endregion
+
         void renderer_Render(object sender, RenderEventArgs e)
         {
             var bitmap = new Bitmap(e.Width, e.Height, e.Width * 4, PixelFormat.Format32bppArgb, e.Buffer);
@@ -167,6 +221,9 @@ namespace RainbowMage.OverlayPlugin
 
         private void OverlayForm_Load(object sender, EventArgs e)
         {
+            this.IsLoaded = true;
+
+            UpdateMouseClickThru();
             UpdateRender();
         }
 

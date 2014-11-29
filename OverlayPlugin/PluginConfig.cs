@@ -12,14 +12,83 @@ namespace RainbowMage.OverlayPlugin
     [Serializable]
     public class PluginConfig
     {
-        public bool IsHidden { get; set; }
+        public event EventHandler<VisibleStateChangedEventArgs> VisibleChanged;
+        public event EventHandler<ThruStateChangedEventArgs> ClickThruChanged;
+        public event EventHandler<UrlChangedEventArgs> UrlChanged;
+
+        [XmlElement("IsVisible")]
+        private bool isVisible;
+        public bool IsVisible 
+        { 
+            get
+            {
+                return this.isVisible;
+            }
+            set
+            {
+                if (this.isVisible != value)
+                {
+                    this.isVisible = value;
+                    if (VisibleChanged != null)
+                    {
+                        VisibleChanged(this, new VisibleStateChangedEventArgs(this.isVisible));
+                    }
+                }
+            }
+        }
+
+        [XmlElement("IsClickThru")]
+        private bool isClickThru;
+        public bool IsClickThru
+        {
+            get
+            {
+                return this.isClickThru;
+            }
+            set
+            {
+                if (this.isClickThru != value)
+                {
+                    this.isClickThru = value;
+                    if (ClickThruChanged != null)
+                    {
+                        ClickThruChanged(this, new ThruStateChangedEventArgs(this.isClickThru));
+                    }
+                }
+            }
+        }
+
+        [XmlElement("OverlayPosition")]
         public Point OverlayPosition { get; set; }
+
+        [XmlElement("OverlaySize")]
         public Size OverlaySize { get; set; }
-        public string Url { get; set; }
+
+        [XmlElement("Url")]
+        private string url;
+        public string Url
+        {
+            get
+            {
+                return this.url;
+            }
+            set
+            {
+                if (this.url != value)
+                {
+                    this.url = value;
+                    if (UrlChanged != null)
+                    {
+                        UrlChanged(this, new UrlChangedEventArgs(this.url));
+                    }
+                }
+            }
+        }
 
         public PluginConfig()
         {
-            this.IsHidden = false;
+            this.IsVisible = true;
+            this.IsClickThru = false;
             this.OverlayPosition = new Point(20, 20);
             this.OverlaySize = new Size(300, 300);
             this.Url = "";
@@ -47,6 +116,33 @@ namespace RainbowMage.OverlayPlugin
                 var result = (PluginConfig)serializer.Deserialize(stream);
                 return result;
             }
+        }
+    }
+
+    public class VisibleStateChangedEventArgs : EventArgs
+    {
+        public bool IsVisible { get; private set; }
+        public VisibleStateChangedEventArgs(bool isVisible)
+        {
+            this.IsVisible = isVisible;
+        }
+    }
+
+    public class ThruStateChangedEventArgs : EventArgs
+    {
+        public bool IsClickThru { get; private set; }
+        public ThruStateChangedEventArgs(bool isClickThru)
+        {
+            this.IsClickThru = isClickThru;
+        }
+    }
+
+    public class UrlChangedEventArgs : EventArgs
+    {
+        public string NewUrl { get; private set; }
+        public UrlChangedEventArgs(string url)
+        {
+            this.NewUrl = url;
         }
     }
 }
