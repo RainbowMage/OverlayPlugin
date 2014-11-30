@@ -268,7 +268,8 @@ namespace RainbowMage.OverlayPlugin
                 }
                 builder.Append("}");
             }
-            builder.Append("}");
+            builder.Append("},");
+            builder.AppendFormat("\"isActive\": {0}", ActGlobals.oFormActMain.ActiveZone.ActiveEncounter.Active ? "true" : "false");
             builder.Append("};");
 
             return builder.ToString();
