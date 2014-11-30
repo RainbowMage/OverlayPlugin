@@ -1,4 +1,4 @@
-'@echo off
+@echo off
 
 if not exist "%~dp0\Thirdparty\ACT\Advanced Combat Tracker.exe" (
 	echo エラー: "Thirdparty" ディレクトリに "Advanced Combat Tracker.exe" をコピーしてください。
