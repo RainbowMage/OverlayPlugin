@@ -10,7 +10,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Files", "Files", "{84CCF15D-3E71-42A6-9C35-A5E3D19FF5DA}"
 	ProjectSection(SolutionItems) = preProject
 		build.bat = build.bat
+		distribute.ps1 = distribute.ps1
+		full.exclude = full.exclude
 		LICENSE.txt = LICENSE.txt
+		PS-Zip.psm1 = PS-Zip.psm1
 		README.md = README.md
 	EndProjectSection
 EndProject
