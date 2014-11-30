@@ -15,6 +15,15 @@ namespace RainbowMage.OverlayPlugin
         PluginMain pluginMain;
         PluginConfig config;
 
+        static readonly List<KeyValuePair<string, SortType>> sortTypeDict = new List<KeyValuePair<string, SortType>>()
+        {
+            new KeyValuePair<string, SortType>("ソートしない", SortType.None),
+            new KeyValuePair<string, SortType>("文字列 - 昇順", SortType.StringAscending),
+            new KeyValuePair<string, SortType>("文字列 - 降順", SortType.StringDescending),
+            new KeyValuePair<string, SortType>("数値 - 昇順", SortType.NumericAscending),
+            new KeyValuePair<string, SortType>("数値 - 降順", SortType.NumericDescending)
+        };
+
         public ControlPanel(PluginMain pluginMain, PluginConfig config)
         {
             InitializeComponent();
@@ -43,10 +52,29 @@ namespace RainbowMage.OverlayPlugin
                     this.textUrl.Text = e.NewUrl;
                 }));
             };
+            this.config.SortKeyChanged += (o, e) =>
+            {
+                this.Invoke(new Action(() =>
+                {
+                    this.textSortKey.Text = e.NewSortKey;
+                }));
+            };
+            this.config.SortTypeChanged += (o, e) =>
+            {
+                this.Invoke(new Action(() =>
+                {
+                    this.comboSortType.SelectedValue = e.NewSortType;
+                }));
+            };
                  
             this.checkWindowVisible.Checked = config.IsVisible;
             this.checkMouseClickthru.Checked = config.IsClickThru;
             this.textUrl.Text = config.Url;
+            this.textSortKey.Text = config.SortKey;
+            this.comboSortType.DataSource = sortTypeDict;
+            this.comboSortType.DisplayMember = "Key";
+            this.comboSortType.ValueMember = "Value";
+            this.comboSortType.SelectedValue = config.SortType;
 
             this.listLog.DataSource = pluginMain.Logs;
         }
@@ -108,6 +136,16 @@ namespace RainbowMage.OverlayPlugin
             {
                 Clipboard.SetText("var " + updateScript);
             }
+        }
+
+        private void textSortKey_TextChanged(object sender, EventArgs e)
+        {
+            this.config.SortKey = this.textSortKey.Text;
+        }
+
+        private void comboSortType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            this.config.SortType = (SortType)this.comboSortType.SelectedValue;
         }
     }
 }

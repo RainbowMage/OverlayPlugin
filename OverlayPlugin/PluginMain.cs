@@ -221,15 +221,7 @@ namespace RainbowMage.OverlayPlugin
             var encounter = GetEncounterDictionary(allies);
             var combatant = GetCombatantList(allies);
 
-            combatant.Sort((x, y) =>
-            {
-                const string key = "ENCDPS";
-                double xValue, yValue;
-                double.TryParse(x.Value[key].Replace("%", ""), out xValue);
-                double.TryParse(y.Value[key].Replace("%", ""), out yValue);
-
-                return yValue.CompareTo(xValue);
-            });
+            SortCombatantList(combatant);
 
             var builder = new StringBuilder();
             builder.Append("ActXiv = {");
@@ -280,6 +272,54 @@ namespace RainbowMage.OverlayPlugin
             builder.Append("};");
 
             return builder.ToString();
+        }
+
+        private void SortCombatantList(List<KeyValuePair<CombatantData, Dictionary<string, string>>> combatant)
+        {
+            if (config.SortType == SortType.NumericAscending ||
+                config.SortType == SortType.NumericDescending)
+            {
+                combatant.Sort((x, y) =>
+                {
+                    int result = 0;
+                    if (x.Value.ContainsKey(config.SortKey) &&
+                        y.Value.ContainsKey(config.SortKey))
+                    {
+                        double xValue, yValue;
+                        double.TryParse(x.Value[config.SortKey].Replace("%", ""), out xValue);
+                        double.TryParse(y.Value[config.SortKey].Replace("%", ""), out yValue);
+
+                        result = xValue.CompareTo(yValue);
+
+                        if (config.SortType == SortType.NumericDescending)
+                        {
+                            result *= -1;
+                        }
+                    }
+
+                    return result;
+                });
+            }
+            else if (config.SortType == SortType.StringAscending ||
+                config.SortType == SortType.StringDescending)
+            {
+                combatant.Sort((x, y) =>
+                {
+                    int result = 0;
+                    if (x.Value.ContainsKey(config.SortKey) &&
+                        y.Value.ContainsKey(config.SortKey))
+                    {
+                        result = x.Value[config.SortKey].CompareTo(y.Value[config.SortKey]);
+
+                        if (config.SortType == SortType.StringDescending)
+                        {
+                            result *= -1;
+                        }
+                    }
+
+                    return result;
+                });
+            }
         }
 
         private static List<KeyValuePair<CombatantData, Dictionary<string, string>>> GetCombatantList(List<CombatantData> allies)

@@ -15,6 +15,8 @@ namespace RainbowMage.OverlayPlugin
         public event EventHandler<VisibleStateChangedEventArgs> VisibleChanged;
         public event EventHandler<ThruStateChangedEventArgs> ClickThruChanged;
         public event EventHandler<UrlChangedEventArgs> UrlChanged;
+        public event EventHandler<SortKeyChangedEventArgs> SortKeyChanged;
+        public event EventHandler<SortTypeChangedEventArgs> SortTypeChanged;
 
         [XmlElement("IsVisible")]
         private bool isVisible;
@@ -85,6 +87,48 @@ namespace RainbowMage.OverlayPlugin
             }
         }
 
+        [XmlElement("SortKey")]
+        private string sortKey;
+        public string SortKey
+        {
+            get
+            {
+                return this.sortKey;
+            }
+            set
+            {
+                if (this.sortKey != value)
+                {
+                    this.sortKey = value;
+                    if (SortKeyChanged != null)
+                    {
+                        SortKeyChanged(this, new SortKeyChangedEventArgs(this.sortKey));
+                    }
+                }
+            }
+        }
+
+        [XmlElement("SortType")]
+        private SortType sortType;
+        public SortType SortType
+        {
+            get
+            {
+                return this.sortType;
+            }
+            set
+            {
+                if (this.sortType != value)
+                {
+                    this.sortType = value;
+                    if (SortTypeChanged != null)
+                    {
+                        SortTypeChanged(this, new SortTypeChangedEventArgs(this.sortType));
+                    }
+                }
+            }
+        }
+
         public PluginConfig()
         {
             this.IsVisible = true;
@@ -92,6 +136,8 @@ namespace RainbowMage.OverlayPlugin
             this.OverlayPosition = new Point(20, 20);
             this.OverlaySize = new Size(300, 300);
             this.Url = "";
+            this.SortKey = "encdps";
+            this.SortType = OverlayPlugin.SortType.NumericDescending;
         }
 
         public void SaveXml(string path)
@@ -119,6 +165,15 @@ namespace RainbowMage.OverlayPlugin
         }
     }
 
+    public enum SortType
+    {
+        None,
+        StringAscending,
+        StringDescending,
+        NumericAscending,
+        NumericDescending
+    }
+
     public class VisibleStateChangedEventArgs : EventArgs
     {
         public bool IsVisible { get; private set; }
@@ -143,6 +198,24 @@ namespace RainbowMage.OverlayPlugin
         public UrlChangedEventArgs(string url)
         {
             this.NewUrl = url;
+        }
+    }
+
+    public class SortTypeChangedEventArgs : EventArgs
+    {
+        public SortType NewSortType { get; private set; }
+        public SortTypeChangedEventArgs(SortType newSortType)
+        {
+            this.NewSortType = newSortType;
+        }
+    }
+
+    public class SortKeyChangedEventArgs : EventArgs
+    {
+        public string NewSortKey { get; private set; }
+        public SortKeyChangedEventArgs(string newSortKey)
+        {
+            this.NewSortKey = newSortKey;
         }
     }
 }
