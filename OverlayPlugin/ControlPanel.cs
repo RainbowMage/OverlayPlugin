@@ -66,7 +66,14 @@ namespace RainbowMage.OverlayPlugin
 
         private void buttonReloadBrowser_Click(object sender, EventArgs e)
         {
-            pluginMain.Overlay.Url = config.Url;
+            if (pluginMain.Overlay.Url != config.Url)
+            {
+                pluginMain.Overlay.Url = config.Url;
+            }
+            else
+            {
+                pluginMain.Overlay.Reload();
+            }
         }
 
         private void buttonSelectFile_Click(object sender, EventArgs e)
