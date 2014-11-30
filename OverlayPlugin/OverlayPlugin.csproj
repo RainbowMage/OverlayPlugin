@@ -33,6 +33,7 @@
     <Reference Include="Advanced Combat Tracker, Version=3.1.5.246, Culture=neutral, PublicKeyToken=a946b61e93d97868, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Thirdparty\ACT\Advanced Combat Tracker.exe</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -99,7 +100,10 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy /Y /R /S "$(SolutionDir)Thirdparty\CefBinary\*" "$(TargetDir)"</PostBuildEvent>
+    <PostBuildEvent>xcopy /Y /R /S "$(SolutionDir)Thirdparty\CefBinary\*" "$(TargetDir)"
+xcopy /Y /R "$(SolutionDir)README.md" "$(TargetDir)"
+xcopy /Y /R "$(SolutionDir)LICENSE.txt" "$(TargetDir)"
+</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

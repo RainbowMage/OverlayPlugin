@@ -100,5 +100,14 @@ namespace RainbowMage.OverlayPlugin
                 Clipboard.SetText(sb.ToString());
             }
         }
+
+        private void buttonCopyActXiv_Click(object sender, EventArgs e)
+        {
+            var updateScript = pluginMain.GetUpdateScript();
+            if (!string.IsNullOrWhiteSpace(updateScript))
+            {
+                Clipboard.SetText("var " + updateScript);
+            }
+        }
     }
 }

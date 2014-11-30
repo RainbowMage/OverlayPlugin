@@ -36,12 +36,13 @@
             this.label1 = new System.Windows.Forms.Label();
             this.checkWindowVisible = new System.Windows.Forms.CheckBox();
             this.checkMouseClickthru = new System.Windows.Forms.CheckBox();
-            this.textUrl = new System.Windows.Forms.TextBox();
-            this.listLog = new System.Windows.Forms.ListBox();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.buttonCopyActXiv = new System.Windows.Forms.Button();
             this.buttonReloadBrowser = new System.Windows.Forms.Button();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
+            this.textUrl = new System.Windows.Forms.TextBox();
             this.buttonSelectFile = new System.Windows.Forms.Button();
+            this.listLog = new System.Windows.Forms.ListBox();
             this.contextMenuLogList = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.menuLogCopy = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -93,7 +94,7 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 22F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 22F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 57F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(481, 246);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
@@ -150,45 +151,35 @@
             this.checkMouseClickthru.UseVisualStyleBackColor = true;
             this.checkMouseClickthru.CheckedChanged += new System.EventHandler(this.checkMouseClickthru_CheckedChanged);
             // 
-            // textUrl
-            // 
-            this.textUrl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textUrl.Location = new System.Drawing.Point(0, 0);
-            this.textUrl.Margin = new System.Windows.Forms.Padding(0);
-            this.textUrl.Name = "textUrl";
-            this.textUrl.Size = new System.Drawing.Size(287, 19);
-            this.textUrl.TabIndex = 3;
-            this.textUrl.TextChanged += new System.EventHandler(this.textUrl_TextChanged);
-            // 
-            // listLog
-            // 
-            this.listLog.ContextMenuStrip = this.contextMenuLogList;
-            this.listLog.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listLog.FormattingEnabled = true;
-            this.listLog.ItemHeight = 12;
-            this.listLog.Location = new System.Drawing.Point(0, 0);
-            this.listLog.Name = "listLog";
-            this.listLog.ScrollAlwaysVisible = true;
-            this.listLog.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.listLog.Size = new System.Drawing.Size(481, 117);
-            this.listLog.TabIndex = 0;
-            // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.buttonCopyActXiv);
             this.panel1.Controls.Add(this.buttonReloadBrowser);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(158, 209);
+            this.panel1.Location = new System.Drawing.Point(158, 192);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(320, 34);
+            this.panel1.Size = new System.Drawing.Size(320, 51);
             this.panel1.TabIndex = 4;
+            // 
+            // buttonCopyActXiv
+            // 
+            this.buttonCopyActXiv.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonCopyActXiv.Location = new System.Drawing.Point(36, 4);
+            this.buttonCopyActXiv.Name = "buttonCopyActXiv";
+            this.buttonCopyActXiv.Size = new System.Drawing.Size(137, 43);
+            this.buttonCopyActXiv.TabIndex = 1;
+            this.buttonCopyActXiv.Text = "ActXivをクリップボードにコピー";
+            this.buttonCopyActXiv.UseVisualStyleBackColor = true;
+            this.buttonCopyActXiv.Click += new System.EventHandler(this.buttonCopyActXiv_Click);
             // 
             // buttonReloadBrowser
             // 
             this.buttonReloadBrowser.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonReloadBrowser.Location = new System.Drawing.Point(146, 4);
+            this.buttonReloadBrowser.Location = new System.Drawing.Point(179, 4);
             this.buttonReloadBrowser.Name = "buttonReloadBrowser";
-            this.buttonReloadBrowser.Size = new System.Drawing.Size(170, 26);
+            this.buttonReloadBrowser.Size = new System.Drawing.Size(137, 43);
             this.buttonReloadBrowser.TabIndex = 0;
             this.buttonReloadBrowser.Text = "ブラウザの表示をリロード";
             this.buttonReloadBrowser.UseVisualStyleBackColor = true;
@@ -210,6 +201,16 @@
             this.tableLayoutPanel2.Size = new System.Drawing.Size(324, 20);
             this.tableLayoutPanel2.TabIndex = 5;
             // 
+            // textUrl
+            // 
+            this.textUrl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.textUrl.Location = new System.Drawing.Point(0, 0);
+            this.textUrl.Margin = new System.Windows.Forms.Padding(0);
+            this.textUrl.Name = "textUrl";
+            this.textUrl.Size = new System.Drawing.Size(287, 19);
+            this.textUrl.TabIndex = 3;
+            this.textUrl.TextChanged += new System.EventHandler(this.textUrl_TextChanged);
+            // 
             // buttonSelectFile
             // 
             this.buttonSelectFile.Location = new System.Drawing.Point(287, 0);
@@ -220,6 +221,19 @@
             this.buttonSelectFile.Text = "...";
             this.buttonSelectFile.UseVisualStyleBackColor = true;
             this.buttonSelectFile.Click += new System.EventHandler(this.buttonSelectFile_Click);
+            // 
+            // listLog
+            // 
+            this.listLog.ContextMenuStrip = this.contextMenuLogList;
+            this.listLog.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.listLog.FormattingEnabled = true;
+            this.listLog.ItemHeight = 12;
+            this.listLog.Location = new System.Drawing.Point(0, 0);
+            this.listLog.Name = "listLog";
+            this.listLog.ScrollAlwaysVisible = true;
+            this.listLog.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+            this.listLog.Size = new System.Drawing.Size(481, 117);
+            this.listLog.TabIndex = 0;
             // 
             // contextMenuLogList
             // 
@@ -273,5 +287,6 @@
         private System.Windows.Forms.Button buttonSelectFile;
         private System.Windows.Forms.ContextMenuStrip contextMenuLogList;
         private System.Windows.Forms.ToolStripMenuItem menuLogCopy;
+        private System.Windows.Forms.Button buttonCopyActXiv;
     }
 }

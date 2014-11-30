@@ -199,60 +199,7 @@ namespace RainbowMage.OverlayPlugin
 
         private void Update()
         {
-            if (!CheckIsActReady())
-            {
-                return;
-            }
-
-            var allies = ActGlobals.oFormActMain.ActiveZone.ActiveEncounter.GetAllies();
-
-            var encounterDict = new Dictionary<string, string>();
-            foreach (var exportValuePair in EncounterData.ExportVariables)
-            {
-                try
-                {
-                    var value = exportValuePair.Value.GetExportString(
-                        ActGlobals.oFormActMain.ActiveZone.ActiveEncounter,
-                        allies,
-                        "");
-                    encounterDict.Add(exportValuePair.Key, value);
-                }
-                catch
-                {
-                    continue;
-                }
-            }
-
-            var combatantList = new List<KeyValuePair<CombatantData, Dictionary<string, string>>>();
-            foreach (var ally in allies)
-            {
-                var valueDict = new Dictionary<string, string>();
-                foreach (var exportValuePair in CombatantData.ExportVariables)
-                {
-                    try
-                    {
-                        var value = exportValuePair.Value.GetExportString(ally, "");
-                        valueDict.Add(exportValuePair.Key, value);
-                    }
-                    catch
-                    {
-                        continue;
-                    }
-                }
-                combatantList.Add(new KeyValuePair<CombatantData,Dictionary<string,string>>(ally, valueDict));
-            }
-
-            combatantList.Sort((x, y) =>
-                {
-                    const string key = "ENCDPS";
-                    double xValue, yValue;
-                    double.TryParse(x.Value[key].Replace("%", ""), out xValue);
-                    double.TryParse(y.Value[key].Replace("%", ""), out yValue);
-
-                    return yValue.CompareTo(xValue);
-                });
-
-            var updateScript = GetUpdateScript(encounterDict, combatantList);
+            var updateScript = GetUpdateScript();
 
             if (this.Overlay != null &&
                 this.Overlay.Renderer != null &&
@@ -262,10 +209,28 @@ namespace RainbowMage.OverlayPlugin
             }
         }
 
-        private string GetUpdateScript(
-            Dictionary<string, string> encounter, 
-            List<KeyValuePair<CombatantData, Dictionary<string, string>>> combatant)
+        internal string GetUpdateScript()
         {
+            if (!CheckIsActReady())
+            {
+                return "";
+            }
+
+            var allies = ActGlobals.oFormActMain.ActiveZone.ActiveEncounter.GetAllies();
+
+            var encounter = GetEncounterDictionary(allies);
+            var combatant = GetCombatantList(allies);
+
+            combatant.Sort((x, y) =>
+            {
+                const string key = "ENCDPS";
+                double xValue, yValue;
+                double.TryParse(x.Value[key].Replace("%", ""), out xValue);
+                double.TryParse(y.Value[key].Replace("%", ""), out yValue);
+
+                return yValue.CompareTo(xValue);
+            });
+
             var builder = new StringBuilder();
             builder.Append("ActXiv = {");
             builder.Append("\"Encounter\": {");
@@ -315,6 +280,50 @@ namespace RainbowMage.OverlayPlugin
             builder.Append("};");
 
             return builder.ToString();
+        }
+
+        private static List<KeyValuePair<CombatantData, Dictionary<string, string>>> GetCombatantList(List<CombatantData> allies)
+        {
+            var combatantList = new List<KeyValuePair<CombatantData, Dictionary<string, string>>>();
+            foreach (var ally in allies)
+            {
+                var valueDict = new Dictionary<string, string>();
+                foreach (var exportValuePair in CombatantData.ExportVariables)
+                {
+                    try
+                    {
+                        var value = exportValuePair.Value.GetExportString(ally, "");
+                        valueDict.Add(exportValuePair.Key, value);
+                    }
+                    catch
+                    {
+                        continue;
+                    }
+                }
+                combatantList.Add(new KeyValuePair<CombatantData, Dictionary<string, string>>(ally, valueDict));
+            }
+            return combatantList;
+        }
+
+        private static Dictionary<string, string> GetEncounterDictionary(List<CombatantData> allies)
+        {
+            var encounterDict = new Dictionary<string, string>();
+            foreach (var exportValuePair in EncounterData.ExportVariables)
+            {
+                try
+                {
+                    var value = exportValuePair.Value.GetExportString(
+                        ActGlobals.oFormActMain.ActiveZone.ActiveEncounter,
+                        allies,
+                        "");
+                    encounterDict.Add(exportValuePair.Key, value);
+                }
+                catch
+                {
+                    continue;
+                }
+            }
+            return encounterDict;
         }
 
         private string CleanUp(string str)
