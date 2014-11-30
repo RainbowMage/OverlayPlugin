@@ -23,11 +23,7 @@ namespace RainbowMage.HtmlRenderer
 
         public void BeginRender(int width, int height, string url)
         {
-            if (this.Browser != null)
-            {
-                this.Browser.Dispose();
-                this.Browser = null;
-            }
+            EndRender();
 
             var cefWindowInfo = CefWindowInfo.Create();
             cefWindowInfo.SetAsWindowless(IntPtr.Zero, true);
@@ -48,7 +44,11 @@ namespace RainbowMage.HtmlRenderer
             if (this.Browser != null)
             {
                 var host = Browser.GetHost();
-                host.CloseBrowser(true);
+                if (host != null)
+                {
+                    host.CloseBrowser(true);
+                    host.Dispose();
+                }
                 this.Browser.Dispose();
                 this.Browser = null;
             }
