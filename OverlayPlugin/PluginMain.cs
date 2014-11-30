@@ -4,10 +4,11 @@ using System.Text;
 using System.Linq;
 using System.Windows.Forms;
 using System.Reflection;
-using System;
 using RainbowMage.HtmlRenderer;
+using System;
 using System.Drawing;
 using System.IO;
+using System.ComponentModel;
 
 namespace RainbowMage.OverlayPlugin
 {
@@ -21,12 +22,23 @@ namespace RainbowMage.OverlayPlugin
         System.Timers.Timer timer;
         bool isFirstLaunch;
 
+        string pluginDirectory;
+
         internal OverlayForm Overlay { get; private set; }
+        internal BindingList<string> Logs { get; private set; }
+
+        public PluginMain()
+        {
+            this.Logs = new BindingList<string>();
+
+            // プラグインの配置してあるフォルダを検索するカスタムリゾルバーでアセンブリを解決する
+            SetupAssemblyResolver();
+        }
 
         static readonly Dictionary<string, string> assemblyTable = new Dictionary<string,string>
         {
-            { "HtmlRenderer", "HtmlRenderer.dll" },
-            { "Xilium.CefGlue", "Xilium.CefGlue.dll" }
+            { "HtmlRenderer,", "HtmlRenderer.dll" },
+            { "Xilium.CefGlue,", "Xilium.CefGlue.dll" }
         };
 
         public void InitPlugin(TabPage pluginScreenSpace, Label pluginStatusText)
@@ -34,14 +46,14 @@ namespace RainbowMage.OverlayPlugin
             this.tabPage = pluginScreenSpace;
             this.label = pluginStatusText;
 
+            this.pluginDirectory = GetPluginDirectory();
+            Log("Info: InitPlugin: PluginDirectory = {0}", this.pluginDirectory);
+
             // コンフィグ系読み込み
             LoadConfig();
             this.controlPanel = new ControlPanel(this, this.config);
             this.controlPanel.Dock = DockStyle.Fill;
             this.tabPage.Controls.Add(this.controlPanel);
-
-            // プラグインの配置してあるフォルダを検索するカスタムリゾルバーでアセンブリを解決する
-            SetupAssemblyResolver();
 
             try
             {
@@ -56,7 +68,7 @@ namespace RainbowMage.OverlayPlugin
                 InitializeTimer();
                 InitializeConfigHandlers();
 
-                Log("Initialized.");
+                Log("Info: InitPlugin: Initialized.");
                 this.label.Text = "Initialized.";
             }
             catch (Exception e)
@@ -146,7 +158,7 @@ namespace RainbowMage.OverlayPlugin
             timer.Stop();
             this.Overlay.Close();
 
-            Log("Finalized.");
+            Log("Info: DeInitPlugin: Finalized.");
             this.label.Text = "Finalized.";
         }
 
@@ -154,16 +166,34 @@ namespace RainbowMage.OverlayPlugin
         {
             AppDomain.CurrentDomain.AssemblyResolve += (o, e) =>
             {
+                Log("Info: AssemblyResolve: Resolving assembly for '{0}'...", e.Name);
+
+                Assembly result = null;
                 foreach (var pair in assemblyTable)
                 {
                     if (e.Name.StartsWith(pair.Key))
                     {
-                        var dir = GetPluginDirectory();
-                        return Assembly.LoadFile(System.IO.Path.Combine(dir, pair.Value));
+                        try
+                        {
+                            var asmPath = System.IO.Path.Combine(pluginDirectory, pair.Value);
+                            result = Assembly.LoadFile(asmPath);
+                            Log("Info: AssemblyResolve: => Found assembly in {0}.", asmPath);
+                            break;
+                        }
+                        catch (Exception ex)
+                        {
+                            Log("Error: AssemblyResolve: => {0}", ex);
+                            continue;
+                        }
                     }
                 }
 
-                return null;
+                if (result == null)
+                {
+                    Log("Info: AssemblyResolve: => Not found in plugin directory.");
+                }
+
+                return result;
             };
         }
 
@@ -325,7 +355,7 @@ namespace RainbowMage.OverlayPlugin
                 Log("Error: LoadConfig: {0}", e);
                 Log("Creating new config.");
                 config = new PluginConfig();
-                config.Url = new Uri(System.IO.Path.Combine(GetPluginDirectory(), "resources", "default.html")).ToString();
+                config.Url = new Uri(System.IO.Path.Combine(pluginDirectory, "resources", "default.html")).ToString();
                 isFirstLaunch = true;
             }
         }
@@ -370,12 +400,7 @@ namespace RainbowMage.OverlayPlugin
 
         private void Log(string format, params object[] args)
         {
-            if (this.controlPanel != null &&
-                this.controlPanel.listLog != null &&
-                this.controlPanel.listLog.Items != null)
-            {
-                this.controlPanel.listLog.Items.Add(DateTime.Now.ToString() + "|" + string.Format(format, args));
-            }
+            this.Logs.Add(DateTime.Now.ToString() + "|" + string.Format(format, args));
         }
 
         public bool IsOnScreen(Form form)

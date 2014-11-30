@@ -47,6 +47,8 @@ namespace RainbowMage.OverlayPlugin
             this.checkWindowVisible.Checked = config.IsVisible;
             this.checkMouseClickthru.Checked = config.IsClickThru;
             this.textUrl.Text = config.Url;
+
+            this.listLog.DataSource = pluginMain.Logs;
         }
 
         private void checkWindowVisible_CheckedChanged(object sender, EventArgs e)
@@ -83,6 +85,19 @@ namespace RainbowMage.OverlayPlugin
             if (ofd.ShowDialog() == DialogResult.OK)
             {
                 this.config.Url = new Uri(ofd.FileName).ToString();
+            }
+        }
+
+        private void menuLogCopy_Click(object sender, EventArgs e)
+        {
+            if (listLog.SelectedItems != null)
+            {
+                var sb = new StringBuilder();
+                foreach (var item in listLog.SelectedItems)
+                {
+                    sb.AppendLine(item.ToString());
+                }
+                Clipboard.SetText(sb.ToString());
             }
         }
     }

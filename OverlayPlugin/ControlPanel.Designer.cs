@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.label2 = new System.Windows.Forms.Label();
@@ -41,6 +42,8 @@
             this.buttonReloadBrowser = new System.Windows.Forms.Button();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.buttonSelectFile = new System.Windows.Forms.Button();
+            this.contextMenuLogList = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.menuLogCopy = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -48,6 +51,7 @@
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
+            this.contextMenuLogList.SuspendLayout();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -158,12 +162,14 @@
             // 
             // listLog
             // 
+            this.listLog.ContextMenuStrip = this.contextMenuLogList;
             this.listLog.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listLog.FormattingEnabled = true;
             this.listLog.ItemHeight = 12;
             this.listLog.Location = new System.Drawing.Point(0, 0);
             this.listLog.Name = "listLog";
             this.listLog.ScrollAlwaysVisible = true;
+            this.listLog.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
             this.listLog.Size = new System.Drawing.Size(481, 117);
             this.listLog.TabIndex = 0;
             // 
@@ -215,6 +221,20 @@
             this.buttonSelectFile.UseVisualStyleBackColor = true;
             this.buttonSelectFile.Click += new System.EventHandler(this.buttonSelectFile_Click);
             // 
+            // contextMenuLogList
+            // 
+            this.contextMenuLogList.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuLogCopy});
+            this.contextMenuLogList.Name = "contextMenuLogList";
+            this.contextMenuLogList.Size = new System.Drawing.Size(177, 26);
+            // 
+            // menuLogCopy
+            // 
+            this.menuLogCopy.Name = "menuLogCopy";
+            this.menuLogCopy.Size = new System.Drawing.Size(176, 22);
+            this.menuLogCopy.Text = "選択した項目をコピー";
+            this.menuLogCopy.Click += new System.EventHandler(this.menuLogCopy_Click);
+            // 
             // ControlPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -231,6 +251,7 @@
             this.panel1.ResumeLayout(false);
             this.tableLayoutPanel2.ResumeLayout(false);
             this.tableLayoutPanel2.PerformLayout();
+            this.contextMenuLogList.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -250,5 +271,7 @@
         internal System.Windows.Forms.ListBox listLog;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
         private System.Windows.Forms.Button buttonSelectFile;
+        private System.Windows.Forms.ContextMenuStrip contextMenuLogList;
+        private System.Windows.Forms.ToolStripMenuItem menuLogCopy;
     }
 }
