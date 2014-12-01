@@ -31,6 +31,9 @@
             this.components = new System.ComponentModel.Container();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.label5 = new System.Windows.Forms.Label();
+            this.textSortKey = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
@@ -42,13 +45,10 @@
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.textUrl = new System.Windows.Forms.TextBox();
             this.buttonSelectFile = new System.Windows.Forms.Button();
+            this.comboSortType = new System.Windows.Forms.ComboBox();
             this.listLog = new System.Windows.Forms.ListBox();
             this.contextMenuLogList = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.menuLogCopy = new System.Windows.Forms.ToolStripMenuItem();
-            this.label4 = new System.Windows.Forms.Label();
-            this.textSortKey = new System.Windows.Forms.TextBox();
-            this.label5 = new System.Windows.Forms.Label();
-            this.comboSortType = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -107,6 +107,38 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 57F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(481, 246);
             this.tableLayoutPanel1.TabIndex = 0;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label5.Location = new System.Drawing.Point(3, 88);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(149, 22);
+            this.label5.TabIndex = 10;
+            this.label5.Text = "ソートタイプ";
+            this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // textSortKey
+            // 
+            this.textSortKey.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.textSortKey.Location = new System.Drawing.Point(156, 67);
+            this.textSortKey.Margin = new System.Windows.Forms.Padding(1);
+            this.textSortKey.Name = "textSortKey";
+            this.textSortKey.Size = new System.Drawing.Size(324, 19);
+            this.textSortKey.TabIndex = 9;
+            this.textSortKey.TextChanged += new System.EventHandler(this.textSortKey_TextChanged);
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label4.Location = new System.Drawing.Point(3, 66);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(149, 22);
+            this.label4.TabIndex = 8;
+            this.label4.Text = "ソートキー";
+            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // label2
             // 
@@ -232,6 +264,18 @@
             this.buttonSelectFile.UseVisualStyleBackColor = true;
             this.buttonSelectFile.Click += new System.EventHandler(this.buttonSelectFile_Click);
             // 
+            // comboSortType
+            // 
+            this.comboSortType.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.comboSortType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboSortType.FormattingEnabled = true;
+            this.comboSortType.Location = new System.Drawing.Point(156, 89);
+            this.comboSortType.Margin = new System.Windows.Forms.Padding(1);
+            this.comboSortType.Name = "comboSortType";
+            this.comboSortType.Size = new System.Drawing.Size(324, 20);
+            this.comboSortType.TabIndex = 11;
+            this.comboSortType.SelectedIndexChanged += new System.EventHandler(this.comboSortType_SelectedIndexChanged);
+            // 
             // listLog
             // 
             this.listLog.ContextMenuStrip = this.contextMenuLogList;
@@ -258,50 +302,6 @@
             this.menuLogCopy.Size = new System.Drawing.Size(176, 22);
             this.menuLogCopy.Text = "選択した項目をコピー";
             this.menuLogCopy.Click += new System.EventHandler(this.menuLogCopy_Click);
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label4.Location = new System.Drawing.Point(3, 66);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(149, 22);
-            this.label4.TabIndex = 8;
-            this.label4.Text = "ソートキー";
-            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // textSortKey
-            // 
-            this.textSortKey.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textSortKey.Location = new System.Drawing.Point(156, 67);
-            this.textSortKey.Margin = new System.Windows.Forms.Padding(1);
-            this.textSortKey.Name = "textSortKey";
-            this.textSortKey.Size = new System.Drawing.Size(324, 19);
-            this.textSortKey.TabIndex = 9;
-            this.textSortKey.TextChanged += new System.EventHandler(this.textSortKey_TextChanged);
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label5.Location = new System.Drawing.Point(3, 88);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(149, 22);
-            this.label5.TabIndex = 10;
-            this.label5.Text = "ソートタイプ";
-            this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // comboSortType
-            // 
-            this.comboSortType.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.comboSortType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboSortType.FormattingEnabled = true;
-            this.comboSortType.Location = new System.Drawing.Point(156, 89);
-            this.comboSortType.Margin = new System.Windows.Forms.Padding(1);
-            this.comboSortType.Name = "comboSortType";
-            this.comboSortType.Size = new System.Drawing.Size(324, 20);
-            this.comboSortType.TabIndex = 11;
-            this.comboSortType.SelectedIndexChanged += new System.EventHandler(this.comboSortType_SelectedIndexChanged);
             // 
             // ControlPanel
             // 

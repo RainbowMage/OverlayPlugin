@@ -50,13 +50,18 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConfigEventArgs.cs" />
     <Compile Include="ControlPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ControlPanel.Designer.cs">
       <DependentUpon>ControlPanel.cs</DependentUpon>
     </Compile>
+    <Compile Include="MiniParseOverlay.cs" />
+    <Compile Include="MiniParseOverlayConfig.cs" />
     <Compile Include="NativeMethods.cs" />
+    <Compile Include="OverlayBase.cs" />
+    <Compile Include="OverlayConfig.cs" />
     <Compile Include="OverlayForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -71,6 +76,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="SpellTimerOverlay.cs" />
+    <Compile Include="Util.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="resources\default.html">

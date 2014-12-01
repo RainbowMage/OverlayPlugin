@@ -32,13 +32,13 @@ namespace RainbowMage.OverlayPlugin
             public int Height;
         }
 
-        public struct Rect
-        {
-            public int Left;
-            public int Top;
-            public int Right;
-            public int Bottom;
-        }
+        //public struct Rect
+        //{
+        //    public int Left;
+        //    public int Top;
+        //    public int Right;
+        //    public int Bottom;
+        //}
 
         [DllImport("user32")]
         public static extern bool UpdateLayeredWindow(

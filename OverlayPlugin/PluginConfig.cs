@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -12,15 +13,17 @@ namespace RainbowMage.OverlayPlugin
     [Serializable]
     public class PluginConfig
     {
-        public event EventHandler<VisibleStateChangedEventArgs> VisibleChanged;
-        public event EventHandler<ThruStateChangedEventArgs> ClickThruChanged;
-        public event EventHandler<UrlChangedEventArgs> UrlChanged;
-        public event EventHandler<SortKeyChangedEventArgs> SortKeyChanged;
-        public event EventHandler<SortTypeChangedEventArgs> SortTypeChanged;
+        #region Config for version 0.1.2.0 or below
+#pragma warning disable 612, 618
+        [Obsolete] public event EventHandler<VisibleStateChangedEventArgs> VisibleChanged;
+        [Obsolete] public event EventHandler<ThruStateChangedEventArgs> ClickThruChanged;
+        [Obsolete] public event EventHandler<UrlChangedEventArgs> UrlChanged;
+        [Obsolete] public event EventHandler<SortKeyChangedEventArgs> SortKeyChanged;
+        [Obsolete] public event EventHandler<SortTypeChangedEventArgs> SortTypeChanged;
 
-        [XmlElement("IsVisible")]
         private bool isVisible;
-        public bool IsVisible 
+        [XmlElement("IsVisible")]
+        public bool IsVisibleObsolete
         { 
             get
             {
@@ -39,9 +42,9 @@ namespace RainbowMage.OverlayPlugin
             }
         }
 
-        [XmlElement("IsClickThru")]
         private bool isClickThru;
-        public bool IsClickThru
+        [XmlElement("IsClickThru")]
+        public bool IsClickThruObsolete
         {
             get
             {
@@ -60,15 +63,37 @@ namespace RainbowMage.OverlayPlugin
             }
         }
 
+        private Point overlayPosition;
         [XmlElement("OverlayPosition")]
-        public Point OverlayPosition { get; set; }
+        public Point OverlayPositionObsolete
+        { 
+            get
+            {
+                return this.overlayPosition;
+            }
+            set
+            {
+                this.overlayPosition = value;
+            }
+        }
 
+        private Size overlaySize;
         [XmlElement("OverlaySize")]
-        public Size OverlaySize { get; set; }
+        public Size OverlaySizeObsolete
+        {
+            get
+            {
+                return this.overlaySize;
+            }
+            set
+            {
+                this.overlaySize = value;
+            }
+        }
 
-        [XmlElement("Url")]
         private string url;
-        public string Url
+        [XmlElement("Url")]
+        public string UrlObsolete
         {
             get
             {
@@ -87,9 +112,9 @@ namespace RainbowMage.OverlayPlugin
             }
         }
 
-        [XmlElement("SortKey")]
         private string sortKey;
-        public string SortKey
+        [XmlElement("SortKey")]
+        public string SortKeyObsolete
         {
             get
             {
@@ -108,9 +133,9 @@ namespace RainbowMage.OverlayPlugin
             }
         }
 
+        private MiniParseSortType sortType;
         [XmlElement("SortType")]
-        private SortType sortType;
-        public SortType SortType
+        public MiniParseSortType SortTypeObsolete
         {
             get
             {
@@ -128,20 +153,49 @@ namespace RainbowMage.OverlayPlugin
                 }
             }
         }
+#pragma warning restore 612, 618
+        #endregion
+
+        [XmlElement("MiniParseOverlay")]
+        public MiniParseOverlayConfig MiniParseOverlay { get; set; }
+
+        [XmlElement("SpellTimerOverlay")]
+        public OverlayConfig SpellTimerOverlay { get; set; }
+
+        [XmlElement("Version")]
+        public Version Version { get; set; }
+
+        [XmlIgnore]
+        public bool IsFirstLaunch { get; set; }
 
         public PluginConfig()
         {
-            this.IsVisible = true;
-            this.IsClickThru = false;
-            this.OverlayPosition = new Point(20, 20);
-            this.OverlaySize = new Size(300, 300);
-            this.Url = "";
-            this.SortKey = "encdps";
-            this.SortType = OverlayPlugin.SortType.NumericDescending;
+            #region Config for version 0.1.2.0 or below
+#pragma warning disable 612, 618
+            this.IsVisibleObsolete = true;
+            this.IsClickThruObsolete = false;
+            this.OverlayPositionObsolete = new Point(20, 20);
+            this.OverlaySizeObsolete = new Size(300, 300);
+            this.UrlObsolete = "";
+            this.SortKeyObsolete = "encdps";
+            this.SortTypeObsolete = OverlayPlugin.MiniParseSortType.NumericDescending;
+#pragma warning restore 612, 618
+            #endregion
+
+            this.MiniParseOverlay = new MiniParseOverlayConfig();
+            this.MiniParseOverlay.Position = new Point(20, 20);
+            this.MiniParseOverlay.Size = new Size(500, 300);
+            this.SpellTimerOverlay = new OverlayConfig();
+            this.SpellTimerOverlay.Position = new Point(20, 520);
+            this.SpellTimerOverlay.Size = new Size(200, 300);
+            this.IsFirstLaunch = true;
+
         }
 
         public void SaveXml(string path)
         {
+            this.Version = typeof(PluginMain).Assembly.GetName().Version;
+
             using (var stream = new FileStream(path, FileMode.Create, FileAccess.Write))
             {
                 XmlSerializer serializer = new XmlSerializer(typeof(PluginConfig));
@@ -160,62 +214,27 @@ namespace RainbowMage.OverlayPlugin
             {
                 XmlSerializer serializer = new XmlSerializer(typeof(PluginConfig));
                 var result = (PluginConfig)serializer.Deserialize(stream);
+
+                result.IsFirstLaunch = false;
+
+                if (result.Version == null)
+                {
+                    result.UpdateFromVersion0_1_2_0OrBelow();
+                }
+
                 return result;
             }
         }
-    }
 
-    public enum SortType
-    {
-        None,
-        StringAscending,
-        StringDescending,
-        NumericAscending,
-        NumericDescending
-    }
-
-    public class VisibleStateChangedEventArgs : EventArgs
-    {
-        public bool IsVisible { get; private set; }
-        public VisibleStateChangedEventArgs(bool isVisible)
+        private void UpdateFromVersion0_1_2_0OrBelow()
         {
-            this.IsVisible = isVisible;
-        }
-    }
-
-    public class ThruStateChangedEventArgs : EventArgs
-    {
-        public bool IsClickThru { get; private set; }
-        public ThruStateChangedEventArgs(bool isClickThru)
-        {
-            this.IsClickThru = isClickThru;
-        }
-    }
-
-    public class UrlChangedEventArgs : EventArgs
-    {
-        public string NewUrl { get; private set; }
-        public UrlChangedEventArgs(string url)
-        {
-            this.NewUrl = url;
-        }
-    }
-
-    public class SortTypeChangedEventArgs : EventArgs
-    {
-        public SortType NewSortType { get; private set; }
-        public SortTypeChangedEventArgs(SortType newSortType)
-        {
-            this.NewSortType = newSortType;
-        }
-    }
-
-    public class SortKeyChangedEventArgs : EventArgs
-    {
-        public string NewSortKey { get; private set; }
-        public SortKeyChangedEventArgs(string newSortKey)
-        {
-            this.NewSortKey = newSortKey;
+#pragma warning disable 612, 618
+            this.MiniParseOverlay.IsVisible = this.IsVisibleObsolete;
+            this.MiniParseOverlay.IsClickThru = this.IsClickThruObsolete;
+            this.MiniParseOverlay.Position = this.OverlayPositionObsolete;
+            this.MiniParseOverlay.Size = this.OverlaySizeObsolete;
+            this.MiniParseOverlay.Url = this.UrlObsolete;
+#pragma warning restore 612, 618
         }
     }
 }
