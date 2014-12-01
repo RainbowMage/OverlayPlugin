@@ -23,7 +23,7 @@ namespace RainbowMage.OverlayPlugin
 
         internal PluginConfig Config { get; private set; }
         internal MiniParseOverlay MiniParseOverlay { get; private set; }
-        internal MiniParseOverlay MiniParseOverlay2 { get; private set; }
+        internal SpellTimerOverlay SpellTimerOverlay { get; private set; }
         internal BindingList<string> Logs { get; private set; }
 
         public PluginMain()
@@ -66,6 +66,12 @@ namespace RainbowMage.OverlayPlugin
                 this.label.Text = "MiniParseOverlay";
                 this.MiniParseOverlay = new OverlayPlugin.MiniParseOverlay(this);
                 this.MiniParseOverlay.Start();
+                this.SpellTimerOverlay = new OverlayPlugin.SpellTimerOverlay(this);
+                this.SpellTimerOverlay.Start();
+
+                // ショートカットキー設定
+                ActGlobals.oFormActMain.KeyPreview = true;
+                ActGlobals.oFormActMain.KeyDown += oFormActMain_KeyDown;
 
                 Log("Info: InitPlugin: Initialized.");
                 this.label.Text = "Initialized.";
@@ -80,6 +86,8 @@ namespace RainbowMage.OverlayPlugin
         {
             SaveConfig();
             this.MiniParseOverlay.Dispose();
+            this.SpellTimerOverlay.Dispose();
+            ActGlobals.oFormActMain.KeyDown -= oFormActMain_KeyDown;
 
             Log("Info: DeInitPlugin: Finalized.");
             this.label.Text = "Finalized.";
@@ -127,6 +135,23 @@ namespace RainbowMage.OverlayPlugin
             };
         }
 
+
+        void oFormActMain_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Control && e.KeyCode == Keys.M)
+            {
+                // ミニパース表示非表示
+                this.Config.MiniParseOverlay.IsVisible = !this.Config.MiniParseOverlay.IsVisible;
+                ActGlobals.oFormActMain.Activate();
+            }
+            else if (e.Control && e.KeyCode == Keys.S)
+            {
+                // スペルタイマー表示非表示
+                this.Config.SpellTimerOverlay.IsVisible = !this.Config.SpellTimerOverlay.IsVisible;
+                ActGlobals.oFormActMain.Activate();
+            }
+        }
+
         private void LoadConfig()
         {
             try
@@ -136,10 +161,21 @@ namespace RainbowMage.OverlayPlugin
             catch (Exception e)
             {
                 Log("Error: LoadConfig: {0}", e);
-                Log("Creating new config.");
+                Log("Creating new configuration.");
                 Config = new PluginConfig();
-                Config.MiniParseOverlay.Url = new Uri(System.IO.Path.Combine(pluginDirectory, "resources", "default.html")).ToString();
-                Config.SpellTimerOverlay.Url = new Uri(System.IO.Path.Combine(pluginDirectory, "resources", "spelltimer.html")).ToString();
+            }
+            finally
+            {
+                if (string.IsNullOrWhiteSpace(Config.MiniParseOverlay.Url))
+                {
+                    Config.MiniParseOverlay.Url =
+                        new Uri(System.IO.Path.Combine(pluginDirectory, "resources", "default.html")).ToString();
+                }
+                if (string.IsNullOrWhiteSpace(Config.SpellTimerOverlay.Url))
+                {
+                    Config.SpellTimerOverlay.Url = 
+                        new Uri(System.IO.Path.Combine(pluginDirectory, "resources", "spelltimer.html")).ToString();
+                }
             }
         }
 

@@ -1,0 +1,204 @@
+﻿<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <style>
+        * {
+            /* フォント （一部のフォントは上手く適用されない） */
+            font-family: "Meiryo";
+            font-size: 12px;
+        }
+
+        body, html {
+            margin: 0;
+        }
+
+        html {
+            /* リサイズ用のハンドル
+             * リサイズができる場所はウィンドウ右下の16x16ピクセルの場所
+             * この部分が完全に透明だとマウス入力が透過してしまってサイズを変更できなくなる */
+            background-image: url(handle.png);
+            background-position: bottom right;
+            background-repeat: no-repeat;
+            box-sizing: border-box;
+            height: 100%;
+            /* 外枠 */
+            /*border: 1px solid rgba(0,0,0,0.1);*/
+            /* はみ出た内容はスクロールバーを表示させずに隠す
+             * 今のところ、ブラウザへの入力はできないので表示させても無意味 */
+            overflow: hidden;
+            /* 背景色 */
+            background-color: transparent;
+        }
+
+        #combatantTable {
+            width: 100%;
+            table-layout: fixed;
+            border-collapse: collapse;
+        }
+
+        #combatantTableBody * {
+            color: #E2EBF5;
+            text-shadow: -1px 0 3px #217AA2, 0 1px 3px #217AA2, 1px 0 3px #217AA2, 0 -1px 3px #217AA2;
+            font-weight: 300;
+            /* はみ出たテキストを「…」で省略する */
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        #encounter,
+        #combatantTableHeader *,
+        * {
+            color: #DED7BE;
+            text-shadow: -1px 0 2px #795516, 0 1px 2px #795516, 1px 0 2px #795516, 0 -1px 2px #795516;
+            font-weight: 300;
+            /*white-space: nowrap;*/
+        }
+
+        #combatantTableHeader tr {
+            border-bottom: 1px solid #DED7BE;
+        }
+
+        #combatantTableBody tr:not(:last-child) {
+            /*border-bottom: 1px solid rgba(192, 192, 192, 0.25);*/
+        }
+
+        .progress-outer {
+            background-color: rgba(0, 0, 0, 0.2);
+            position: relative;
+            border: 1px solid rgba(0, 0, 0, 0.3);
+            box-sizing: border-box;
+            border-radius: 3px;
+        }
+
+        .progress-bar {
+            opacity: 0.2;
+            background-color: purple;
+            position: absolute;
+            height: 100%;
+            box-sizing: border-box;
+        }
+
+        .progress-text {
+            position: absolute;
+            width: 100%;
+            display: block;
+            text-align: center;
+        }
+    </style>
+    <script>
+
+        //
+        // プラグイン側から以下のような ActXiv オブジェクトとしてデータが提供される
+        //
+        // var ActXiv = {
+        //     "timerFrames": [
+        //         {
+        //             "name": "スペルタイマー名",
+        //             "key": "グループ名|スペルタイマー名",
+        //             "color": 色(0xRRGGBB),
+        //             "startCount": タイマーの開始カウント,
+        //             "warningCount": タイマーの警告カウント,
+        //             "expireCount": タイマーの除去カウント,
+        //             "tooltip", "ツールチップ文字列",
+        //             "spellTimers": [
+        //                 {
+        //                     "startTime": タイマーがカウントを開始した時刻（1970年1月1日からの経過秒数）
+        //                 },
+        //                 ...
+        //             ]
+        //         },
+        //         ...
+        //     ]
+        // };
+        //
+        // データの更新は 1 秒毎
+        // プラグインからの更新の通知はないので、ひたすらこちら側で更新し続ける
+        //
+
+        ActXiv = { timerFrames: [{ "color": -16776961, "expireCount": -15, "key": " general|sttest", "name": "sttest", "spellTimers": [{ "startTime": 1417478776894 }], "startCount": 30, "tooltip": "", "warningCount": 10 }] };
+
+        function initialize() {
+            update();
+            setInterval("update()", 1000);
+        }
+
+        // 表示要素の更新
+        function update() {
+            if (typeof (ActXiv) != 'undefined') {
+                var containerDiv = document.createElement("div");
+                for (var i = 0; i < ActXiv.timerFrames.length; i++) {
+                    var timerFrame = ActXiv.timerFrames[i];
+                    for (var j = 0; j < timerFrame.spellTimers.length; j++) {
+                        var spellTimer = timerFrame.spellTimers[j];
+                        var elapsed = getElapsedSeconds(spellTimer.startTime);
+                        var remaining = timerFrame.startCount - elapsed;
+                        var text = timerFrame.name + ": " + remaining.toFixed(1) + "sec";
+                        if (remaining < timerFrame.expireCount) {
+                            text += " [EXPIRED]";
+                        } else if (remaining < 0) {
+                            text += " [DONE]";
+                        } else if (remaining < timerFrame.warningCount) {
+                            text += " [WARNING]";
+                        }
+
+                        var progressBar = createProgressBarElement();
+                        progressBar.style.height = "20px";
+                        progressBar.children[1].innerText = text;
+                        var percentage = Math.max(0, Math.min(1, remaining / timerFrame.startCount)) * 100;
+                        progressBar.children[0].style.width = percentage.toFixed(2) + "%";
+                        progressBar.children[0].style.backgroundColor = getColorCodeFromNumber(timerFrame.color);
+
+                        containerDiv.appendChild(progressBar);
+                    }
+                }
+                document.getElementById('spelltimer').innerHTML = containerDiv.outerHTML;
+            }
+            else {
+                document.getElementById('spelltimer').innerText = "Waiting for data...";
+            }
+        }
+
+        function getElapsedSeconds(startTime) {
+            var jsDate = new Date();
+            var offsetMinutes = new Date().getTimezoneOffset();
+            var jsTime = jsDate.getTime() - offsetMinutes * 60 * 1000;
+
+            return (jsTime - startTime) / 1000;
+        }
+
+        function getColorCodeFromNumber(number) {
+            var color = number & 0x00FFFFFF;
+            var numberHexStr = color.toString(16);
+            return "#" + (("000000" + numberHexStr).substring(6 + numberHexStr.length - 6));
+        }
+
+        function createProgressBarElement() {
+            var outerDiv = document.createElement("div");
+            outerDiv.className = "progress-outer";
+            var barDiv = document.createElement("div");
+            barDiv.className = "progress-bar";
+            var textDiv = document.createElement("div");
+            textDiv.className = "progress-text";
+
+            outerDiv.appendChild(barDiv);
+            outerDiv.appendChild(textDiv);
+
+            return outerDiv;
+        }
+
+    </script>
+</head>
+<body onload="initialize();">
+
+    <div id="title">
+        Spell Timer
+    </div>
+
+    <div id="spelltimer">
+        
+    </div>
+
+</body>
+</html>
