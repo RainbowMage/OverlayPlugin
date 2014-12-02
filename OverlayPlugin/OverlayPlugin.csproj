@@ -58,6 +58,7 @@
     <Compile Include="ControlPanel.Designer.cs">
       <DependentUpon>ControlPanel.cs</DependentUpon>
     </Compile>
+    <Compile Include="DIBitmap.cs" />
     <Compile Include="MiniParseOverlay.cs" />
     <Compile Include="MiniParseOverlayConfig.cs" />
     <Compile Include="NativeMethods.cs" />

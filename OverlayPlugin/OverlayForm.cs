@@ -8,6 +8,7 @@ using System.Drawing.Imaging;
 using System.Linq;
 using System.Security.Permissions;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -15,7 +16,12 @@ namespace RainbowMage.OverlayPlugin
 {
     public partial class OverlayForm : Form
     {
+        private DIBitmap surfaceBuffer;
+        private object surfaceBufferLocker = new object();
+        private int maxFrameRate;
+
         public Renderer Renderer { get; private set; }
+        public bool IsDisposed { get; private set; }
 
         private string url;
         public string Url
@@ -50,10 +56,12 @@ namespace RainbowMage.OverlayPlugin
 
         public bool IsLoaded { get; private set; }
 
-        public OverlayForm(string url)
+        public OverlayForm(string url, int maxFrameRate = 30)
         {
             InitializeComponent();
             Renderer.Initialize();
+
+            this.maxFrameRate = maxFrameRate;
 
             this.Renderer = new Renderer();
             this.Renderer.Render += renderer_Render;
@@ -107,15 +115,14 @@ namespace RainbowMage.OverlayPlugin
             
         }
 
-        private void UpdateLayeredWindowBitmap(Bitmap bitmap)
+        private void UpdateLayeredWindowBitmap()
         {
-            using (var gScreen = Graphics.FromHwnd(IntPtr.Zero))
-            using (var gBitmap = Graphics.FromImage(bitmap))
-            {
-                var hScreen = gScreen.GetHdc();
-                var hBitmap = gBitmap.GetHdc();
+            if (surfaceBuffer.IsDisposed) { return; }
 
-                var hOldBitmap = NativeMethods.SelectObject(hBitmap, bitmap.GetHbitmap(Color.FromArgb(0)));
+            using (var gScreen = Graphics.FromHwnd(IntPtr.Zero))
+            {
+                var hScreenDC = gScreen.GetHdc();
+                var hOldBitmap = NativeMethods.SelectObject(surfaceBuffer.DeviceContext, surfaceBuffer.Handle);
 
                 var blend = new NativeMethods.BlendFunction
                 {
@@ -124,10 +131,21 @@ namespace RainbowMage.OverlayPlugin
                     SourceConstantAlpha = 255,
                     AlphaFormat = NativeMethods.AC_SRC_ALPHA
                 };
-
-                var windowPosition = new NativeMethods.Point { X = this.Left, Y = this.Top };
-                var surfaceSize = new NativeMethods.Size { Width = this.Width, Height = this.Height };
-                var surfacePosition = new NativeMethods.Point { X = 0, Y = 0 };
+                var windowPosition = new NativeMethods.Point
+                {
+                    X = this.Left,
+                    Y = this.Top
+                };
+                var surfaceSize = new NativeMethods.Size
+                {
+                    Width = surfaceBuffer.Width,
+                    Height = surfaceBuffer.Height
+                };
+                var surfacePosition = new NativeMethods.Point
+                {
+                    X = 0,
+                    Y = 0
+                };
 
                 IntPtr handle = IntPtr.Zero;
                 try
@@ -148,10 +166,10 @@ namespace RainbowMage.OverlayPlugin
 
                         NativeMethods.UpdateLayeredWindow(
                             handle,
-                            hScreen,
+                            hScreenDC,
                             ref windowPosition,
                             ref surfaceSize,
-                            hBitmap,
+                            surfaceBuffer.DeviceContext, //hBitmap,
                             ref surfacePosition,
                             0,
                             ref blend,
@@ -163,9 +181,8 @@ namespace RainbowMage.OverlayPlugin
 
                 }
 
-                NativeMethods.DeleteObject(NativeMethods.SelectObject(hBitmap, hOldBitmap));
-                gScreen.ReleaseHdc(hScreen);
-                gBitmap.ReleaseHdc(hBitmap);
+                NativeMethods.SelectObject(surfaceBuffer.DeviceContext, hOldBitmap);
+                gScreen.ReleaseHdc(hScreenDC);
             }
         }
         #endregion
@@ -207,15 +224,32 @@ namespace RainbowMage.OverlayPlugin
 
         void renderer_Render(object sender, RenderEventArgs e)
         {
-            var bitmap = new Bitmap(e.Width, e.Height, e.Width * 4, PixelFormat.Format32bppArgb, e.Buffer);
-            UpdateLayeredWindowBitmap(bitmap);
+            lock (surfaceBufferLocker)
+            {
+                if (surfaceBuffer != null &&
+                    (surfaceBuffer.Width != e.Width || surfaceBuffer.Height != e.Height))
+                {
+                    surfaceBuffer.Dispose();
+                    surfaceBuffer = null;
+                }
+
+                if (surfaceBuffer == null)
+                {
+                    surfaceBuffer = new DIBitmap(e.Width, e.Height);
+                }
+
+                // TODO: DirtyRect に対応
+                surfaceBuffer.SetSurfaceData(e.Buffer, (uint)(e.Width * e.Height * 4));
+
+                UpdateLayeredWindowBitmap();
+            }
         }
 
         private void UpdateRender()
         {
             if (this.Renderer != null)
             {
-                this.Renderer.BeginRender(this.Width, this.Height, this.Url);
+                this.Renderer.BeginRender(this.Width, this.Height, this.Url, this.maxFrameRate);
             }
         }
 
@@ -229,11 +263,27 @@ namespace RainbowMage.OverlayPlugin
 
         private void OverlayForm_FormClosed(object sender, FormClosedEventArgs e)
         {
+            
+        }
+
+        new public void Dispose()
+        {
+            this.Dispose(true);
+
             if (this.Renderer != null)
             {
                 this.Renderer.Dispose();
                 this.Renderer = null;
             }
+            lock (surfaceBufferLocker)
+            {
+                if (this.surfaceBuffer != null)
+                {
+                    this.surfaceBuffer.Dispose();
+                }
+            }
+
+            this.IsDisposed = true;
         }
 
         private void OverlayForm_Resize(object sender, EventArgs e)

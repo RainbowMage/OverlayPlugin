@@ -53,7 +53,7 @@ namespace RainbowMage.HtmlRenderer
 
         protected override void OnPaint(CefBrowser browser, CefPaintElementType type, CefRectangle[] dirtyRects, IntPtr buffer, int width, int height)
         {
-            renderer.OnPaint(browser, buffer, width, height);
+            renderer.OnPaint(browser, buffer, width, height, dirtyRects);
         }
 
         protected override void OnCursorChange(CefBrowser browser, IntPtr cursorHandle)
@@ -70,12 +70,14 @@ namespace RainbowMage.HtmlRenderer
         public IntPtr Buffer { get; private set; }
         public int Width { get; private set; }
         public int Height { get; private set; }
+        public CefRectangle[] DirtyRects { get; private set; }
 
-        public RenderEventArgs(IntPtr buffer, int width, int height)
+        public RenderEventArgs(IntPtr buffer, int width, int height, CefRectangle[] dirtyRects)
         {
             this.Buffer = buffer;
             this.Width = width;
             this.Height = height;
+            this.DirtyRects = dirtyRects;
         }
     }
 }

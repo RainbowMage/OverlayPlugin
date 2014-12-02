@@ -147,6 +147,7 @@ namespace RainbowMage.OverlayPlugin
             {
                 timer.Stop();
                 this.Overlay.Close();
+                this.Overlay.Dispose();
             }
             catch (Exception ex)
             {

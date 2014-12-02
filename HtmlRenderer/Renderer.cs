@@ -21,7 +21,7 @@ namespace RainbowMage.HtmlRenderer
             
         }
 
-        public void BeginRender(int width, int height, string url)
+        public void BeginRender(int width, int height, string url, int maxFrameRate = 30)
         {
             EndRender();
 
@@ -29,6 +29,7 @@ namespace RainbowMage.HtmlRenderer
             cefWindowInfo.SetAsWindowless(IntPtr.Zero, true);
 
             var cefBrowserSettings = new CefBrowserSettings();
+            cefBrowserSettings.WindowlessFrameRate = maxFrameRate;
 
             this.Client = new Client(this, width, height);
 
@@ -76,11 +77,11 @@ namespace RainbowMage.HtmlRenderer
             this.Browser = browser;
         }
 
-        internal void OnPaint(CefBrowser browser, IntPtr buffer, int width, int height)
+        internal void OnPaint(CefBrowser browser, IntPtr buffer, int width, int height, CefRectangle[] dirtyRects)
         {
             if (Render != null)
             {
-                Render(this, new RenderEventArgs(buffer, width, height));
+                Render(this, new RenderEventArgs(buffer, width, height, dirtyRects));
             }
         }
 
