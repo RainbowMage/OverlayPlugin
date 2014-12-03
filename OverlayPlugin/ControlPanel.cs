@@ -51,6 +51,7 @@ namespace RainbowMage.OverlayPlugin
             this.comboMiniParseSortType.DataSource = sortTypeDict;
             this.comboMiniParseSortType.SelectedValue = config.MiniParseOverlay.SortType;
             this.comboMiniParseSortType.SelectedIndexChanged += comboSortType_SelectedIndexChanged;
+            this.nudMiniParseMaxFrameRate.Value = config.MiniParseOverlay.MaxFrameRate;
         }
 
         private void SetupSpellTimerTab()
@@ -58,6 +59,7 @@ namespace RainbowMage.OverlayPlugin
             this.checkSpellTimerVisible.Checked = config.SpellTimerOverlay.IsVisible;
             this.checkSpellTimerClickThru.Checked = config.SpellTimerOverlay.IsClickThru;
             this.textSpellTimerUrl.Text = config.SpellTimerOverlay.Url;
+            this.nudSpellTimerMaxFrameRate.Value = config.SpellTimerOverlay.MaxFrameRate;
         }
 
         private void SetupMiniParseConfigHandlers()
@@ -97,6 +99,13 @@ namespace RainbowMage.OverlayPlugin
                     this.comboMiniParseSortType.SelectedValue = e.NewSortType;
                 });
             };
+            this.config.MiniParseOverlay.MaxFrameRateChanged += (o, e) =>
+            {
+                this.InvokeIfRequired(() =>
+                {
+                    this.nudMiniParseMaxFrameRate.Value = e.NewFrameRate;
+                });
+            };
         }
 
         private void SetupSpellTimerConfigHandlers()
@@ -120,6 +129,13 @@ namespace RainbowMage.OverlayPlugin
                 this.InvokeIfRequired(() =>
                 {
                     this.textSpellTimerUrl.Text = e.NewUrl;
+                });
+            };
+            this.config.SpellTimerOverlay.MaxFrameRateChanged += (o, e) =>
+            {
+                this.InvokeIfRequired(() =>
+                {
+                    this.nudSpellTimerMaxFrameRate.Value = e.NewFrameRate;
                 });
             };
         }
@@ -206,6 +222,11 @@ namespace RainbowMage.OverlayPlugin
             this.config.MiniParseOverlay.SortType = value;
         }
 
+        private void nudMiniParseMaxFrameRate_ValueChanged(object sender, EventArgs e)
+        {
+            this.config.MiniParseOverlay.MaxFrameRate = (int)nudMiniParseMaxFrameRate.Value;
+        }
+
         private void checkSpellTimerVisible_CheckedChanged(object sender, EventArgs e)
         {
             this.config.SpellTimerOverlay.IsVisible = this.checkSpellTimerVisible.Checked;
@@ -250,6 +271,11 @@ namespace RainbowMage.OverlayPlugin
             {
                 pluginMain.SpellTimerOverlay.Overlay.Reload();
             }
+        }
+
+        private void nudSpellTimerMaxFrameRate_ValueChanged(object sender, EventArgs e)
+        {
+            this.config.SpellTimerOverlay.MaxFrameRate = (int)nudSpellTimerMaxFrameRate.Value;
         }
     }
 }

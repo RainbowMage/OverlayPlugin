@@ -89,6 +89,9 @@
     <Content Include="resources\handle.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="resources\jquery-2.1.1.min.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="resources\spelltimer.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

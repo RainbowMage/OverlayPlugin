@@ -14,6 +14,7 @@ namespace RainbowMage.OverlayPlugin
         public event EventHandler<VisibleStateChangedEventArgs> VisibleChanged;
         public event EventHandler<ThruStateChangedEventArgs> ClickThruChanged;
         public event EventHandler<UrlChangedEventArgs> UrlChanged;
+        public event EventHandler<MaxFrameRateChangedEventArgs> MaxFrameRateChanged;
 
         private bool isVisible;
         [XmlElement("IsVisible")]
@@ -84,6 +85,27 @@ namespace RainbowMage.OverlayPlugin
             }
         }
 
+        private int maxFrameRate;
+        [XmlElement("MaxFrameRate")]
+        public int MaxFrameRate
+        {
+            get
+            {
+                return this.maxFrameRate;
+            }
+            set
+            {
+                if (this.maxFrameRate != value)
+                {
+                    this.maxFrameRate = value;
+                    if (MaxFrameRateChanged != null)
+                    {
+                        MaxFrameRateChanged(this, new MaxFrameRateChangedEventArgs(this.maxFrameRate));
+                    }
+                }
+            }
+        }
+
         public OverlayConfig()
         {
             this.IsVisible = true;
@@ -91,6 +113,7 @@ namespace RainbowMage.OverlayPlugin
             this.Position = new Point(20, 20);
             this.Size = new Size(300, 300);
             this.Url = "";
+            this.MaxFrameRate = 30;
         }
     }
 }

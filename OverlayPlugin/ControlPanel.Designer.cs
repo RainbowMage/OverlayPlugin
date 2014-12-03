@@ -66,6 +66,12 @@
             this.tableLayoutPanel6 = new System.Windows.Forms.TableLayoutPanel();
             this.textSpellTimerUrl = new System.Windows.Forms.TextBox();
             this.buttonSpellTimerSelectFile = new System.Windows.Forms.Button();
+            this.label6 = new System.Windows.Forms.Label();
+            this.nudMiniParseMaxFrameRate = new System.Windows.Forms.NumericUpDown();
+            this.label7 = new System.Windows.Forms.Label();
+            this.nudSpellTimerMaxFrameRate = new System.Windows.Forms.NumericUpDown();
+            this.label12 = new System.Windows.Forms.Label();
+            this.label13 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -82,6 +88,8 @@
             this.panel2.SuspendLayout();
             this.tableLayoutPanel5.SuspendLayout();
             this.tableLayoutPanel6.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudMiniParseMaxFrameRate)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudSpellTimerMaxFrameRate)).BeginInit();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -107,6 +115,8 @@
             this.tableLayoutPanel1.ColumnCount = 2;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 155F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.Controls.Add(this.label13, 1, 6);
+            this.tableLayoutPanel1.Controls.Add(this.label6, 0, 5);
             this.tableLayoutPanel1.Controls.Add(this.label5, 0, 4);
             this.tableLayoutPanel1.Controls.Add(this.textMiniParseSortKey, 1, 3);
             this.tableLayoutPanel1.Controls.Add(this.label4, 0, 3);
@@ -115,13 +125,15 @@
             this.tableLayoutPanel1.Controls.Add(this.label1, 0, 2);
             this.tableLayoutPanel1.Controls.Add(this.checkMiniParseVisible, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.checkMiniParseClickthru, 1, 1);
-            this.tableLayoutPanel1.Controls.Add(this.panel1, 1, 7);
+            this.tableLayoutPanel1.Controls.Add(this.panel1, 1, 8);
             this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel2, 1, 2);
             this.tableLayoutPanel1.Controls.Add(this.comboMiniParseSortType, 1, 4);
+            this.tableLayoutPanel1.Controls.Add(this.nudMiniParseMaxFrameRate, 1, 5);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 8;
+            this.tableLayoutPanel1.RowCount = 9;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 22F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 22F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 22F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 22F));
@@ -304,6 +316,7 @@
             this.listLog.ContextMenuStrip = this.contextMenuLogList;
             this.listLog.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listLog.FormattingEnabled = true;
+            this.listLog.HorizontalScrollbar = true;
             this.listLog.ItemHeight = 12;
             this.listLog.Location = new System.Drawing.Point(0, 0);
             this.listLog.Name = "listLog";
@@ -379,6 +392,9 @@
             this.tableLayoutPanel4.ColumnCount = 2;
             this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 155F));
             this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel4.Controls.Add(this.label12, 1, 4);
+            this.tableLayoutPanel4.Controls.Add(this.label7, 0, 3);
+            this.tableLayoutPanel4.Controls.Add(this.nudSpellTimerMaxFrameRate, 1, 3);
             this.tableLayoutPanel4.Controls.Add(this.label8, 0, 1);
             this.tableLayoutPanel4.Controls.Add(this.label9, 0, 0);
             this.tableLayoutPanel4.Controls.Add(this.label10, 0, 2);
@@ -539,10 +555,105 @@
             this.buttonSpellTimerSelectFile.UseVisualStyleBackColor = true;
             this.buttonSpellTimerSelectFile.Click += new System.EventHandler(this.buttonSpellTimerSelectFile_Click);
             // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label6.Location = new System.Drawing.Point(3, 110);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(149, 22);
+            this.label6.TabIndex = 12;
+            this.label6.Text = "最大フレームレート";
+            this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // nudMiniParseMaxFrameRate
+            // 
+            this.nudMiniParseMaxFrameRate.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.nudMiniParseMaxFrameRate.Location = new System.Drawing.Point(156, 111);
+            this.nudMiniParseMaxFrameRate.Margin = new System.Windows.Forms.Padding(1);
+            this.nudMiniParseMaxFrameRate.Maximum = new decimal(new int[] {
+            60,
+            0,
+            0,
+            0});
+            this.nudMiniParseMaxFrameRate.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudMiniParseMaxFrameRate.Name = "nudMiniParseMaxFrameRate";
+            this.nudMiniParseMaxFrameRate.Size = new System.Drawing.Size(431, 19);
+            this.nudMiniParseMaxFrameRate.TabIndex = 13;
+            this.nudMiniParseMaxFrameRate.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudMiniParseMaxFrameRate.ValueChanged += new System.EventHandler(this.nudMiniParseMaxFrameRate_ValueChanged);
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label7.Location = new System.Drawing.Point(3, 66);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(149, 22);
+            this.label7.TabIndex = 14;
+            this.label7.Text = "最大フレームレート";
+            this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // nudSpellTimerMaxFrameRate
+            // 
+            this.nudSpellTimerMaxFrameRate.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.nudSpellTimerMaxFrameRate.Location = new System.Drawing.Point(156, 67);
+            this.nudSpellTimerMaxFrameRate.Margin = new System.Windows.Forms.Padding(1);
+            this.nudSpellTimerMaxFrameRate.Maximum = new decimal(new int[] {
+            60,
+            0,
+            0,
+            0});
+            this.nudSpellTimerMaxFrameRate.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudSpellTimerMaxFrameRate.Name = "nudSpellTimerMaxFrameRate";
+            this.nudSpellTimerMaxFrameRate.Size = new System.Drawing.Size(431, 19);
+            this.nudSpellTimerMaxFrameRate.TabIndex = 15;
+            this.nudSpellTimerMaxFrameRate.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudSpellTimerMaxFrameRate.ValueChanged += new System.EventHandler(this.nudSpellTimerMaxFrameRate_ValueChanged);
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label12.Location = new System.Drawing.Point(158, 88);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(427, 22);
+            this.label12.TabIndex = 17;
+            this.label12.Text = "※最大フレームレートの変更を有効にするためには再起動が必要です";
+            this.label12.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label13.Location = new System.Drawing.Point(158, 132);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(427, 22);
+            this.label13.TabIndex = 19;
+            this.label13.Text = "※最大フレームレートの変更を有効にするためには再起動が必要です";
+            this.label13.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
             // ControlPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.Transparent;
             this.Controls.Add(this.splitContainer1);
             this.Name = "ControlPanel";
             this.Size = new System.Drawing.Size(602, 412);
@@ -566,6 +677,8 @@
             this.tableLayoutPanel5.ResumeLayout(false);
             this.tableLayoutPanel6.ResumeLayout(false);
             this.tableLayoutPanel6.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudMiniParseMaxFrameRate)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudSpellTimerMaxFrameRate)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -609,5 +722,11 @@
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel6;
         private System.Windows.Forms.TextBox textSpellTimerUrl;
         private System.Windows.Forms.Button buttonSpellTimerSelectFile;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.NumericUpDown nudMiniParseMaxFrameRate;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.NumericUpDown nudSpellTimerMaxFrameRate;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.Label label12;
     }
 }

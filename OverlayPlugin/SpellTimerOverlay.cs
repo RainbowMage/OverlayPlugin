@@ -17,13 +17,8 @@ namespace RainbowMage.OverlayPlugin
 
         IList<SerializableTimerFrameEntry> activatedTimers;
 
-        protected override OverlayConfig Config
-        {
-            get { return pluginMain.Config.SpellTimerOverlay; }
-        }
-
-        public SpellTimerOverlay(PluginMain pluginMain)
-            : base(pluginMain, "SpellTimerOverlay")
+        public SpellTimerOverlay(OverlayConfig config)
+            : base(config, "SpellTimerOverlay")
         {
             this.activatedTimers = new List<SerializableTimerFrameEntry>();
 
@@ -70,7 +65,7 @@ namespace RainbowMage.OverlayPlugin
             }
             catch (Exception ex)
             {
-                pluginMain.Log("Error: {0}: Update: {1}", this.Name, ex);
+                Log("Error: {0}: Update: {1}", this.Name, ex);
             }
         }
 

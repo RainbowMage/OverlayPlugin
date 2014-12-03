@@ -9,20 +9,22 @@ using System.Windows.Forms;
 
 namespace RainbowMage.OverlayPlugin
 {
-    abstract class OverlayBase<TConfig> : IDisposable
+    public abstract class OverlayBase<TConfig> : IDisposable
         where TConfig: OverlayConfig
     {
-        protected PluginMain pluginMain;
+        public event EventHandler<LogEventArgs> OnLog;
+
+        //protected PluginMain pluginMain;
         protected System.Timers.Timer timer;
 
         public string Name { get; private set; }
         public OverlayForm Overlay { get; private set; }
 
-        protected abstract TConfig Config { get; }
+        protected TConfig Config { get; private set; }
 
-        protected OverlayBase(PluginMain pluginMain, string name)
+        protected OverlayBase(TConfig config, string name)
         {
-            this.pluginMain = pluginMain;
+            this.Config = config;
             this.Name = name;
 
             InitializeOverlay();
@@ -54,8 +56,7 @@ namespace RainbowMage.OverlayPlugin
                     {
                         if (!File.Exists(uri.LocalPath))
                         {
-                            pluginMain.Log(
-                                "Warn: {0}: InitializeOverlay: Local file {1} is not exist!",
+                            Log("Warn: {0}: InitializeOverlay: Local file {1} is not exist!",
                                 this.Name,
                                 uri.LocalPath);
                         }
@@ -64,39 +65,34 @@ namespace RainbowMage.OverlayPlugin
                 catch (Exception ex)
                 {
                     // URL パースエラー
-                    pluginMain.Log(
-                                "Error: {0}: InitializeOverlay: URI parse error! (Config.Url = {1}): {2}",
-                                this.Name,
-                                this.Config.Url,
-                                ex);
-                    pluginMain.Log("Error: {0}: InitializeOverlay: Please reconfigure URL.", this.Name);
+                    Log("Error: {0}: InitializeOverlay: URI parse error! (Config.Url = {1}): {2}",
+                        this.Name,
+                        this.Config.Url,
+                        ex);
+                    Log("Error: {0}: InitializeOverlay: Please reconfigure URL.", this.Name);
                     uri = new System.Uri("about:blank"); // 空白ページを表示
                 }
 
-                this.Overlay = new OverlayForm(uri.AbsoluteUri);
+                this.Overlay = new OverlayForm(uri.AbsoluteUri, this.Config.MaxFrameRate);
 
-                // 初回起動または画面外にウィンドウがある場合は、初期表示位置をシステムに設定させる
-                if (!pluginMain.Config.IsFirstLaunch)
+                // 画面外にウィンドウがある場合は、初期表示位置をシステムに設定させる
+                if (!Util.IsOnScreen(this.Overlay))
                 {
-                    this.Overlay.Location = this.Config.Position;
-                    if (!Util.IsOnScreen(this.Overlay))
-                    {
-                        this.Overlay.StartPosition = FormStartPosition.WindowsDefaultLocation;
-                    }
+                    this.Overlay.StartPosition = FormStartPosition.WindowsDefaultLocation;
                 }
                 else
                 {
-                    this.Overlay.StartPosition = FormStartPosition.WindowsDefaultLocation;
+                    this.Overlay.Location = this.Config.Position;
                 }
                 this.Overlay.Size = this.Config.Size;
                 this.Overlay.IsClickThru = this.Config.IsClickThru;
                 this.Overlay.Renderer.BrowserError += (o, e) =>
                 {
-                    pluginMain.Log("Error: {0}: Overlay: {1}, {2}, {3}", this.Name, e.ErrorCode, e.ErrorText, e.Url);
+                    Log("Error: {0}: Overlay: {1}, {2}, {3}", this.Name, e.ErrorCode, e.ErrorText, e.Url);
                 };
                 this.Overlay.Renderer.BrowserLoad += (o, e) =>
                 {
-                    pluginMain.Log("Info: {0}: Overlay: {1}: {2}", this.Name, e.HttpStatusCode, e.Url);
+                    Log("Info: {0}: Overlay: {1}: {2}", this.Name, e.HttpStatusCode, e.Url);
                 };
 
                 this.Overlay.Show();
@@ -105,7 +101,7 @@ namespace RainbowMage.OverlayPlugin
             }
             catch (Exception ex)
             {
-                pluginMain.Log("Error: {0}: InitializeOverlay: {1}", this.Name, ex);
+                Log("Error: {0}: InitializeOverlay: {1}", this.Name, ex);
             }
         }
 
@@ -121,7 +117,7 @@ namespace RainbowMage.OverlayPlugin
                 }
                 catch (Exception ex)
                 {
-                    pluginMain.Log("Error: {0}: Update: {0}", this.Name, ex.ToString());
+                    Log("Error: {0}: Update: {0}", this.Name, ex.ToString());
                 }
             };
         }
@@ -151,8 +147,30 @@ namespace RainbowMage.OverlayPlugin
             }
             catch (Exception ex)
             {
-                pluginMain.Log("Error: {0}: Dispose: {1}", this.Name, ex);
+                Log("Error: {0}: Dispose: {1}", this.Name, ex);
             }
+        }
+
+        public class LogEventArgs : EventArgs
+        {
+            public string Message { get; private set; }
+            public LogEventArgs(string message)
+            {
+                this.Message = message;
+            }
+        }
+
+        protected void Log(string message)
+        {
+            if (OnLog != null)
+            {
+                OnLog(this, new LogEventArgs(message));
+            }
+        }
+
+        protected void Log(string format, params object[] args)
+        {
+            Log(string.Format(format, args));
         }
     }
 }

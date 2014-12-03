@@ -188,6 +188,8 @@ namespace RainbowMage.OverlayPlugin
             this.SpellTimerOverlay = new OverlayConfig();
             this.SpellTimerOverlay.Position = new Point(20, 520);
             this.SpellTimerOverlay.Size = new Size(200, 300);
+            this.SpellTimerOverlay.IsVisible = false;
+            this.SpellTimerOverlay.MaxFrameRate = 5;
             this.IsFirstLaunch = true;
 
         }

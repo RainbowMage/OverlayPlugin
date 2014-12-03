@@ -13,6 +13,10 @@
             margin: 0;
         }
 
+        body {
+            margin: 0.2em;
+        }
+
         html {
             /* リサイズ用のハンドル
              * リサイズができる場所はウィンドウ右下の16x16ピクセルの場所
@@ -31,24 +35,6 @@
             background-color: transparent;
         }
 
-        #combatantTable {
-            width: 100%;
-            table-layout: fixed;
-            border-collapse: collapse;
-        }
-
-        #combatantTableBody * {
-            color: #E2EBF5;
-            text-shadow: -1px 0 3px #217AA2, 0 1px 3px #217AA2, 1px 0 3px #217AA2, 0 -1px 3px #217AA2;
-            font-weight: 300;
-            /* はみ出たテキストを「…」で省略する */
-            overflow: hidden;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-        }
-
-        #encounter,
-        #combatantTableHeader *,
         * {
             color: #DED7BE;
             text-shadow: -1px 0 2px #795516, 0 1px 2px #795516, 1px 0 2px #795516, 0 -1px 2px #795516;
@@ -56,7 +42,7 @@
             /*white-space: nowrap;*/
         }
 
-        #combatantTableHeader tr {
+        #title {
             border-bottom: 1px solid #DED7BE;
         }
 
@@ -64,29 +50,71 @@
             /*border-bottom: 1px solid rgba(192, 192, 192, 0.25);*/
         }
 
+        /* バーを囲う要素の設定 */
         .progress-outer {
-            background-color: rgba(0, 0, 0, 0.2);
-            position: relative;
-            border: 1px solid rgba(0, 0, 0, 0.3);
             box-sizing: border-box;
+            position: relative;
+
+            /* 背景色 */
+            background-color: rgba(0, 0, 0, 0.2);
+            /* 枠の色 */
+            border: 1px solid rgba(192, 192, 192, 0.75);
+            /* 陰の色 */
+            box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.1);
+            /* 角を丸くする */
             border-radius: 3px;
+            /* バーの高さ（指定しないとだめ） */
+            height: 2em;
+            /* タイトルとの間隔 */
+            margin-top: 1px;
         }
 
+        .progress-outer:first-child {
+            /* タイトルとの間隔 */
+            margin-top: 1px;
+        }
+
+        /* バーの設定 */
         .progress-bar {
-            opacity: 0.2;
+            opacity: 0.75;
             background-color: purple;
             position: absolute;
             height: 100%;
             box-sizing: border-box;
+            border-radius: 3px;
         }
 
+        /* バーに表示されるテキストの設定 */
         .progress-text {
             position: absolute;
             width: 100%;
-            display: block;
-            text-align: center;
+            display: table;
+            table-layout: fixed;
+            height: 100%;
         }
+
+        /* タイマー名のテキスト */
+        .label-left {
+            display: table-cell;
+            text-align: left;
+            vertical-align: middle;
+            padding-left: 0.5em;
+        }
+
+        /* 残り秒数のテキスト */
+        .label-right {
+            display: table-cell;
+            text-align: right;
+            vertical-align: middle;
+            padding-right: 0.5em;
+            
+            color: #E2EBF5;
+            text-shadow: -1px 0 3px #217AA2, 0 1px 3px #217AA2, 1px 0 3px #217AA2, 0 -1px 3px #217AA2;
+            font-weight: 300;
+        }
+
     </style>
+    <script src="jquery-2.1.1.min.js" type="text/javascript"></script>
     <script>
 
         //
@@ -97,7 +125,7 @@
         //         {
         //             "name": "スペルタイマー名",
         //             "key": "グループ名|スペルタイマー名",
-        //             "color": 色(0xRRGGBB),
+        //             "color": 色(0xAARRGGBB),
         //             "startCount": タイマーの開始カウント,
         //             "warningCount": タイマーの警告カウント,
         //             "expireCount": タイマーの除去カウント,
@@ -117,48 +145,261 @@
         // プラグインからの更新の通知はないので、ひたすらこちら側で更新し続ける
         //
 
-        ActXiv = { timerFrames: [{ "color": -16776961, "expireCount": -15, "key": " general|sttest", "name": "sttest", "spellTimers": [{ "startTime": 1417478776894 }], "startCount": 30, "tooltip": "", "warningCount": 10 }] };
+        /*
+        // テスト用データ
+        var ActXiv = {
+            timerFrames: [
+                {
+                    "color": -16776961, // 0xFF0000FF
+                    "expireCount": -5,
+                    "key": " general|Timer1",
+                    "name": "Timer1",
+                    "startCount": 30,
+                    "tooltip": "",
+                    "warningCount": 10,
+                    "spellTimers": [
+                        { "startTime": createTimestamp(-10) },
+                        { "startTime": createTimestamp(-5) },
+                        { "startTime": createTimestamp() },
+                    ]
+                },
+                {
+                    "color": -65536, // 0xFFFF0000
+                    "expireCount": -5,
+                    "key": " general|Timer2",
+                    "name": "Timer2",
+                    "startCount": 20,
+                    "tooltip": "",
+                    "warningCount": 10,
+                    "spellTimers": [
+                        { "startTime": createTimestamp(-10) },
+                        { "startTime": createTimestamp(-5) },
+                        { "startTime": createTimestamp() },
+                    ]
+                },
+            ]
+        };
+        function createTimestamp(dSecs) {
+            var jsDate = new Date();
+            var offsetMinutes = new Date().getTimezoneOffset();
+            var jsTime = jsDate.getTime() - offsetMinutes * 60 * 1000;
+
+            var delta = 0;
+            if (typeof dSecs == "number") {
+                delta = dSecs * 1000;
+            }
+
+            return jsTime + delta;
+        }
+        */
 
         function initialize() {
             update();
-            setInterval("update()", 1000);
+            setInterval("update()", 500);
         }
+
+        // ★表示の流れ
+        //
+        // ActXiv オブジェクトに新しいタイマーがないかチェック
+        // → あったらバー作成＆アニメーション開始（アニメーション時間はバーの残り時間）
+        // → 作成したバーを残り時間に応じた場所に挿入
+        // → 作成済みのバーの中に期限切れのものがないかをチェック
+        // → あったら除去
+        // → 最初に戻る
+
+        var bars = [];
 
         // 表示要素の更新
         function update() {
-            if (typeof (ActXiv) != 'undefined') {
-                var containerDiv = document.createElement("div");
-                for (var i = 0; i < ActXiv.timerFrames.length; i++) {
-                    var timerFrame = ActXiv.timerFrames[i];
-                    for (var j = 0; j < timerFrame.spellTimers.length; j++) {
-                        var spellTimer = timerFrame.spellTimers[j];
-                        var elapsed = getElapsedSeconds(spellTimer.startTime);
-                        var remaining = timerFrame.startCount - elapsed;
-                        var text = timerFrame.name + ": " + remaining.toFixed(1) + "sec";
-                        if (remaining < timerFrame.expireCount) {
-                            text += " [EXPIRED]";
-                        } else if (remaining < 0) {
-                            text += " [DONE]";
-                        } else if (remaining < timerFrame.warningCount) {
-                            text += " [WARNING]";
+            if (typeof ActXiv != 'undefined') {
+                var containerDiv = document.getElementById('spelltimer');
+
+                if (typeof ActXiv.timerFrames != 'undefined') {
+                    for (var i = 0; i < ActXiv.timerFrames.length; i++) {
+                        if (typeof ActXiv.timerFrames[i].spellTimers != 'undefined') {
+                            for (var j = 0; j < ActXiv.timerFrames[i].spellTimers.length; j++) {
+
+                                processActXivTimerEntry(
+                                    containerDiv,
+                                    ActXiv.timerFrames[i],
+                                    ActXiv.timerFrames[i].spellTimers[j]);
+
+                            }
                         }
-
-                        var progressBar = createProgressBarElement();
-                        progressBar.style.height = "20px";
-                        progressBar.children[1].innerText = text;
-                        var percentage = Math.max(0, Math.min(1, remaining / timerFrame.startCount)) * 100;
-                        progressBar.children[0].style.width = percentage.toFixed(2) + "%";
-                        progressBar.children[0].style.backgroundColor = getColorCodeFromNumber(timerFrame.color);
-
-                        containerDiv.appendChild(progressBar);
                     }
                 }
-                document.getElementById('spelltimer').innerHTML = containerDiv.outerHTML;
-            }
-            else {
-                document.getElementById('spelltimer').innerText = "Waiting for data...";
+
+                // バーの更新と期限切れバーの削除
+                var newBars = [];
+                for (var i = 0; i < bars.length; i++) {
+                    if (!bars[i].spellTimer.getIsExpired()) {
+                        bars[i].updateBar();
+                        newBars.push(bars[i]);
+                    } else {
+                        bars[i].removeBarElement();
+                    }
+                }
+                bars = newBars;
+
+                ActXiv = {};
             }
         }
+
+        function processActXivTimerEntry(container, _tf, _st) {
+            var spellTimer = new SpellTimer(_tf, _st);
+
+            if (spellTimer.getIsExpired()) {
+                return; // 渡されたデータが既に期限切れだった場合は何もせずに次へ
+            };
+
+            var bar = getTimerBarFromList(spellTimer);
+            if (typeof bar == 'undefined') {
+                bar = new TimerBar(spellTimer);
+
+                // テキストの表示方法を設定
+                bar.setBarLabel(function (_st) {
+                    var nameText = _st.name;
+                    var remaining = _st.getRemaining();
+                    var timerText;
+                    if (remaining <= 0) {
+                        timerText = "READY"; // カウントが0以下なら READY と表示
+                    } else {
+                        timerText = _st.getRemaining().toFixed(0) + "s"; // それ以上ならカウントを表示
+                    }
+
+                    return "<span class='label-left'><span class='timer-name'>" + nameText + "</span>:</span>" +
+                           "<span class='label-right timer-remaining'>" + timerText + "</span>";
+                });
+                bar.useHTMLLabel = true; // HTML で表示する
+                // 色設定
+                bar.setBarColor(getColorCodeFromNumber(bar.spellTimer.color));
+                // バーの高さ設定
+                //bar.setBarHeight(20);
+                
+                // 残り時間を考慮してリストに追加
+                var i;
+                var inserted = false;
+                for (i = 0; i < bars.length; i++) {
+                    if (spellTimer.getRemaining() < bars[i].spellTimer.getRemaining()) {
+                        bars.splice(i, 0, bar);
+                        inserted = true;
+                        break;
+                    }
+                }
+                if (!inserted) {
+                    bars.push(bar);
+                }
+
+                // 並び順を考慮してコンテナに追加
+                var nextElement;
+                if (bars[i + 1]) {
+                    nextElement = bars[i + 1].barElement;
+                }
+                container.insertBefore(bar.barElement, nextElement)
+            }
+        }
+
+        function getTimerBarFromList(spellTimer) {
+            var uniqueName = TimerBar.createUniqueName(spellTimer);
+            for (var i = 0; i < bars.length; i++) {
+                if (bars[i].uniqueName == uniqueName) {
+                    return bars[i];
+                }
+            }
+            return;
+        }
+
+        // SpellTimer オブジェクト
+        var SpellTimer = (function (tf, st) {
+            this.color = tf.color;
+            this.expireCount = tf.expireCount;
+            this.key = tf.key;
+            this.name = tf.name;
+            this.startCount = tf.startCount;
+            this.tooltip = tf.tooltip;
+            this.warningCount = tf.warningCount;
+            this.startTime = st.startTime;
+        });
+        SpellTimer.prototype = {
+            getIsExpired: function () {
+                if (this.getRemaining() < this.expireCount) {
+                    return true;
+                } else {
+                    return false;
+                }
+            },
+            getElapsed: function() {
+                return getElapsedSeconds(this.startTime);
+            },
+            getRemaining: function () {
+                return this.startCount - this.getElapsed();
+            }
+        };
+
+        // TimerBar オブジェクト
+        var TimerBar = (function (_spellTimer) {
+
+            this.spellTimer = _spellTimer;
+
+            this.uniqueName = TimerBar.createUniqueName(this.spellTimer);
+            this.barElement = this._createProgressBarElement();
+            this.labelFunc = (function (_bar) { return ""; });
+            this.useHTMLLabel = false;
+
+        });
+        TimerBar.createUniqueName = function (spellTimer) {
+            return "TBAR_" + spellTimer.name + "_" + spellTimer.startTime.toString();
+        }
+        
+        TimerBar.prototype = {
+            setBarLabel: function (strOrFunc) {
+                if (typeof (strOrFunc) == "function") {
+                    this.labelFunc = strOrFunc;
+                } else {
+                    this.labelFunc = function () { return strOrFunc; };
+                }
+            },
+            setBarColor: function (color) {
+                this.barElement.children[0].style.backgroundColor = color;
+            },
+            setBarHeight: function (height) {
+                this.barElement.style.height = height;
+            },
+            updateBar: function () {
+                var text = this.labelFunc(this.spellTimer);
+                if (this.useHTMLLabel) {
+                    this.barElement.children[1].innerHTML = text;
+                } else {
+                    this.barElement.children[1].innerText = text;
+                }
+            },
+            _createProgressBarElement: function () {
+                var outerDiv = document.createElement("div");
+                outerDiv.className = "progress-outer";
+                var barDiv = document.createElement("div");
+                barDiv.className = "progress-bar";
+                var textDiv = document.createElement("div");
+                textDiv.className = "progress-text";
+
+                outerDiv.appendChild(barDiv);
+                outerDiv.appendChild(textDiv);
+
+
+                var percentage = Math.max(0, Math.min(1, this.spellTimer.getRemaining() / this.spellTimer.startCount)) * 100;
+                barDiv.style.width = percentage.toFixed(2) + "%";
+
+                $(barDiv).animate(
+                    { width: "0%" },
+                    Math.max(0, this.spellTimer.getRemaining() * 1000),
+                    "linear");
+
+                return outerDiv;
+            },
+            removeBarElement: function () {
+                this.barElement.parentElement.removeChild(this.barElement);
+            }
+        };
+
 
         function getElapsedSeconds(startTime) {
             var jsDate = new Date();
@@ -168,32 +409,23 @@
             return (jsTime - startTime) / 1000;
         }
 
+        function formatTimeSpan(seconds) {
+
+        }
+
         function getColorCodeFromNumber(number) {
             var color = number & 0x00FFFFFF;
             var numberHexStr = color.toString(16);
             return "#" + (("000000" + numberHexStr).substring(6 + numberHexStr.length - 6));
         }
-
-        function createProgressBarElement() {
-            var outerDiv = document.createElement("div");
-            outerDiv.className = "progress-outer";
-            var barDiv = document.createElement("div");
-            barDiv.className = "progress-bar";
-            var textDiv = document.createElement("div");
-            textDiv.className = "progress-text";
-
-            outerDiv.appendChild(barDiv);
-            outerDiv.appendChild(textDiv);
-
-            return outerDiv;
-        }
+        
 
     </script>
 </head>
 <body onload="initialize();">
 
     <div id="title">
-        Spell Timer
+        Timer
     </div>
 
     <div id="spelltimer">

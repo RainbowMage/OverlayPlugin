@@ -12,13 +12,8 @@ namespace RainbowMage.OverlayPlugin
 {
     class MiniParseOverlay : OverlayBase<MiniParseOverlayConfig>
     {
-        protected override MiniParseOverlayConfig Config
-        {
-            get { return pluginMain.Config.MiniParseOverlay; }
-        }
-
-        public MiniParseOverlay(PluginMain pluginMain)
-            : base(pluginMain, "MiniParseOverlay")
+        public MiniParseOverlay(MiniParseOverlayConfig config)
+            : base(config, "MiniParseOverlay")
         {
         }
 
@@ -104,7 +99,7 @@ namespace RainbowMage.OverlayPlugin
 
 #if DEBUG
             stopwatch.Stop();
-            pluginMain.Log("Debug: MiniParseOverlayUpdater: GetUpdateScript: {0} msec", stopwatch.Elapsed.TotalMilliseconds);
+            Log("Debug: MiniParseOverlayUpdater: GetUpdateScript: {0} msec", stopwatch.Elapsed.TotalMilliseconds);
 #endif
 
             return builder.ToString();

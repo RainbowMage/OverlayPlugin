@@ -30,8 +30,6 @@ namespace RainbowMage.OverlayPlugin
         {
             this.Logs = new BindingList<string>();
 
-            // プラグインの配置してあるフォルダを検索するカスタムリゾルバーでアセンブリを解決する
-            SetupAssemblyResolver();
         }
 
         public void InitPlugin(TabPage pluginScreenSpace, Label pluginStatusText)
@@ -49,6 +47,9 @@ namespace RainbowMage.OverlayPlugin
                 this.pluginDirectory = GetPluginDirectory();
                 Log("Info: InitPlugin: PluginDirectory = {0}", this.pluginDirectory);
 
+                // プラグインの配置してあるフォルダを検索するカスタムリゾルバーでアセンブリを解決する
+                AppDomain.CurrentDomain.AssemblyResolve += CustomAssemblyResolve;
+
                 // コンフィグ系読み込み
                 LoadConfig();
                 this.controlPanel = new ControlPanel(this, this.Config);
@@ -63,10 +64,11 @@ namespace RainbowMage.OverlayPlugin
                 };
 
                 // オーバーレイ初期化
-                this.label.Text = "MiniParseOverlay";
-                this.MiniParseOverlay = new OverlayPlugin.MiniParseOverlay(this);
+                this.MiniParseOverlay = new OverlayPlugin.MiniParseOverlay(this.Config.MiniParseOverlay);
+                this.MiniParseOverlay.OnLog += (o, e) => Log(e.Message);
                 this.MiniParseOverlay.Start();
-                this.SpellTimerOverlay = new OverlayPlugin.SpellTimerOverlay(this);
+                this.SpellTimerOverlay = new OverlayPlugin.SpellTimerOverlay(this.Config.SpellTimerOverlay);
+                this.SpellTimerOverlay.OnLog += (o, e) => Log(e.Message);
                 this.SpellTimerOverlay.Start();
 
                 // ショートカットキー設定
@@ -79,6 +81,8 @@ namespace RainbowMage.OverlayPlugin
             catch (Exception e)
             {
                 Log("Error: InitPlugin: {0}", e.ToString());
+
+                throw;
             }
         }
 
@@ -88,6 +92,8 @@ namespace RainbowMage.OverlayPlugin
             this.MiniParseOverlay.Dispose();
             this.SpellTimerOverlay.Dispose();
             ActGlobals.oFormActMain.KeyDown -= oFormActMain_KeyDown;
+
+            AppDomain.CurrentDomain.AssemblyResolve -= CustomAssemblyResolve;
 
             Log("Info: DeInitPlugin: Finalized.");
             this.label.Text = "Finalized.";
@@ -99,41 +105,79 @@ namespace RainbowMage.OverlayPlugin
             { "Xilium.CefGlue,", "Xilium.CefGlue.dll" }
         };
 
-        // 現在のアプリケーションドメインにカスタムリゾルバを設定
-        private void SetupAssemblyResolver()
+        private Assembly CustomAssemblyResolve(object sender, ResolveEventArgs e)
         {
-            AppDomain.CurrentDomain.AssemblyResolve += (o, e) =>
-            {
-                Log("Info: AssemblyResolve: Resolving assembly for '{0}'...", e.Name);
+#if DEBUG
+            Log("Info: AssemblyResolve: Resolving assembly for '{0}'...", e.Name);
+#endif
 
-                Assembly result = null;
-                foreach (var pair in assemblyTable)
+            Assembly result = null;
+            foreach (var pair in assemblyTable)
+            {
+                if (e.Name.StartsWith(pair.Key))
                 {
-                    if (e.Name.StartsWith(pair.Key))
+                    string asmPath = "";
+                    try
                     {
-                        try
-                        {
-                            var asmPath = System.IO.Path.Combine(pluginDirectory, pair.Value);
-                            result = Assembly.LoadFile(asmPath);
-                            Log("Info: AssemblyResolve: => Found assembly in {0}.", asmPath);
-                            break;
-                        }
-                        catch (Exception ex)
-                        {
-                            Log("Error: AssemblyResolve: => {0}", ex);
-                            continue;
-                        }
+                        asmPath = Path.Combine(pluginDirectory, pair.Value);
+                        result = Assembly.LoadFile(asmPath);
+#if DEBUG
+                        Log("Info: AssemblyResolve: => Found assembly in {0}.", asmPath);
+#endif
+                        break;
+                    }
+                    catch (FileNotFoundException ex)
+                    {
+                        var message = string.Format(
+                            "エラー：必要なアセンブリ {0} が存在しません。",
+                            asmPath
+                            );
+                        Log("Error: AssemblyResolve: => {0}", message);
+                        Log("Error: AssemblyResolve: => {0}", ex);
+                        MessageBox.Show(message);
+                    }
+                    catch (FileLoadException ex)
+                    {
+                        var message = string.Format(
+                            "エラー：必要なアセンブリ {0} は存在しますが、読み込めません。",
+                            asmPath
+                            );
+                        Log("Error: AssemblyResolve: => {0}", message);
+                        Log("Error: AssemblyResolve: => {0}", ex);
+                        MessageBox.Show(message);
+                    }
+                    catch (NotSupportedException ex)
+                    {
+                        var message = string.Format(
+                            "エラー：アセンブリ {0} がネットワーク上にあるか、またはブロックされている可能性があります。",
+                            asmPath
+                            );
+                        Log("Error: AssemblyResolve: => {0}", message);
+                        Log("Error: AssemblyResolve: => {0}", ex);
+                        MessageBox.Show(message);
+                    }
+                    catch (Exception ex)
+                    {
+                        var message = string.Format(
+                            "エラー：アセンブリ {0}の読み込み時に例外が発生しました。\n{0}",
+                            asmPath
+                            );
+                        Log("Error: AssemblyResolve: => {0}", ex);
+                        MessageBox.Show(message);
                     }
                 }
+            }
 
-                if (result == null)
-                {
-                    Log("Info: AssemblyResolve: => Not found in plugin directory.");
-                }
+#if DEBUG
+            if (result == null)
+            {
+                Log("Info: AssemblyResolve: => Not found in plugin directory.");
+            }
+#endif
 
-                return result;
-            };
+            return result;
         }
+
 
 
         void oFormActMain_KeyDown(object sender, KeyEventArgs e)
@@ -169,12 +213,12 @@ namespace RainbowMage.OverlayPlugin
                 if (string.IsNullOrWhiteSpace(Config.MiniParseOverlay.Url))
                 {
                     Config.MiniParseOverlay.Url =
-                        new Uri(System.IO.Path.Combine(pluginDirectory, "resources", "default.html")).ToString();
+                        new Uri(Path.Combine(pluginDirectory, "resources", "default.html")).ToString();
                 }
                 if (string.IsNullOrWhiteSpace(Config.SpellTimerOverlay.Url))
                 {
                     Config.SpellTimerOverlay.Url = 
-                        new Uri(System.IO.Path.Combine(pluginDirectory, "resources", "spelltimer.html")).ToString();
+                        new Uri(Path.Combine(pluginDirectory, "resources", "spelltimer.html")).ToString();
                 }
             }
         }
@@ -185,6 +229,8 @@ namespace RainbowMage.OverlayPlugin
             {
                 Config.MiniParseOverlay.Position = this.MiniParseOverlay.Overlay.Location;
                 Config.MiniParseOverlay.Size = this.MiniParseOverlay.Overlay.Size;
+                Config.SpellTimerOverlay.Position = this.SpellTimerOverlay.Overlay.Location;
+                Config.SpellTimerOverlay.Size = this.SpellTimerOverlay.Overlay.Size;
 
                 Config.SaveXml(GetConfigPath());
             }
@@ -217,9 +263,14 @@ namespace RainbowMage.OverlayPlugin
             }
         }
 
+        internal void Log(string message)
+        {
+            this.Logs.Add(DateTime.Now.ToString() + "|" + message);
+        }
+
         internal void Log(string format, params object[] args)
         {
-            this.Logs.Add(DateTime.Now.ToString() + "|" + string.Format(format, args));
+            Log(string.Format(format, args));
         }
     }
 }
