@@ -25,12 +25,31 @@ namespace RainbowMage.OverlayPlugin
         public int ExpireCount { get; set; }
         [DataMember(Name = "tooltip")]
         public string Tooltip { get; set; }
+        [DataMember(Name = "absoluteTiming")]
+        public bool AbsoluteTiming { get; set; }
+        [DataMember(Name = "onlyMasterTicks")]
+        public bool OnlyMasterTicks { get; set; }
+        [DataMember(Name = "oneOnly")]
+        public bool OneOnly { get; set; }
+        //[DataMember(Name = "masterExists")]
+        //public bool MasterExists { get; set; }
+        //[DataMember(Name = "activeInList")]
+        //public bool ActiveInList { get; set; }
         [DataMember(Name = "spellTimers")]
         public IList<SerializableSpellTimerEntry> SpellTimers { get; set; }
 
         public TimerFrame Original { get; private set; }
 
         public SerializableTimerFrameEntry(TimerFrame timerFrame)
+        {
+            this.Update(timerFrame);
+
+            this.SpellTimers = new List<SerializableSpellTimerEntry>();
+
+            this.Original = timerFrame;
+        }
+
+        public void Update(TimerFrame timerFrame)
         {
             this.Name = timerFrame.Name;
             this.Key = timerFrame.TimerData.Key;
@@ -39,10 +58,11 @@ namespace RainbowMage.OverlayPlugin
             this.WarningCount = timerFrame.TimerData.WarningValue;
             this.ExpireCount = timerFrame.TimerData.RemoveValue;
             this.Tooltip = timerFrame.TimerData.Tooltip;
+            this.OnlyMasterTicks = timerFrame.TimerData.OnlyMasterTicks;
+            this.AbsoluteTiming = timerFrame.TimerData.AbsoluteTiming;
+            //this.OneOnly = timerFrame.OneOnly;
+            //this.MasterExists = timerFrame.MasterExists;
 
-            this.SpellTimers = new List<SerializableSpellTimerEntry>();
-
-            this.Original = timerFrame;
         }
     }
 

@@ -204,6 +204,7 @@
         // ★表示の流れ
         //
         // ActXiv オブジェクトに新しいタイマーがないかチェック
+        // → timerFrame.onlyMasterTicks && !timerFrame.absoluteTiming なら、最新のタイマーで上書き
         // → あったらバー作成＆アニメーション開始（アニメーション時間はバーの残り時間）
         // → 作成したバーを残り時間に応じた場所に挿入
         // → 作成済みのバーの中に期限切れのものがないかをチェック
@@ -214,38 +215,48 @@
 
         // 表示要素の更新
         function update() {
-            if (typeof ActXiv != 'undefined') {
-                var containerDiv = document.getElementById('spelltimer');
+            if (typeof(ActXiv) == 'undefined') { return; }
 
-                if (typeof ActXiv.timerFrames != 'undefined') {
-                    for (var i = 0; i < ActXiv.timerFrames.length; i++) {
-                        if (typeof ActXiv.timerFrames[i].spellTimers != 'undefined') {
-                            for (var j = 0; j < ActXiv.timerFrames[i].spellTimers.length; j++) {
-
-                                processActXivTimerEntry(
-                                    containerDiv,
-                                    ActXiv.timerFrames[i],
-                                    ActXiv.timerFrames[i].spellTimers[j]);
-
+            var containerDiv = document.getElementById('spelltimer');
+            if (typeof(ActXiv.timerFrames) != 'undefined') {
+                ActXiv.timerFrames.forEach(function (timerFrame) {
+                    // 1 つのみ許容＆最新のタイマーで上書きされる設定の場合
+                    if (timerFrame.spellTimers.length > 0 &&
+                        timerFrame.onlyMasterTicks && 
+                        !timerFrame.absoluteTiming) {
+                        // 最新のタイマーを捜す
+                        var latestSpellTimer;
+                        timerFrame.spellTimers.forEach(function (spellTimer) {
+                            if (typeof(latestSpellTimer) == 'undefined') { // 初回
+                                latestSpellTimer = spellTimer;
+                            } else if (latestSpellTimer.startTime < spellTimer.startTime) { // 2 回目以降
+                                latestSpellTimer = spellTimer;
                             }
-                        }
+                        });
+                        // 最新のタイマーのみを処理にかける
+                        processActXivTimerEntry(containerDiv, timerFrame, latestSpellTimer);
                     }
-                }
-
-                // バーの更新と期限切れバーの削除
-                var newBars = [];
-                for (var i = 0; i < bars.length; i++) {
-                    if (!bars[i].spellTimer.getIsExpired()) {
-                        bars[i].updateBar();
-                        newBars.push(bars[i]);
-                    } else {
-                        bars[i].removeBarElement();
+                    else { // そうでない場合はすべてのタイマーを処理にかける
+                        timerFrame.spellTimers.forEach(function (spellTimer) {
+                            processActXivTimerEntry(containerDiv, timerFrame, spellTimer);
+                        });
                     }
-                }
-                bars = newBars;
-
-                ActXiv = {};
+                });
             }
+
+            // バーの更新と期限切れバーの削除
+            var newBars = [];
+            for (var i = 0; i < bars.length; i++) {
+                if (!bars[i].spellTimer.getIsExpired()) { // 期限切れではない
+                    bars[i].updateBar(); // バー更新
+                    newBars.push(bars[i]);
+                } else {
+                    bars[i].removeBarElement(); // バーを親要素から削除
+                }
+            }
+            bars = newBars;
+
+            ActXiv = {};
         }
 
         function processActXivTimerEntry(container, _tf, _st) {
@@ -256,7 +267,18 @@
             };
 
             var bar = getTimerBarFromList(spellTimer);
-            if (typeof bar == 'undefined') {
+
+            // リセットが必要な場合、既に存在するバーを消して作り直す
+            if (typeof (bar) == 'undefined' && _tf.onlyMasterTicks && !_tf.absoluteTiming) {
+                for (var i = bars.length - 1; i >= 0; i--) {
+                    if (bars[i].spellTimer.key == _tf.key) {
+                        bars[i].removeBarElement();
+                        bars.splice(i, 1);
+                    }
+                }
+            }
+
+            if (typeof(bar) == 'undefined') {
                 bar = new TimerBar(spellTimer);
 
                 // テキストの表示方法を設定
@@ -387,7 +409,6 @@
                 outerDiv.appendChild(barDiv);
                 outerDiv.appendChild(textDiv);
 
-
                 var percentage = Math.max(0, Math.min(1, this.spellTimer.getRemaining() / this.spellTimer.startCount)) * 100;
                 barDiv.style.width = percentage.toFixed(2) + "%";
 
@@ -417,9 +438,14 @@
         }
 
         function getColorCodeFromNumber(number) {
-            var color = number & 0x00FFFFFF;
-            var numberHexStr = color.toString(16);
-            return "#" + (("000000" + numberHexStr).substring(6 + numberHexStr.length - 6));
+            // 各要素を取得
+            var alpha = ((number >> 24) & 0xFF) / 255.0;
+            var red = (number >> 16) & 0xFF;
+            var green = (number >> 8) & 0xFF;
+            var blue = number & 0xFF;
+
+            // rgba(red, green, blue, alpha) 
+            return "rgba(" + red + ", " + green + ", " + blue + ", " + alpha + ")";
         }
         
 

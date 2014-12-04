@@ -32,6 +32,10 @@ namespace RainbowMage.OverlayPlugin
                         timerFrame = new SerializableTimerFrameEntry(t);
                         this.activatedTimers.Add(timerFrame);
                     }
+                    else
+                    {
+                        timerFrame.Update(t);
+                    }
                     foreach (var spellTimer in t.SpellTimers)
                     {
                         var timer = timerFrame.SpellTimers.Where(x => x.Original == spellTimer).FirstOrDefault();
