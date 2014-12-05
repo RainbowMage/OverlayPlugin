@@ -12,6 +12,7 @@ namespace RainbowMage.HtmlRenderer
         public event EventHandler<RenderEventArgs> Render;
         public event EventHandler<BrowserErrorEventArgs> BrowserError;
         public event EventHandler<BrowserLoadEventArgs> BrowserLoad;
+        public event EventHandler<BrowserConsoleLogEventArgs> BrowserConsoleLog;
 
         public CefBrowser Browser { get; private set; }
         private Client Client { get; set; }
@@ -101,6 +102,14 @@ namespace RainbowMage.HtmlRenderer
             }
         }
 
+        internal void OnConsoleLog(CefBrowser browser, string message, string source, int line)
+        {
+            if (BrowserConsoleLog != null)
+            {
+                BrowserConsoleLog(this, new BrowserConsoleLogEventArgs(message, source, line));
+            }
+        }
+
         public void Dispose()
         {
             var host = Browser.GetHost();
@@ -129,7 +138,8 @@ namespace RainbowMage.HtmlRenderer
                 var cefSettings = new CefSettings
                 {
                     SingleProcess = true,
-                    MultiThreadedMessageLoop = true
+                    MultiThreadedMessageLoop = true,
+                    LogSeverity = CefLogSeverity.Disable
                 };
 
                 CefRuntime.Initialize(cefMainArgs, cefSettings, cefApp, IntPtr.Zero);
@@ -168,6 +178,19 @@ namespace RainbowMage.HtmlRenderer
         {
             this.HttpStatusCode = httpStatusCode;
             this.Url = url;
+        }
+    }
+
+    public class BrowserConsoleLogEventArgs : EventArgs
+    {
+        public string Message { get; private set; }
+        public string Source { get; private set; }
+        public int Line { get; private set; }
+        public BrowserConsoleLogEventArgs(string message, string source, int line)
+        {
+            this.Message = message;
+            this.Source = source;
+            this.Line = line;
         }
     }
 }

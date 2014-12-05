@@ -46,7 +46,6 @@
             this.textMiniParseUrl = new System.Windows.Forms.TextBox();
             this.buttonMiniParseSelectFile = new System.Windows.Forms.Button();
             this.comboMiniParseSortType = new System.Windows.Forms.ComboBox();
-            this.listLog = new System.Windows.Forms.ListBox();
             this.contextMenuLogList = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.menuLogCopy = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControl1 = new System.Windows.Forms.TabControl();
@@ -72,6 +71,15 @@
             this.nudSpellTimerMaxFrameRate = new System.Windows.Forms.NumericUpDown();
             this.label12 = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
+            this.listViewLog = new System.Windows.Forms.ListView();
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
+            this.menuFollowLatestLog = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuClearLog = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuCopyLogAll = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -105,7 +113,7 @@
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.listLog);
+            this.splitContainer1.Panel2.Controls.Add(this.listViewLog);
             this.splitContainer1.Size = new System.Drawing.Size(602, 412);
             this.splitContainer1.SplitterDistance = 276;
             this.splitContainer1.TabIndex = 0;
@@ -311,31 +319,22 @@
             this.comboMiniParseSortType.Size = new System.Drawing.Size(431, 20);
             this.comboMiniParseSortType.TabIndex = 11;
             // 
-            // listLog
-            // 
-            this.listLog.ContextMenuStrip = this.contextMenuLogList;
-            this.listLog.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listLog.FormattingEnabled = true;
-            this.listLog.HorizontalScrollbar = true;
-            this.listLog.ItemHeight = 12;
-            this.listLog.Location = new System.Drawing.Point(0, 0);
-            this.listLog.Name = "listLog";
-            this.listLog.ScrollAlwaysVisible = true;
-            this.listLog.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.listLog.Size = new System.Drawing.Size(602, 132);
-            this.listLog.TabIndex = 0;
-            // 
             // contextMenuLogList
             // 
             this.contextMenuLogList.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.menuLogCopy});
+            this.menuCopyLogAll,
+            this.menuLogCopy,
+            this.toolStripMenuItem1,
+            this.menuFollowLatestLog,
+            this.toolStripMenuItem2,
+            this.menuClearLog});
             this.contextMenuLogList.Name = "contextMenuLogList";
-            this.contextMenuLogList.Size = new System.Drawing.Size(177, 26);
+            this.contextMenuLogList.Size = new System.Drawing.Size(181, 104);
             // 
             // menuLogCopy
             // 
             this.menuLogCopy.Name = "menuLogCopy";
-            this.menuLogCopy.Size = new System.Drawing.Size(176, 22);
+            this.menuLogCopy.Size = new System.Drawing.Size(180, 22);
             this.menuLogCopy.Text = "選択した項目をコピー";
             this.menuLogCopy.Click += new System.EventHandler(this.menuLogCopy_Click);
             // 
@@ -649,6 +648,71 @@
             this.label13.Text = "※最大フレームレートの変更を有効にするためには再起動が必要です";
             this.label13.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
+            // listViewLog
+            // 
+            this.listViewLog.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader1,
+            this.columnHeader2,
+            this.columnHeader3});
+            this.listViewLog.ContextMenuStrip = this.contextMenuLogList;
+            this.listViewLog.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.listViewLog.FullRowSelect = true;
+            this.listViewLog.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+            this.listViewLog.HideSelection = false;
+            this.listViewLog.Location = new System.Drawing.Point(0, 0);
+            this.listViewLog.Name = "listViewLog";
+            this.listViewLog.Size = new System.Drawing.Size(602, 132);
+            this.listViewLog.TabIndex = 0;
+            this.listViewLog.UseCompatibleStateImageBehavior = false;
+            this.listViewLog.View = System.Windows.Forms.View.Details;
+            this.listViewLog.VirtualMode = true;
+            this.listViewLog.RetrieveVirtualItem += new System.Windows.Forms.RetrieveVirtualItemEventHandler(this.listViewLog_RetrieveVirtualItem);
+            // 
+            // columnHeader1
+            // 
+            this.columnHeader1.Text = "Time";
+            // 
+            // columnHeader2
+            // 
+            this.columnHeader2.Text = "Level";
+            // 
+            // columnHeader3
+            // 
+            this.columnHeader3.Text = "Message";
+            this.columnHeader3.Width = 451;
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(177, 6);
+            // 
+            // menuFollowLatestLog
+            // 
+            this.menuFollowLatestLog.CheckOnClick = true;
+            this.menuFollowLatestLog.Name = "menuFollowLatestLog";
+            this.menuFollowLatestLog.Size = new System.Drawing.Size(180, 22);
+            this.menuFollowLatestLog.Text = "常に最新のログを追跡";
+            this.menuFollowLatestLog.Click += new System.EventHandler(this.menuFollowLatestLog_Click);
+            // 
+            // menuClearLog
+            // 
+            this.menuClearLog.Name = "menuClearLog";
+            this.menuClearLog.Size = new System.Drawing.Size(180, 22);
+            this.menuClearLog.Text = "ログをクリア";
+            this.menuClearLog.Click += new System.EventHandler(this.menuClearLog_Click);
+            // 
+            // menuCopyLogAll
+            // 
+            this.menuCopyLogAll.Name = "menuCopyLogAll";
+            this.menuCopyLogAll.Size = new System.Drawing.Size(180, 22);
+            this.menuCopyLogAll.Text = "全てのログをコピー";
+            this.menuCopyLogAll.Click += new System.EventHandler(this.menuCopyLogAll_Click);
+            // 
+            // toolStripMenuItem2
+            // 
+            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(177, 6);
+            // 
             // ControlPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -695,7 +759,6 @@
         private System.Windows.Forms.TextBox textMiniParseUrl;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Button buttonMiniParseReloadBrowser;
-        internal System.Windows.Forms.ListBox listLog;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
         private System.Windows.Forms.Button buttonMiniParseSelectFile;
         private System.Windows.Forms.ContextMenuStrip contextMenuLogList;
@@ -728,5 +791,14 @@
         private System.Windows.Forms.NumericUpDown nudSpellTimerMaxFrameRate;
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.ListView listViewLog;
+        private System.Windows.Forms.ColumnHeader columnHeader1;
+        private System.Windows.Forms.ColumnHeader columnHeader2;
+        private System.Windows.Forms.ColumnHeader columnHeader3;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem menuFollowLatestLog;
+        private System.Windows.Forms.ToolStripMenuItem menuCopyLogAll;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem2;
+        private System.Windows.Forms.ToolStripMenuItem menuClearLog;
     }
 }

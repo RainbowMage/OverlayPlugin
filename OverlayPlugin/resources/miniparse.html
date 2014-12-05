@@ -4,6 +4,10 @@
     <title></title>
     <style>
 
+        /*
+            表示設定 (1)
+        */
+
         * {
             /* フォント （一部のフォントは上手く適用されない） */
             font-family: "Meiryo";
@@ -41,6 +45,7 @@
             border-collapse: collapse;
         }
 
+        /* キャラクターデータのテキストの設定 */
         #combatantTableBody * {
             color: #E2EBF5;
             text-shadow: -1px 0 3px #217AA2, 0 1px 3px #217AA2, 1px 0 3px #217AA2, 0 -1px 3px #217AA2;
@@ -52,6 +57,7 @@
             text-overflow: ellipsis;
         }
 
+        /* エンカウント情報とテーブルヘッダ内のテキストの設定 */
         #encounter,
         #combatantTableHeader * {
             color: #DED7BE;
@@ -60,12 +66,9 @@
             white-space: nowrap;
         }
 
+        /* テーブルヘッダの下線の設定 */
         #combatantTableHeader tr {
             border-bottom: 1px solid #DED7BE;
-        }
-
-        #combatantTableBody tr:not(:last-child) {
-            /*border-bottom: 1px solid rgba(192, 192, 192, 0.25);*/
         }
 
     </style>
@@ -83,27 +86,38 @@
         //    }
         // };
         //
-        // データの更新は 1 秒毎
-        // プラグインからの更新の通知はないので、ひたすらこちら側で更新し続ける
+        // データの更新は 1 秒毎。
+        // 
+        // プラグインから onOverlayDataUpdate イベントが発行されるので、それを受信することもできる
+        // イベントハンドラの第一引数の detail プロパティ内に上記のオブジェクトが入る
+        //
+
+        //
+        // 表示設定 (2)
         //
 
         // エンカウント情報の定義
         var encounterDefine = "{title} / Time: {duration} / DPS: {ENCDPS}";
 
+        // 上記のエンカウント情報を HTML として扱うなら true
+        var useHTMLEncounterDefine = false;
+
         // ヘッダの定義
         var headerDefine =
         [
+            //{ text: "#", width: "5%", align: "center" },
             { text: "Name", width: "25%", align: "left" },
             { text: "Job", width: "8%", align: "center" },
             { text: "DPS (%)", width: "18%", align: "center", span: 2 },
             { text: "HPS (%)", width: "18%", align: "center", span: 2 },
             { text: "Acc.(%)", width: "16%", align: "right" },
-            { text: "Crt.(%)", width: "14%", align: "right" }
+            { text: "Crt.(%)", width: "14%", align: "right" },
         ];
 
         // 表示するデータの定義
         var bodyDefine =
         [
+            //{ text: rankingText, width: "5%", align: "center", effect: deadYatsuEffect },
             { text: "{name}", width: "25%" },
             { text: "{Job}", width: "8%", align: "center" },
             { text: "{encdps}", width: "16%", align: "right" },
@@ -111,39 +125,81 @@
             { text: "{enchps}", width: "16%", align: "right" },
             { text: "{healed%}", width: "5%", align: "right" },
             { text: "{tohit}%", width: "16%", align: "right" },
-            { text: "{crithit%}", width: "14%", align: "right" }
+            { text: "{crithit%}", width: "14%", align: "right" },
         ];
 
-        function initialize() {
-            update();
-            setInterval("update()", 1000);
+        // 順位を表示する（text に関数を指定する例）
+        // 引数:
+        //  combatant : キャラクターのデータ。combatant["..."]でデータを取得できる。
+        //  index : キャラクターの並び順。一番上は 0 で、その後は 1 ずつ増える。
+        // 戻り値: 
+        //  表示するテキスト。
+        //  ACT のタグは展開されないので、展開したい場合は parseActFormat 関数を使用してください。
+        function rankingText(combatant, index) {
+            // 1 から始まる番号を返す
+            return (index + 1).toString();
         }
+        
+        // 死亡奴を赤くする（effect の例）
+        // 引数:
+        //  cell : セルの DOM 要素
+        //  combatant : キャラクターのデータ。combatant["..."]でデータを取得できる。
+        //  index: キャラクターの並び順。一番上は 0 で、その後は 1 ずつ増える。
+        // 戻り値: なし
+        function deadYatsuEffect(cell, combatant, index) {
+            // デス数を整数値に変換
+            var deaths = parseInt(combatant["deaths"]);
+            // デス数が 0 よりも大きいなら
+            if (deaths > 0) {
+                // 赤くする
+                cell.style.color = "#FFA0A0";
+                cell.style.textShadow = "-1px 0 3px #802020, 0 1px 3px #802020, 1px 0 3px #802020, 0 -1px 3px #802020";
+            }
+        }
+
+        //
+        // 以下表示用スクリプト
+        //
+
+        // onOverlayDataUpdate イベントを購読
+        document.addEventListener("onOverlayDataUpdate", function (e) {
+            update(e.detail);
+        });
 
         // 表示要素の更新
-        function update() {
-            if (typeof (ActXiv) != 'undefined') {
-                updateEncounter();
-                if (document.getElementById("combatantTableHeader") == null) {
-                    updateCombatantListHeader();
-                }
-                updateCombatantList();
+        function update(data) {
+            updateEncounter(data);
+            if (document.getElementById("combatantTableHeader") == null) {
+                updateCombatantListHeader();
             }
-            else {
-                document.getElementById('encounter').innerText = "No data to show.";
-            }
+            updateCombatantList(data);
         }
 
-        // エンカウント情報の更新
-        function updateEncounter() {
+        // エンカウント情報を更新する
+        function updateEncounter(data) {
             // 要素取得
             var encounterElem = document.getElementById('encounter');
 
-            // テキスト更新
-            var encounter = ActXiv.Encounter;
-            encounterElem.innerText = parseActFormat(encounterDefine, encounter);
+            // テキスト取得
+            var elementText;
+            if (typeof encounterDefine == 'function') {
+                elementText = encounterDefine(data.Encounter);
+            } else if (typeof encounterDefine == 'string') {
+                elementText = parseActFormat(encounterDefine, data.Encounter);
+            } else {
+                console.log("updateEncounter: Could not update the encounter element due to invalid type.");
+                return;
+            }
+
+            // テキスト設定
+            if (!useHTMLEncounterDefine) {
+                encounterElem.innerText = parseActFormat(encounterDefine, data.Encounter);
+            } else {
+                encounterElem.innerHTML = parseActFormat(encounterDefine, data.Encounter);
+            }
         }
 
-        // ヘッダを更新
+        // ヘッダを更新する
         function updateCombatantListHeader() {
             var table = document.getElementById('combatantTable');
             var tableHeader = document.createElement("thead");
@@ -152,12 +208,20 @@
 
             for (var i = 0; i < headerDefine.length; i++) {
                 var cell = document.createElement("th");
-                cell.innerText = headerDefine[i].text;
+                // テキスト設定
+                if (typeof headerDefine[i].text != 'undefined') {
+                    cell.innerText = headerDefine[i].text;
+                } else if (typeof headerDefine[i].html != 'undefined') {
+                    cell.innerHTML = headerDefine[i].text;
+                }
+                // 幅設定
                 cell.style.width = headerDefine[i].width;
                 cell.style.maxWidth = headerDefine[i].width;
+                // 横結合数設定
                 if (typeof(headerDefine[i].span) !== 'undefined') {
                     cell.colSpan = headerDefine[i].span;
                 }
+                // 行揃え設定
                 if (typeof(headerDefine[i].align) !== 'undefined') {
                     cell.style["textAlign"] = headerDefine[i].align;
                 }
@@ -167,8 +231,8 @@
             table.tHead = tableHeader;
         }
 
-        // プレイヤーリストの更新
-        function updateCombatantList() {
+        // プレイヤーリストを更新する
+        function updateCombatantList(data) {
             // 要素取得＆作成
             var table = document.getElementById('combatantTable');
             var oldTableBody = table.tBodies.namedItem('combatantTableBody');
@@ -176,20 +240,44 @@
             newTableBody.id = "combatantTableBody";
 
             // tbody の内容を作成
-            for (var combatantName in ActXiv.Combatant) {
-                var combatant = ActXiv.Combatant[combatantName];
+            var combatantIndex = 0;
+            for (var combatantName in data.Combatant) {
+                var combatant = data.Combatant[combatantName];
                 var tableRow = newTableBody.insertRow(newTableBody.rows.length);
                 for (var i = 0; i < bodyDefine.length; i++)
                 {
                     var cell = tableRow.insertCell(i);
-                    cell.innerText = parseActFormat(bodyDefine[i].text, combatant);
-                    //cell.width = bodyDefine[i].width;
+                    // テキスト設定
+                    if (typeof bodyDefine[i].text != 'undefined') {
+                        var cellText;
+                        if (typeof bodyDefine[i].text == 'function') {
+                            cellText = bodyDefine[i].text(combatant, combatantIndex);
+                        } else {
+                            cellText = parseActFormat(bodyDefine[i].text, combatant);
+                        }
+                        cell.innerText = cellText;
+                    } else if (typeof bodyDefine[i].html != 'undefined') {
+                        var cellHTML;
+                        if (typeof bodyDefine[i].html == 'function') {
+                            cellHTML = bodyDefine[i].html(combatant, combatantIndex);
+                        } else {
+                            cellHTML = parseActFormat(bodyDefine[i].html, combatant);
+                        }
+                        cell.innerText = cellHTML;
+                    }
+                    // 幅設定
                     cell.style.width = bodyDefine[i].width;
                     cell.style.maxWidth = bodyDefine[i].width;
+                    // 行構え設定
                     if (typeof(bodyDefine[i].align) !== 'undefined') {
                         cell.style["textAlign"] = bodyDefine[i].align;
                     }
+                    // エフェクト実行
+                    if (typeof bodyDefine[i].effect == 'function') {
+                        bodyDefine[i].effect(cell, combatant, combatantIndex);
+                    }
                 }
+                combatantIndex++;
             }
 
             // tbody が既に存在していたら置換、そうでないならテーブルに追加
@@ -218,11 +306,17 @@
                     var closeBraceIndex = str.indexOf('}', openBraceIndex);
                     if (closeBraceIndex < 0) {
                         // parse error!
-                        return "Parse error: missing close-brace for " + openBraceIndex.toString() + ".";
+                        console.log("parseActFormat: Parse error: missing close-brace for " + openBraceIndex.toString() + ".");
+                        return "ERROR";
                     }
                     else {
-                        var key = str.slice(openBraceIndex + 1, closeBraceIndex);
-                        result += dictionary[key];
+                        var tag = str.slice(openBraceIndex + 1, closeBraceIndex);
+                        if (dictionary[tag] != void (0)) {
+                            result += dictionary[tag];
+                        } else {
+                            console.log("parseActFormat: Unknown tag: " + tag);
+                            result += "ERROR";
+                        }
                         currentIndex = closeBraceIndex + 1;
                     }
                 }
@@ -233,9 +327,10 @@
 
     </script>
 </head>
-<body onload="initialize();">
+<body>
 
     <div id="encounter">
+        No data to show.
         <!-- ここにエンカウント情報が入る -->
     </div>
 

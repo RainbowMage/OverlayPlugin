@@ -162,6 +162,9 @@ namespace RainbowMage.OverlayPlugin
         [XmlElement("SpellTimerOverlay")]
         public OverlayConfig SpellTimerOverlay { get; set; }
 
+        [XmlElement("FollowLatestLog")]
+        public bool FollowLatestLog { get; set; }
+
         [XmlElement("Version")]
         public Version Version { get; set; }
 
@@ -190,6 +193,7 @@ namespace RainbowMage.OverlayPlugin
             this.SpellTimerOverlay.Size = new Size(200, 300);
             this.SpellTimerOverlay.IsVisible = false;
             this.SpellTimerOverlay.MaxFrameRate = 5;
+            this.FollowLatestLog = false;
             this.IsFirstLaunch = true;
 
         }

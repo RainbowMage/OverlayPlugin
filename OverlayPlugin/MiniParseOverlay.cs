@@ -12,24 +12,54 @@ namespace RainbowMage.OverlayPlugin
 {
     class MiniParseOverlay : OverlayBase<MiniParseOverlayConfig>
     {
+        private string prevEncounterId { get; set; }
+        private DateTime prevEndDateTime { get; set; }
+
         public MiniParseOverlay(MiniParseOverlayConfig config)
             : base(config, "MiniParseOverlay")
         {
         }
 
+        public override void Navigate(string url)
+        {
+            base.Navigate(url);
+
+            this.prevEncounterId = null;
+            this.prevEndDateTime = DateTime.MinValue;
+        }
+
         protected override void Update()
         {
-            var updateScript = CreateUpdateScript();
-
-            if (this.Overlay != null &&
-                this.Overlay.Renderer != null &&
-                this.Overlay.Renderer.Browser != null)
+            if (CheckIsActReady())
             {
-                this.Overlay.Renderer.Browser.GetMainFrame().ExecuteJavaScript(updateScript, null, 0);
+                // 最終更新時刻に変化がないなら更新を行わない
+                if (this.prevEncounterId == ActGlobals.oFormActMain.ActiveZone.ActiveEncounter.EncId &&
+                    this.prevEndDateTime == ActGlobals.oFormActMain.ActiveZone.ActiveEncounter.EndTime)
+                {
+                    return;
+                }
+
+                this.prevEncounterId = ActGlobals.oFormActMain.ActiveZone.ActiveEncounter.EncId;
+                this.prevEndDateTime = ActGlobals.oFormActMain.ActiveZone.ActiveEncounter.EndTime;
+
+                var updateScript = CreateEventDispatcherScript();
+
+                if (this.Overlay != null &&
+                    this.Overlay.Renderer != null &&
+                    this.Overlay.Renderer.Browser != null)
+                {
+                    this.Overlay.Renderer.Browser.GetMainFrame().ExecuteJavaScript(updateScript, null, 0);
+                }
             }
         }
 
-        public string CreateUpdateScript()
+        private string CreateEventDispatcherScript()
+        {
+            return "var ActXiv = " + this.CreateJsonData() + ";\n" +
+                   "document.dispatchEvent(new CustomEvent('onOverlayDataUpdate', { detail: ActXiv }));";
+        }
+
+        internal string CreateJsonData()
         {
             if (!CheckIsActReady())
             {
@@ -49,7 +79,7 @@ namespace RainbowMage.OverlayPlugin
             SortCombatantList(combatant);
 
             var builder = new StringBuilder();
-            builder.Append("ActXiv = {");
+            builder.Append("{");
             builder.Append("\"Encounter\": {");
             var isFirst1 = true;
             foreach (var pair in encounter)
@@ -95,11 +125,11 @@ namespace RainbowMage.OverlayPlugin
             }
             builder.Append("},");
             builder.AppendFormat("\"isActive\": {0}", ActGlobals.oFormActMain.ActiveZone.ActiveEncounter.Active ? "true" : "false");
-            builder.Append("};");
+            builder.Append("}");
 
 #if DEBUG
             stopwatch.Stop();
-            Log("Debug: MiniParseOverlayUpdater: GetUpdateScript: {0} msec", stopwatch.Elapsed.TotalMilliseconds);
+            Log(LogLevel.Trace, "CreateUpdateScript: {0} msec", stopwatch.Elapsed.TotalMilliseconds);
 #endif
 
             return builder.ToString();

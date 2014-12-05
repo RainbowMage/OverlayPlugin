@@ -37,8 +37,20 @@ namespace RainbowMage.OverlayPlugin
             SetupMiniParseTab();
             SetupSpellTimerTab();
 
-            this.listLog.DataSource = pluginMain.Logs;
+            this.menuFollowLatestLog.Checked = this.config.FollowLatestLog;
+            this.listViewLog.VirtualListSize = pluginMain.Logs.Count;
+            this.pluginMain.Logs.ListChanged += (o, e) =>
+            {
+                this.listViewLog.BeginUpdate();
+                this.listViewLog.VirtualListSize = pluginMain.Logs.Count;
+                if (this.config.FollowLatestLog && this.pluginMain.Logs.Count > 0)
+                {
+                    this.listViewLog.EnsureVisible(this.pluginMain.Logs.Count - 1);
+                }
+                this.listViewLog.EndUpdate();
+            };
         }
+
 
         private void SetupMiniParseTab()
         {
@@ -169,14 +181,7 @@ namespace RainbowMage.OverlayPlugin
 
         private void buttonReloadBrowser_Click(object sender, EventArgs e)
         {
-            if (pluginMain.MiniParseOverlay.Overlay.Url != config.MiniParseOverlay.Url)
-            {
-                pluginMain.MiniParseOverlay.Overlay.Url = config.MiniParseOverlay.Url;
-            }
-            else
-            {
-                pluginMain.MiniParseOverlay.Overlay.Reload();
-            }
+            pluginMain.MiniParseOverlay.Navigate(config.MiniParseOverlay.Url);
         }
 
         private void buttonSelectFile_Click(object sender, EventArgs e)
@@ -191,12 +196,17 @@ namespace RainbowMage.OverlayPlugin
 
         private void menuLogCopy_Click(object sender, EventArgs e)
         {
-            if (listLog.SelectedItems != null)
+            if (listViewLog.SelectedIndices.Count > 0)
             {
                 var sb = new StringBuilder();
-                foreach (var item in listLog.SelectedItems)
+                foreach (int index in listViewLog.SelectedIndices)
                 {
-                    sb.AppendLine(item.ToString());
+                    sb.AppendFormat(
+                        "{0}: {1}: {2}",
+                        pluginMain.Logs[index].Time,
+                        pluginMain.Logs[index].Level,
+                        pluginMain.Logs[index].Message);
+                    sb.AppendLine();
                 }
                 Clipboard.SetText(sb.ToString());
             }
@@ -204,10 +214,10 @@ namespace RainbowMage.OverlayPlugin
 
         private void buttonCopyActXiv_Click(object sender, EventArgs e)
         {
-            var updateScript = pluginMain.MiniParseOverlay.CreateUpdateScript();
-            if (!string.IsNullOrWhiteSpace(updateScript))
+            var json = pluginMain.MiniParseOverlay.CreateJsonData();
+            if (!string.IsNullOrWhiteSpace(json))
             {
-                Clipboard.SetText("var " + updateScript);
+                Clipboard.SetText("var ActXiv = " + json + ";");
             }
         }
 
@@ -254,28 +264,75 @@ namespace RainbowMage.OverlayPlugin
 
         private void buttonSpellTimerCopyActXiv_Click(object sender, EventArgs e)
         {
-            var updateScript = pluginMain.SpellTimerOverlay.CreateUpdateString();
-            if (!string.IsNullOrWhiteSpace(updateScript))
+            var json = pluginMain.SpellTimerOverlay.CreateJsonData();
+            if (!string.IsNullOrWhiteSpace(json))
             {
-                Clipboard.SetText("var " + updateScript);
+                Clipboard.SetText("var ActXiv = " + json + ";");
             }
         }
 
         private void buttonSpellTimerReloadBrowser_Click(object sender, EventArgs e)
         {
-            if (pluginMain.SpellTimerOverlay.Overlay.Url != config.SpellTimerOverlay.Url)
-            {
-                pluginMain.SpellTimerOverlay.Overlay.Url = config.SpellTimerOverlay.Url;
-            }
-            else
-            {
-                pluginMain.SpellTimerOverlay.Overlay.Reload();
-            }
+            pluginMain.SpellTimerOverlay.Navigate(config.SpellTimerOverlay.Url);
         }
 
         private void nudSpellTimerMaxFrameRate_ValueChanged(object sender, EventArgs e)
         {
             this.config.SpellTimerOverlay.MaxFrameRate = (int)nudSpellTimerMaxFrameRate.Value;
+        }
+
+        private void listViewLog_RetrieveVirtualItem(object sender, RetrieveVirtualItemEventArgs e)
+        {
+            if (e.ItemIndex >= pluginMain.Logs.Count) 
+            {
+                e.Item = new ListViewItem();
+                return;
+            };
+
+            var log = this.pluginMain.Logs[e.ItemIndex];
+            e.Item = new ListViewItem(log.Time.ToString());
+            e.Item.UseItemStyleForSubItems = true;
+            e.Item.SubItems.Add(log.Level.ToString());
+            e.Item.SubItems.Add(log.Message);
+
+            e.Item.ForeColor = Color.Black;
+            if (log.Level == LogLevel.Warning)
+            {
+                e.Item.BackColor = Color.LightYellow;
+            }
+            else if (log.Level == LogLevel.Error)
+            {
+                e.Item.BackColor = Color.LightPink;
+            }
+            else
+            {
+                e.Item.BackColor = Color.White;
+            }
+        }
+
+        private void menuFollowLatestLog_Click(object sender, EventArgs e)
+        {
+            this.config.FollowLatestLog = menuFollowLatestLog.Checked;
+        }
+
+        private void menuClearLog_Click(object sender, EventArgs e)
+        {
+            this.pluginMain.Logs.Clear();
+        }
+
+        private void menuCopyLogAll_Click(object sender, EventArgs e)
+        {
+            var sb = new StringBuilder();
+            foreach (var log in this.pluginMain.Logs)
+            {
+                sb.AppendFormat(
+                    "{0}: {1}: {2}",
+                    log.Time,
+                    log.Level,
+                    log.Message);
+                sb.AppendLine();
+            }
+            Clipboard.SetText(sb.ToString());
         }
     }
 }

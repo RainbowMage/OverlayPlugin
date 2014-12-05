@@ -32,6 +32,7 @@ xcopy /Y /R "$buildFolder\HtmlRenderer.dll" "$updateFolder"
 xcopy /Y /R "$buildFolder\OverlayPlugin.dll" "$updateFolder"
 xcopy /Y /R "$buildFolder\README.md" "$updateFolder"
 xcopy /Y /R "$buildFolder\LICENSE.txt" "$updateFolder"
+xcopy /Y /R /S "$buildFolder\resources\*" "$updateFolder\resources\"
 
 # アーカイブ
 New-ZipCompress -source $fullFolder -destination "$fullFolder.zip"

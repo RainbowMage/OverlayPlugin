@@ -24,11 +24,11 @@ namespace RainbowMage.OverlayPlugin
         internal PluginConfig Config { get; private set; }
         internal MiniParseOverlay MiniParseOverlay { get; private set; }
         internal SpellTimerOverlay SpellTimerOverlay { get; private set; }
-        internal BindingList<string> Logs { get; private set; }
+        internal BindingList<LogEntry> Logs { get; private set; }
 
         public PluginMain()
         {
-            this.Logs = new BindingList<string>();
+            this.Logs = new BindingList<LogEntry>();
 
         }
 
@@ -40,12 +40,12 @@ namespace RainbowMage.OverlayPlugin
                 this.label = pluginStatusText;
 
 #if DEBUG
-                Log("Warn: ##################################");
-                Log("Warn:            DEBUG BUILD");
-                Log("Warn: ##################################");
+                Log(LogLevel.Debug, "##################################");
+                Log(LogLevel.Debug, "           DEBUG BUILD");
+                Log(LogLevel.Debug, "##################################");
 #endif
                 this.pluginDirectory = GetPluginDirectory();
-                Log("Info: InitPlugin: PluginDirectory = {0}", this.pluginDirectory);
+                Log(LogLevel.Info, "InitPlugin: PluginDirectory = {0}", this.pluginDirectory);
 
                 // プラグインの配置してあるフォルダを検索するカスタムリゾルバーでアセンブリを解決する
                 AppDomain.CurrentDomain.AssemblyResolve += CustomAssemblyResolve;
@@ -65,22 +65,22 @@ namespace RainbowMage.OverlayPlugin
 
                 // オーバーレイ初期化
                 this.MiniParseOverlay = new OverlayPlugin.MiniParseOverlay(this.Config.MiniParseOverlay);
-                this.MiniParseOverlay.OnLog += (o, e) => Log(e.Message);
+                this.MiniParseOverlay.OnLog += (o, e) => Log(e.Level, e.Message);
                 this.MiniParseOverlay.Start();
                 this.SpellTimerOverlay = new OverlayPlugin.SpellTimerOverlay(this.Config.SpellTimerOverlay);
-                this.SpellTimerOverlay.OnLog += (o, e) => Log(e.Message);
+                this.SpellTimerOverlay.OnLog += (o, e) => Log(e.Level, e.Message);
                 this.SpellTimerOverlay.Start();
 
                 // ショートカットキー設定
                 ActGlobals.oFormActMain.KeyPreview = true;
                 ActGlobals.oFormActMain.KeyDown += oFormActMain_KeyDown;
 
-                Log("Info: InitPlugin: Initialized.");
+                Log(LogLevel.Info, "InitPlugin: Initialized.");
                 this.label.Text = "Initialized.";
             }
             catch (Exception e)
             {
-                Log("Error: InitPlugin: {0}", e.ToString());
+                Log(LogLevel.Error, "InitPlugin: {0}", e.ToString());
 
                 throw;
             }
@@ -95,7 +95,7 @@ namespace RainbowMage.OverlayPlugin
 
             AppDomain.CurrentDomain.AssemblyResolve -= CustomAssemblyResolve;
 
-            Log("Info: DeInitPlugin: Finalized.");
+            Log(LogLevel.Info, "DeInitPlugin: Finalized.");
             this.label.Text = "Finalized.";
         }
 
@@ -107,9 +107,7 @@ namespace RainbowMage.OverlayPlugin
 
         private Assembly CustomAssemblyResolve(object sender, ResolveEventArgs e)
         {
-#if DEBUG
-            Log("Info: AssemblyResolve: Resolving assembly for '{0}'...", e.Name);
-#endif
+            Log(LogLevel.Debug, "AssemblyResolve: Resolving assembly for '{0}'...", e.Name);
 
             Assembly result = null;
             foreach (var pair in assemblyTable)
@@ -121,59 +119,55 @@ namespace RainbowMage.OverlayPlugin
                     {
                         asmPath = Path.Combine(pluginDirectory, pair.Value);
                         result = Assembly.LoadFile(asmPath);
-#if DEBUG
-                        Log("Info: AssemblyResolve: => Found assembly in {0}.", asmPath);
-#endif
+                        Log(LogLevel.Debug, "AssemblyResolve: => Found assembly in {0}.", asmPath);
                         break;
                     }
                     catch (FileNotFoundException ex)
                     {
                         var message = string.Format(
-                            "エラー：必要なアセンブリ {0} が存在しません。",
+                            "必要なアセンブリ {0} が存在しません。",
                             asmPath
                             );
-                        Log("Error: AssemblyResolve: => {0}", message);
-                        Log("Error: AssemblyResolve: => {0}", ex);
-                        MessageBox.Show(message);
+                        Log(LogLevel.Error, "AssemblyResolve: => {0}", message);
+                        Log(LogLevel.Error, "AssemblyResolve: => {0}", ex);
+                        MessageBox.Show(message, "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                     catch (FileLoadException ex)
                     {
                         var message = string.Format(
-                            "エラー：必要なアセンブリ {0} は存在しますが、読み込めません。",
+                            "必要なアセンブリ {0} は存在しますが、読み込めません。",
                             asmPath
                             );
-                        Log("Error: AssemblyResolve: => {0}", message);
-                        Log("Error: AssemblyResolve: => {0}", ex);
-                        MessageBox.Show(message);
+                        Log(LogLevel.Error, "AssemblyResolve: => {0}", message);
+                        Log(LogLevel.Error, "AssemblyResolve: => {0}", ex);
+                        MessageBox.Show(message, "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                     catch (NotSupportedException ex)
                     {
                         var message = string.Format(
-                            "エラー：アセンブリ {0} がネットワーク上にあるか、またはブロックされている可能性があります。",
+                            "アセンブリ {0} がネットワーク上にあるか、またはブロックされている可能性があります。",
                             asmPath
                             );
-                        Log("Error: AssemblyResolve: => {0}", message);
-                        Log("Error: AssemblyResolve: => {0}", ex);
-                        MessageBox.Show(message);
+                        Log(LogLevel.Error, "AssemblyResolve: => {0}", message);
+                        Log(LogLevel.Error, "AssemblyResolve: => {0}", ex);
+                        MessageBox.Show(message, "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                     catch (Exception ex)
                     {
                         var message = string.Format(
-                            "エラー：アセンブリ {0}の読み込み時に例外が発生しました。\n{0}",
+                            "アセンブリ {0}の読み込み時に例外が発生しました。\n{0}",
                             asmPath
                             );
-                        Log("Error: AssemblyResolve: => {0}", ex);
-                        MessageBox.Show(message);
+                        Log(LogLevel.Error, "AssemblyResolve: => {0}", ex);
+                        MessageBox.Show(message, "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
             }
 
-#if DEBUG
             if (result == null)
             {
-                Log("Info: AssemblyResolve: => Not found in plugin directory.");
+                Log(LogLevel.Debug, "AssemblyResolve: => Not found in plugin directory.");
             }
-#endif
 
             return result;
         }
@@ -204,8 +198,8 @@ namespace RainbowMage.OverlayPlugin
             }
             catch (Exception e)
             {
-                Log("Error: LoadConfig: {0}", e);
-                Log("Creating new configuration.");
+                Log(LogLevel.Warning, "LoadConfig: {0}", e);
+                Log(LogLevel.Info, "LoadConfig: Creating new configuration.");
                 Config = new PluginConfig();
             }
             finally
@@ -213,7 +207,7 @@ namespace RainbowMage.OverlayPlugin
                 if (string.IsNullOrWhiteSpace(Config.MiniParseOverlay.Url))
                 {
                     Config.MiniParseOverlay.Url =
-                        new Uri(Path.Combine(pluginDirectory, "resources", "default.html")).ToString();
+                        new Uri(Path.Combine(pluginDirectory, "resources", "miniparse.html")).ToString();
                 }
                 if (string.IsNullOrWhiteSpace(Config.SpellTimerOverlay.Url))
                 {
@@ -236,7 +230,7 @@ namespace RainbowMage.OverlayPlugin
             }
             catch (Exception e)
             {
-                Log("Error: SaveConfig: {0}", e);
+                Log(LogLevel.Error, "SaveConfig: {0}", e);
             }
         }
 
@@ -263,14 +257,44 @@ namespace RainbowMage.OverlayPlugin
             }
         }
 
-        internal void Log(string message)
+        internal void Log(LogLevel level, string message)
         {
-            this.Logs.Add(DateTime.Now.ToString() + "|" + message);
+#if !DEBUG
+            if (level == LogLevel.Trace || level == LogLevel.Debug)
+            {
+                return;
+            }
+#endif
+
+            this.Logs.Add(new LogEntry(level, DateTime.Now, message));
         }
 
-        internal void Log(string format, params object[] args)
+        internal void Log(LogLevel level, string format, params object[] args)
         {
-            Log(string.Format(format, args));
+            Log(level, string.Format(format, args));
         }
+    }
+
+    internal class LogEntry
+    {
+        public string Message { get; set; }
+        public LogLevel Level { get; set; }
+        public DateTime Time { get; set; }
+
+        public LogEntry(LogLevel level, DateTime time, string message)
+        {
+            this.Message = message;
+            this.Level = level;
+            this.Time = time;
+        }
+    }
+
+    public enum LogLevel
+    {
+        Trace,
+        Debug,
+        Info,
+        Warning,
+        Error
     }
 }

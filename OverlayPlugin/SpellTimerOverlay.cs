@@ -57,7 +57,7 @@ namespace RainbowMage.OverlayPlugin
         {
             try
             {
-                var updateScript = CreateUpdateString();
+                var updateScript = CreateEventDispatcherScript();
 
                 if (this.Overlay != null &&
                     this.Overlay.Renderer != null &&
@@ -69,7 +69,7 @@ namespace RainbowMage.OverlayPlugin
             }
             catch (Exception ex)
             {
-                Log("Error: {0}: Update: {1}", this.Name, ex);
+                Log(LogLevel.Error, "Update: {1}", this.Name, ex);
             }
         }
 
@@ -110,7 +110,7 @@ namespace RainbowMage.OverlayPlugin
             }
         }
 
-        internal string CreateUpdateString()
+        internal string CreateJsonData()
         {
             lock (this.activatedTimers)
             {
@@ -129,13 +129,19 @@ namespace RainbowMage.OverlayPlugin
 
                 if (!string.IsNullOrWhiteSpace(result))
                 {
-                    return string.Format("{0}{1}{2}", "ActXiv = { timerFrames: ", result, "};");
+                    return string.Format("{0}{1}{2}", "{ timerFrames: ", result, "}");
                 }
                 else
                 {
                     return "";
                 }
             }
+        }
+
+        private string CreateEventDispatcherScript()
+        {
+            return "var ActXiv = " + this.CreateJsonData() + ";\n" +
+                   "document.dispatchEvent(new CustomEvent('onOverlayDataUpdate', ActXiv));";
         }
     }
 }

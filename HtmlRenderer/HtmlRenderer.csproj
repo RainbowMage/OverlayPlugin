@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="App.cs" />
     <Compile Include="Client.cs" />
+    <Compile Include="DisplayHandler.cs" />
     <Compile Include="LifeSpanHandler.cs" />
     <Compile Include="LoadHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

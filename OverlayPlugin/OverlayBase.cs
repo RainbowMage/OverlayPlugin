@@ -14,7 +14,6 @@ namespace RainbowMage.OverlayPlugin
     {
         public event EventHandler<LogEventArgs> OnLog;
 
-        //protected PluginMain pluginMain;
         protected System.Timers.Timer timer;
 
         public string Name { get; private set; }
@@ -46,34 +45,7 @@ namespace RainbowMage.OverlayPlugin
         {
             try
             {
-                Uri uri = null;
-                try
-                {
-                    uri = new System.Uri(this.Config.Url);
-
-                    // ローカルファイルの場合はファイルが存在するかチェックし、存在しなければ警告を出力
-                    if (uri.Scheme == "file")
-                    {
-                        if (!File.Exists(uri.LocalPath))
-                        {
-                            Log("Warn: {0}: InitializeOverlay: Local file {1} is not exist!",
-                                this.Name,
-                                uri.LocalPath);
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    // URL パースエラー
-                    Log("Error: {0}: InitializeOverlay: URI parse error! (Config.Url = {1}): {2}",
-                        this.Name,
-                        this.Config.Url,
-                        ex);
-                    Log("Error: {0}: InitializeOverlay: Please reconfigure URL.", this.Name);
-                    uri = new System.Uri("about:blank"); // 空白ページを表示
-                }
-
-                this.Overlay = new OverlayForm(uri.AbsoluteUri, this.Config.MaxFrameRate);
+                this.Overlay = new OverlayForm("about:blank", this.Config.MaxFrameRate);
 
                 // 画面外にウィンドウがある場合は、初期表示位置をシステムに設定させる
                 if (!Util.IsOnScreen(this.Overlay))
@@ -88,12 +60,18 @@ namespace RainbowMage.OverlayPlugin
                 this.Overlay.IsClickThru = this.Config.IsClickThru;
                 this.Overlay.Renderer.BrowserError += (o, e) =>
                 {
-                    Log("Error: {0}: Overlay: {1}, {2}, {3}", this.Name, e.ErrorCode, e.ErrorText, e.Url);
+                    Log(LogLevel.Error, "BrowserError: {0}, {1}, {2}", e.ErrorCode, e.ErrorText, e.Url);
                 };
                 this.Overlay.Renderer.BrowserLoad += (o, e) =>
                 {
-                    Log("Info: {0}: Overlay: {1}: {2}", this.Name, e.HttpStatusCode, e.Url);
+                    Log(LogLevel.Debug, "BrowserLoad: {0}: {1}", e.HttpStatusCode, e.Url);
                 };
+                this.Overlay.Renderer.BrowserConsoleLog += (o, e) =>
+                {
+                    Log(LogLevel.Info, "BrowserConsole: {0} (Source: {1}, Line: {2})", e.Message, e.Source, e.Line);
+                };
+
+                Navigate(this.Config.Url);
 
                 this.Overlay.Show();
 
@@ -101,8 +79,39 @@ namespace RainbowMage.OverlayPlugin
             }
             catch (Exception ex)
             {
-                Log("Error: {0}: InitializeOverlay: {1}", this.Name, ex);
+                Log(LogLevel.Error, "InitializeOverlay: {0}", this.Name, ex);
             }
+        }
+
+        private bool CheckUrl(string url)
+        {
+            try
+            {
+                var uri = new System.Uri(url);
+
+                // ローカルファイルの場合はファイルが存在するかチェックし、存在しなければ警告を出力
+                if (uri.Scheme == "file")
+                {
+                    if (!File.Exists(uri.LocalPath))
+                    {
+                        Log(LogLevel.Warning,
+                            "InitializeOverlay: Local file {0} does not exist!",
+                            uri.LocalPath);
+                        return false;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // URL パースエラー
+                Log(LogLevel.Error,
+                    "InitializeOverlay: URI parse error! Please reconfigure the URL. (Config.Url = {0}): {1}",
+                    this.Config.Url,
+                    ex);
+                return false;
+            }
+
+            return true;
         }
 
         protected virtual void InitializeTimer()
@@ -117,7 +126,7 @@ namespace RainbowMage.OverlayPlugin
                 }
                 catch (Exception ex)
                 {
-                    Log("Error: {0}: Update: {0}", this.Name, ex.ToString());
+                    Log(LogLevel.Error, "Update: {0}", ex.ToString());
                 }
             };
         }
@@ -147,30 +156,44 @@ namespace RainbowMage.OverlayPlugin
             }
             catch (Exception ex)
             {
-                Log("Error: {0}: Dispose: {1}", this.Name, ex);
+                Log(LogLevel.Error, "Dispose: {0}", ex);
+            }
+        }
+
+        public virtual void Navigate(string url)
+        {
+            if (this.Overlay.Url != url)
+            {
+                this.Overlay.Url = url;
+            }
+            else
+            {
+                this.Overlay.Reload();
             }
         }
 
         public class LogEventArgs : EventArgs
         {
             public string Message { get; private set; }
-            public LogEventArgs(string message)
+            public LogLevel Level { get; private set; }
+            public LogEventArgs(LogLevel level, string message)
             {
                 this.Message = message;
+                this.Level = level;
             }
         }
 
-        protected void Log(string message)
+        protected void Log(LogLevel level, string message)
         {
             if (OnLog != null)
             {
-                OnLog(this, new LogEventArgs(message));
+                OnLog(this, new LogEventArgs(level, string.Format("{0}: {1}", this.Name, message)));
             }
         }
 
-        protected void Log(string format, params object[] args)
+        protected void Log(LogLevel level, string format, params object[] args)
         {
-            Log(string.Format(format, args));
+            Log(level, string.Format(format, args));
         }
     }
 }
