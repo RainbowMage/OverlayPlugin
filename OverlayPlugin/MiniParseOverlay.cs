@@ -14,6 +14,7 @@ namespace RainbowMage.OverlayPlugin
     {
         private string prevEncounterId { get; set; }
         private DateTime prevEndDateTime { get; set; }
+        private bool prevEncounterActive { get; set; }
 
         public MiniParseOverlay(MiniParseOverlayConfig config)
             : base(config, "MiniParseOverlay")
@@ -34,13 +35,15 @@ namespace RainbowMage.OverlayPlugin
             {
                 // 最終更新時刻に変化がないなら更新を行わない
                 if (this.prevEncounterId == ActGlobals.oFormActMain.ActiveZone.ActiveEncounter.EncId &&
-                    this.prevEndDateTime == ActGlobals.oFormActMain.ActiveZone.ActiveEncounter.EndTime)
+                    this.prevEndDateTime == ActGlobals.oFormActMain.ActiveZone.ActiveEncounter.EndTime &&
+                    this.prevEncounterActive == ActGlobals.oFormActMain.ActiveZone.ActiveEncounter.Active)
                 {
                     return;
                 }
 
                 this.prevEncounterId = ActGlobals.oFormActMain.ActiveZone.ActiveEncounter.EncId;
                 this.prevEndDateTime = ActGlobals.oFormActMain.ActiveZone.ActiveEncounter.EndTime;
+                this.prevEncounterActive = ActGlobals.oFormActMain.ActiveZone.ActiveEncounter.Active;
 
                 var updateScript = CreateEventDispatcherScript();
 
