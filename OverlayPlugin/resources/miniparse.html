@@ -182,9 +182,9 @@
 
             // テキスト取得
             var elementText;
-            if (typeof encounterDefine == 'function') {
+            if (typeof encounterDefine === 'function') {
                 elementText = encounterDefine(data.Encounter);
-            } else if (typeof encounterDefine == 'string') {
+            } else if (typeof encounterDefine === 'string') {
                 elementText = parseActFormat(encounterDefine, data.Encounter);
             } else {
                 console.log("updateEncounter: Could not update the encounter element due to invalid type.");
@@ -209,20 +209,20 @@
             for (var i = 0; i < headerDefine.length; i++) {
                 var cell = document.createElement("th");
                 // テキスト設定
-                if (typeof headerDefine[i].text != 'undefined') {
+                if (typeof headerDefine[i].text !== 'undefined') {
                     cell.innerText = headerDefine[i].text;
-                } else if (typeof headerDefine[i].html != 'undefined') {
-                    cell.innerHTML = headerDefine[i].text;
+                } else if (typeof headerDefine[i].html !== 'undefined') {
+                    cell.innerHTML = headerDefine[i].html;
                 }
                 // 幅設定
                 cell.style.width = headerDefine[i].width;
                 cell.style.maxWidth = headerDefine[i].width;
                 // 横結合数設定
-                if (typeof(headerDefine[i].span) !== 'undefined') {
+                if (typeof headerDefine[i].span !== 'undefined') {
                     cell.colSpan = headerDefine[i].span;
                 }
                 // 行揃え設定
-                if (typeof(headerDefine[i].align) !== 'undefined') {
+                if (typeof headerDefine[i].align !== 'undefined') {
                     cell.style["textAlign"] = headerDefine[i].align;
                 }
                 headerRow.appendChild(cell);
@@ -248,32 +248,32 @@
                 {
                     var cell = tableRow.insertCell(i);
                     // テキスト設定
-                    if (typeof bodyDefine[i].text != 'undefined') {
+                    if (typeof bodyDefine[i].text !== 'undefined') {
                         var cellText;
-                        if (typeof bodyDefine[i].text == 'function') {
+                        if (typeof bodyDefine[i].text === 'function') {
                             cellText = bodyDefine[i].text(combatant, combatantIndex);
                         } else {
                             cellText = parseActFormat(bodyDefine[i].text, combatant);
                         }
                         cell.innerText = cellText;
-                    } else if (typeof bodyDefine[i].html != 'undefined') {
+                    } else if (typeof bodyDefine[i].html !== 'undefined') {
                         var cellHTML;
-                        if (typeof bodyDefine[i].html == 'function') {
+                        if (typeof bodyDefine[i].html === 'function') {
                             cellHTML = bodyDefine[i].html(combatant, combatantIndex);
                         } else {
                             cellHTML = parseActFormat(bodyDefine[i].html, combatant);
                         }
-                        cell.innerText = cellHTML;
+                        cell.innerHTML = cellHTML;
                     }
                     // 幅設定
                     cell.style.width = bodyDefine[i].width;
                     cell.style.maxWidth = bodyDefine[i].width;
                     // 行構え設定
                     if (typeof(bodyDefine[i].align) !== 'undefined') {
-                        cell.style["textAlign"] = bodyDefine[i].align;
+                        cell.style.textAlign = bodyDefine[i].align;
                     }
                     // エフェクト実行
-                    if (typeof bodyDefine[i].effect == 'function') {
+                    if (typeof bodyDefine[i].effect === 'function') {
                         bodyDefine[i].effect(cell, combatant, combatantIndex);
                     }
                 }
@@ -311,7 +311,7 @@
                     }
                     else {
                         var tag = str.slice(openBraceIndex + 1, closeBraceIndex);
-                        if (dictionary[tag] != void (0)) {
+                        if (typeof dictionary[tag] !== 'undefined') {
                             result += dictionary[tag];
                         } else {
                             console.log("parseActFormat: Unknown tag: " + tag);
