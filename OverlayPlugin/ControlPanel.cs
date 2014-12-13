@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Globalization;
+using System.Threading;
 
 namespace RainbowMage.OverlayPlugin
 {
@@ -17,11 +19,11 @@ namespace RainbowMage.OverlayPlugin
 
         static readonly List<KeyValuePair<string, MiniParseSortType>> sortTypeDict = new List<KeyValuePair<string, MiniParseSortType>>()
         {
-            new KeyValuePair<string, MiniParseSortType>("ソートしない", MiniParseSortType.None),
-            new KeyValuePair<string, MiniParseSortType>("文字列 - 昇順", MiniParseSortType.StringAscending),
-            new KeyValuePair<string, MiniParseSortType>("文字列 - 降順", MiniParseSortType.StringDescending),
-            new KeyValuePair<string, MiniParseSortType>("数値 - 昇順", MiniParseSortType.NumericAscending),
-            new KeyValuePair<string, MiniParseSortType>("数値 - 降順", MiniParseSortType.NumericDescending)
+            new KeyValuePair<string, MiniParseSortType>(Localization.GetText(TextItem.DoNotSort), MiniParseSortType.None),
+            new KeyValuePair<string, MiniParseSortType>(Localization.GetText(TextItem.SortStringAscending), MiniParseSortType.StringAscending),
+            new KeyValuePair<string, MiniParseSortType>(Localization.GetText(TextItem.SortStringDescending), MiniParseSortType.StringDescending),
+            new KeyValuePair<string, MiniParseSortType>(Localization.GetText(TextItem.SortNumberAscending), MiniParseSortType.NumericAscending),
+            new KeyValuePair<string, MiniParseSortType>(Localization.GetText(TextItem.SortNumberDescending), MiniParseSortType.NumericDescending)
         };
 
         public ControlPanel(PluginMain pluginMain, PluginConfig config)
@@ -50,7 +52,6 @@ namespace RainbowMage.OverlayPlugin
                 this.listViewLog.EndUpdate();
             };
         }
-
 
         private void SetupMiniParseTab()
         {

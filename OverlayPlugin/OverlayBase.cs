@@ -56,6 +56,7 @@ namespace RainbowMage.OverlayPlugin
                 {
                     this.Overlay.Location = this.Config.Position;
                 }
+                this.Overlay.Text = this.Name;
                 this.Overlay.Size = this.Config.Size;
                 this.Overlay.IsClickThru = this.Config.IsClickThru;
                 this.Overlay.Renderer.BrowserError += (o, e) =>

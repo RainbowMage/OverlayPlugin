@@ -80,6 +80,7 @@
     </Compile>
     <Compile Include="SerializableTimerFrameEntry.cs" />
     <Compile Include="SpellTimerOverlay.cs" />
+    <Compile Include="Localization.cs" />
     <Compile Include="Util.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -97,6 +98,9 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="ControlPanel.ja-JP.resx">
+      <DependentUpon>ControlPanel.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ControlPanel.resx">
       <DependentUpon>ControlPanel.cs</DependentUpon>
     </EmbeddedResource>

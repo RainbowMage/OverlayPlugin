@@ -10,6 +10,8 @@ using System.Drawing;
 using System.IO;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Threading;
+using System.Text.RegularExpressions;
 
 namespace RainbowMage.OverlayPlugin
 {
@@ -40,9 +42,9 @@ namespace RainbowMage.OverlayPlugin
                 this.label = pluginStatusText;
 
 #if DEBUG
-                Log(LogLevel.Debug, "##################################");
-                Log(LogLevel.Debug, "           DEBUG BUILD");
-                Log(LogLevel.Debug, "##################################");
+                Log(LogLevel.Warning, "##################################");
+                Log(LogLevel.Warning, "           DEBUG BUILD");
+                Log(LogLevel.Warning, "##################################");
 #endif
                 this.pluginDirectory = GetPluginDirectory();
                 Log(LogLevel.Info, "InitPlugin: PluginDirectory = {0}", this.pluginDirectory);
@@ -81,6 +83,7 @@ namespace RainbowMage.OverlayPlugin
             catch (Exception e)
             {
                 Log(LogLevel.Error, "InitPlugin: {0}", e.ToString());
+                MessageBox.Show(e.ToString());
 
                 throw;
             }
@@ -99,80 +102,82 @@ namespace RainbowMage.OverlayPlugin
             this.label.Text = "Finalized.";
         }
 
-        static readonly Dictionary<string, string> assemblyTable = new Dictionary<string, string>
-        {
-            { "HtmlRenderer,", "HtmlRenderer.dll" },
-            { "Xilium.CefGlue,", "Xilium.CefGlue.dll" }
-        };
+        static readonly Regex assemblyNameParser = new Regex(
+            @"(?<name>.+?), Version=(?<version>.+?), Culture=(?<culture>.+?), PublicKeyToken=(?<pubkey>.+)", 
+            RegexOptions.Compiled);
 
         private Assembly CustomAssemblyResolve(object sender, ResolveEventArgs e)
         {
             Log(LogLevel.Debug, "AssemblyResolve: Resolving assembly for '{0}'...", e.Name);
 
-            Assembly result = null;
-            foreach (var pair in assemblyTable)
+            var asmPath = "";
+            var match = assemblyNameParser.Match(e.Name);
+            if (match.Success)
             {
-                if (e.Name.StartsWith(pair.Key))
+                var asmFileName = match.Groups["name"].Value + ".dll";
+                if (match.Groups["culture"].Value == "neutral")
                 {
-                    string asmPath = "";
-                    try
-                    {
-                        asmPath = Path.Combine(pluginDirectory, pair.Value);
-                        result = Assembly.LoadFile(asmPath);
-                        Log(LogLevel.Debug, "AssemblyResolve: => Found assembly in {0}.", asmPath);
-                        break;
-                    }
-                    catch (FileNotFoundException ex)
-                    {
-                        var message = string.Format(
-                            "必要なアセンブリ {0} が存在しません。",
-                            asmPath
-                            );
-                        Log(LogLevel.Error, "AssemblyResolve: => {0}", message);
-                        Log(LogLevel.Error, "AssemblyResolve: => {0}", ex);
-                        MessageBox.Show(message, "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-                    catch (FileLoadException ex)
-                    {
-                        var message = string.Format(
-                            "必要なアセンブリ {0} は存在しますが、読み込めません。",
-                            asmPath
-                            );
-                        Log(LogLevel.Error, "AssemblyResolve: => {0}", message);
-                        Log(LogLevel.Error, "AssemblyResolve: => {0}", ex);
-                        MessageBox.Show(message, "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-                    catch (NotSupportedException ex)
-                    {
-                        var message = string.Format(
-                            "アセンブリ {0} がネットワーク上にあるか、またはブロックされている可能性があります。",
-                            asmPath
-                            );
-                        Log(LogLevel.Error, "AssemblyResolve: => {0}", message);
-                        Log(LogLevel.Error, "AssemblyResolve: => {0}", ex);
-                        MessageBox.Show(message, "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-                    catch (Exception ex)
-                    {
-                        var message = string.Format(
-                            "アセンブリ {0}の読み込み時に例外が発生しました。\n{0}",
-                            asmPath
-                            );
-                        Log(LogLevel.Error, "AssemblyResolve: => {0}", ex);
-                        MessageBox.Show(message, "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
+                    asmPath = Path.Combine(pluginDirectory, asmFileName);
+                }
+                else
+                {
+                    asmPath = Path.Combine(pluginDirectory, match.Groups["culture"].Value, asmFileName);
                 }
             }
-
-            if (result == null)
+            else
             {
-                Log(LogLevel.Debug, "AssemblyResolve: => Not found in plugin directory.");
+                asmPath = Path.Combine(pluginDirectory, e.Name + ".dll");
             }
 
-            return result;
+            if (File.Exists(asmPath))
+            {
+                return LoadAssembly(asmPath);
+            }
+
+            Log(LogLevel.Debug, "AssemblyResolve: => Not found in plugin directory.");
+            return null;
         }
 
+        private Assembly LoadAssembly(string path)
+        {
+            try
+            {
+                var result = Assembly.LoadFile(path);
+                Log(LogLevel.Debug, "AssemblyResolve: => Found assembly in {0}.", path);
+                return result;
+            }
+            catch (FileLoadException ex)
+            {
+                var message = string.Format(
+                    Localization.GetText(TextItem.RequiredAssemblyFileCannotRead),
+                    path
+                    );
+                Log(LogLevel.Error, "AssemblyResolve: => {0}", message);
+                Log(LogLevel.Error, "AssemblyResolve: => {0}", ex);
+                MessageBox.Show(message, Localization.GetText(TextItem.ErrorTitle), MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            catch (NotSupportedException ex)
+            {
+                var message = string.Format(
+                    Localization.GetText(TextItem.RequiredAssemblyFileBlocked),
+                    path
+                    );
+                Log(LogLevel.Error, "AssemblyResolve: => {0}", message);
+                Log(LogLevel.Error, "AssemblyResolve: => {0}", ex);
+                MessageBox.Show(message, Localization.GetText(TextItem.ErrorTitle), MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            catch (Exception ex)
+            {
+                var message = string.Format(
+                    Localization.GetText(TextItem.RequiredAssemblyFileException),
+                    path
+                    );
+                Log(LogLevel.Error, "AssemblyResolve: => {0}", ex);
+                MessageBox.Show(message, Localization.GetText(TextItem.ErrorTitle), MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
 
+            return null;
+        }
 
         void oFormActMain_KeyDown(object sender, KeyEventArgs e)
         {
@@ -264,6 +269,9 @@ namespace RainbowMage.OverlayPlugin
             {
                 return;
             }
+#endif
+#if DEBUG
+            System.Diagnostics.Trace.WriteLine(string.Format("{0}: {1}: {2}", level, DateTime.Now, message));
 #endif
 
             this.Logs.Add(new LogEntry(level, DateTime.Now, message));
