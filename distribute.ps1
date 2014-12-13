@@ -33,6 +33,7 @@ xcopy /Y /R "$buildFolder\OverlayPlugin.dll" "$updateFolder"
 xcopy /Y /R "$buildFolder\README.md" "$updateFolder"
 xcopy /Y /R "$buildFolder\LICENSE.txt" "$updateFolder"
 xcopy /Y /R /S "$buildFolder\resources\*" "$updateFolder\resources\"
+xcopy /Y /R /S "$buildFolder\ja-JP\*" "$updateFolder\ja-JP\"
 
 # アーカイブ
 New-ZipCompress -source $fullFolder -destination "$fullFolder.zip"
