@@ -184,18 +184,22 @@
             var elementText;
             if (typeof encounterDefine === 'function') {
                 elementText = encounterDefine(data.Encounter);
+                if (typeof elementText !== 'string') {
+                    console.log("updateEncounter: 'encounterDefine' is declared as function but not returns a value as string.");
+                    return;
+                }
             } else if (typeof encounterDefine === 'string') {
                 elementText = parseActFormat(encounterDefine, data.Encounter);
             } else {
-                console.log("updateEncounter: Could not update the encounter element due to invalid type.");
+                console.log("updateEncounter: 'encounterDefine' should be string or function that returns string.");
                 return;
             }
 
             // テキスト設定
             if (!useHTMLEncounterDefine) {
-                encounterElem.innerText = parseActFormat(encounterDefine, data.Encounter);
+                encounterElem.innerText = parseActFormat(elementText, data.Encounter);
             } else {
-                encounterElem.innerHTML = parseActFormat(encounterDefine, data.Encounter);
+                encounterElem.innerHTML = parseActFormat(elementText, data.Encounter);
             }
         }
 
