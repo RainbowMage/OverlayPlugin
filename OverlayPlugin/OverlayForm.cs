@@ -21,7 +21,7 @@ namespace RainbowMage.OverlayPlugin
         private int maxFrameRate;
 
         public Renderer Renderer { get; private set; }
-        public bool IsDisposed { get; private set; }
+        public new bool IsDisposed { get; private set; }
 
         private string url;
         public string Url
