@@ -34,6 +34,14 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.label14 = new System.Windows.Forms.Label();
+            this.numWidth = new System.Windows.Forms.NumericUpDown();
+            this.numHeight = new System.Windows.Forms.NumericUpDown();
+            this.label11 = new System.Windows.Forms.Label();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
+            this.buttonMiniParseReloadBrowser = new System.Windows.Forms.Button();
+            this.buttonMiniParseCopyActXiv = new System.Windows.Forms.Button();
             this.label13 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
@@ -44,10 +52,6 @@
             this.label1 = new System.Windows.Forms.Label();
             this.checkMiniParseVisible = new System.Windows.Forms.CheckBox();
             this.checkMiniParseClickthru = new System.Windows.Forms.CheckBox();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
-            this.buttonMiniParseReloadBrowser = new System.Windows.Forms.Button();
-            this.buttonMiniParseCopyActXiv = new System.Windows.Forms.Button();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.textMiniParseUrl = new System.Windows.Forms.TextBox();
             this.buttonMiniParseSelectFile = new System.Windows.Forms.Button();
@@ -88,6 +92,8 @@
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numWidth)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numHeight)).BeginInit();
             this.panel1.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
@@ -132,8 +138,13 @@
             // tableLayoutPanel1
             // 
             resources.ApplyResources(this.tableLayoutPanel1, "tableLayoutPanel1");
-            this.tableLayoutPanel1.Controls.Add(this.label13, 1, 6);
-            this.tableLayoutPanel1.Controls.Add(this.label6, 0, 5);
+            this.tableLayoutPanel1.Controls.Add(this.label14, 0, 6);
+            this.tableLayoutPanel1.Controls.Add(this.numWidth, 1, 5);
+            this.tableLayoutPanel1.Controls.Add(this.numHeight, 1, 6);
+            this.tableLayoutPanel1.Controls.Add(this.label11, 0, 5);
+            this.tableLayoutPanel1.Controls.Add(this.panel1, 1, 10);
+            this.tableLayoutPanel1.Controls.Add(this.label13, 1, 8);
+            this.tableLayoutPanel1.Controls.Add(this.label6, 0, 7);
             this.tableLayoutPanel1.Controls.Add(this.label5, 0, 4);
             this.tableLayoutPanel1.Controls.Add(this.textMiniParseSortKey, 1, 3);
             this.tableLayoutPanel1.Controls.Add(this.label4, 0, 3);
@@ -142,11 +153,87 @@
             this.tableLayoutPanel1.Controls.Add(this.label1, 0, 2);
             this.tableLayoutPanel1.Controls.Add(this.checkMiniParseVisible, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.checkMiniParseClickthru, 1, 1);
-            this.tableLayoutPanel1.Controls.Add(this.panel1, 1, 8);
             this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel2, 1, 2);
             this.tableLayoutPanel1.Controls.Add(this.comboMiniParseSortType, 1, 4);
-            this.tableLayoutPanel1.Controls.Add(this.nudMiniParseMaxFrameRate, 1, 5);
+            this.tableLayoutPanel1.Controls.Add(this.nudMiniParseMaxFrameRate, 1, 7);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            // 
+            // label14
+            // 
+            resources.ApplyResources(this.label14, "label14");
+            this.label14.Name = "label14";
+            // 
+            // numWidth
+            // 
+            resources.ApplyResources(this.numWidth, "numWidth");
+            this.numWidth.Maximum = new decimal(new int[] {
+            8192,
+            0,
+            0,
+            0});
+            this.numWidth.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numWidth.Name = "numWidth";
+            this.numWidth.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numWidth.ValueChanged += new System.EventHandler(this.numWidth_ValueChanged);
+            // 
+            // numHeight
+            // 
+            resources.ApplyResources(this.numHeight, "numHeight");
+            this.numHeight.Maximum = new decimal(new int[] {
+            8192,
+            0,
+            0,
+            0});
+            this.numHeight.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numHeight.Name = "numHeight";
+            this.numHeight.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numHeight.ValueChanged += new System.EventHandler(this.numHeight_ValueChanged);
+            // 
+            // label11
+            // 
+            resources.ApplyResources(this.label11, "label11");
+            this.label11.Name = "label11";
+            // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.tableLayoutPanel3);
+            resources.ApplyResources(this.panel1, "panel1");
+            this.panel1.Name = "panel1";
+            // 
+            // tableLayoutPanel3
+            // 
+            resources.ApplyResources(this.tableLayoutPanel3, "tableLayoutPanel3");
+            this.tableLayoutPanel3.Controls.Add(this.buttonMiniParseReloadBrowser, 1, 0);
+            this.tableLayoutPanel3.Controls.Add(this.buttonMiniParseCopyActXiv, 0, 0);
+            this.tableLayoutPanel3.Name = "tableLayoutPanel3";
+            // 
+            // buttonMiniParseReloadBrowser
+            // 
+            resources.ApplyResources(this.buttonMiniParseReloadBrowser, "buttonMiniParseReloadBrowser");
+            this.buttonMiniParseReloadBrowser.Name = "buttonMiniParseReloadBrowser";
+            this.buttonMiniParseReloadBrowser.UseVisualStyleBackColor = true;
+            // 
+            // buttonMiniParseCopyActXiv
+            // 
+            resources.ApplyResources(this.buttonMiniParseCopyActXiv, "buttonMiniParseCopyActXiv");
+            this.buttonMiniParseCopyActXiv.Name = "buttonMiniParseCopyActXiv";
+            this.buttonMiniParseCopyActXiv.UseVisualStyleBackColor = true;
             // 
             // label13
             // 
@@ -202,33 +289,6 @@
             this.checkMiniParseClickthru.Name = "checkMiniParseClickthru";
             this.checkMiniParseClickthru.UseVisualStyleBackColor = true;
             this.checkMiniParseClickthru.CheckedChanged += new System.EventHandler(this.checkMouseClickthru_CheckedChanged);
-            // 
-            // panel1
-            // 
-            this.panel1.Controls.Add(this.tableLayoutPanel3);
-            resources.ApplyResources(this.panel1, "panel1");
-            this.panel1.Name = "panel1";
-            // 
-            // tableLayoutPanel3
-            // 
-            resources.ApplyResources(this.tableLayoutPanel3, "tableLayoutPanel3");
-            this.tableLayoutPanel3.Controls.Add(this.buttonMiniParseReloadBrowser, 1, 0);
-            this.tableLayoutPanel3.Controls.Add(this.buttonMiniParseCopyActXiv, 0, 0);
-            this.tableLayoutPanel3.Name = "tableLayoutPanel3";
-            // 
-            // buttonMiniParseReloadBrowser
-            // 
-            resources.ApplyResources(this.buttonMiniParseReloadBrowser, "buttonMiniParseReloadBrowser");
-            this.buttonMiniParseReloadBrowser.Name = "buttonMiniParseReloadBrowser";
-            this.buttonMiniParseReloadBrowser.UseVisualStyleBackColor = true;
-            this.buttonMiniParseReloadBrowser.Click += new System.EventHandler(this.buttonReloadBrowser_Click);
-            // 
-            // buttonMiniParseCopyActXiv
-            // 
-            resources.ApplyResources(this.buttonMiniParseCopyActXiv, "buttonMiniParseCopyActXiv");
-            this.buttonMiniParseCopyActXiv.Name = "buttonMiniParseCopyActXiv";
-            this.buttonMiniParseCopyActXiv.UseVisualStyleBackColor = true;
-            this.buttonMiniParseCopyActXiv.Click += new System.EventHandler(this.buttonCopyActXiv_Click);
             // 
             // tableLayoutPanel2
             // 
@@ -498,6 +558,8 @@
             this.tabPage1.ResumeLayout(false);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numWidth)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numHeight)).EndInit();
             this.panel1.ResumeLayout(false);
             this.tableLayoutPanel3.ResumeLayout(false);
             this.tableLayoutPanel2.ResumeLayout(false);
@@ -526,13 +588,10 @@
         private System.Windows.Forms.CheckBox checkMiniParseVisible;
         private System.Windows.Forms.CheckBox checkMiniParseClickthru;
         private System.Windows.Forms.TextBox textMiniParseUrl;
-        private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.Button buttonMiniParseReloadBrowser;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
         private System.Windows.Forms.Button buttonMiniParseSelectFile;
         private System.Windows.Forms.ContextMenuStrip contextMenuLogList;
         private System.Windows.Forms.ToolStripMenuItem menuLogCopy;
-        private System.Windows.Forms.Button buttonMiniParseCopyActXiv;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TextBox textMiniParseSortKey;
         private System.Windows.Forms.Label label4;
@@ -540,7 +599,6 @@
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabPage tabPage2;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel4;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label label9;
@@ -569,5 +627,13 @@
         private System.Windows.Forms.ToolStripMenuItem menuCopyLogAll;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem2;
         private System.Windows.Forms.ToolStripMenuItem menuClearLog;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
+        private System.Windows.Forms.Button buttonMiniParseReloadBrowser;
+        private System.Windows.Forms.Button buttonMiniParseCopyActXiv;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.NumericUpDown numWidth;
+        private System.Windows.Forms.NumericUpDown numHeight;
     }
 }

@@ -227,7 +227,6 @@ namespace RainbowMage.OverlayPlugin
             try
             {
                 Config.MiniParseOverlay.Position = this.MiniParseOverlay.Overlay.Location;
-                Config.MiniParseOverlay.Size = this.MiniParseOverlay.Overlay.Size;
                 Config.SpellTimerOverlay.Position = this.SpellTimerOverlay.Overlay.Location;
                 Config.SpellTimerOverlay.Size = this.SpellTimerOverlay.Overlay.Size;
 

@@ -65,6 +65,8 @@ namespace RainbowMage.OverlayPlugin
             this.comboMiniParseSortType.SelectedValue = config.MiniParseOverlay.SortType;
             this.comboMiniParseSortType.SelectedIndexChanged += comboSortType_SelectedIndexChanged;
             this.nudMiniParseMaxFrameRate.Value = config.MiniParseOverlay.MaxFrameRate;
+            this.numHeight.Value = config.MiniParseOverlay.Size.Height;
+            this.numWidth.Value = config.MiniParseOverlay.Size.Width;
         }
 
         private void SetupSpellTimerTab()
@@ -117,6 +119,14 @@ namespace RainbowMage.OverlayPlugin
                 this.InvokeIfRequired(() =>
                 {
                     this.nudMiniParseMaxFrameRate.Value = e.NewFrameRate;
+                });
+            };
+            this.config.MiniParseOverlay.OverlaySizeChanged += (o, e) =>
+            {
+                this.InvokeIfRequired(() =>
+                {
+                    this.numWidth.Value = e.NewSize.Width;
+                    this.numHeight.Value = e.NewSize.Height;
                 });
             };
         }
@@ -236,6 +246,16 @@ namespace RainbowMage.OverlayPlugin
         private void nudMiniParseMaxFrameRate_ValueChanged(object sender, EventArgs e)
         {
             this.config.MiniParseOverlay.MaxFrameRate = (int)nudMiniParseMaxFrameRate.Value;
+        }
+
+        private void numWidth_ValueChanged(object sender, EventArgs e)
+        {
+            this.config.MiniParseOverlay.Size = new Size((int)numWidth.Value, this.config.MiniParseOverlay.Size.Height);
+        }
+
+        private void numHeight_ValueChanged(object sender, EventArgs e)
+        {
+            this.config.MiniParseOverlay.Size = new Size(this.config.MiniParseOverlay.Size.Width, (int)numHeight.Value);
         }
 
         private void checkSpellTimerVisible_CheckedChanged(object sender, EventArgs e)
