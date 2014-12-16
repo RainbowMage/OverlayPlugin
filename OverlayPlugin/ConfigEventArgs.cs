@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -57,6 +58,16 @@ namespace RainbowMage.OverlayPlugin
         public MaxFrameRateChangedEventArgs(int frameRate)
         {
             this.NewFrameRate = frameRate;
+        }
+    }
+
+    public class OverlaySizeChangedEventArgs : EventArgs
+    {
+        public Size NewSize { get; private set; }
+
+        public OverlaySizeChangedEventArgs(Size size)
+        {
+            this.NewSize = size;
         }
     }
 }
