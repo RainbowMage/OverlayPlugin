@@ -15,7 +15,7 @@ Then you can find plugin file named `OverlayPlugin.dll` in the `Build` folder.
 ## How to use
 
 * To use this plugin, add `OverlayPlugin.dll` file as ACT plugin.
-* To resize overlay, drag the right-corner of the overlay.
+* To resize overlay, drag the bottom-right corner of the overlay.
 * To configure overlay, you can edit property using control panel under the "OverlayPlugin.dll" plugin tab.
 * You can customize overlay display and behaviour by modifing HTML file in the `resources` folder.
 
