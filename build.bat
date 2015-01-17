@@ -13,7 +13,7 @@ if not exist %DOTNET_PATH% (
 )
 
 
-%DOTNET_PATH%\msbuild /t:Rebuild /p:Configuration=Release /p:OutputPath=%~dp0\Build %~dp0\OverlayPlugin.sln
+%DOTNET_PATH%\msbuild /t:Rebuild /p:Configuration=Release /p:OutputPath="%~dp0\Build" "%~dp0\OverlayPlugin.sln"
 
 
 :END
