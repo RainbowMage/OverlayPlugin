@@ -131,16 +131,58 @@ namespace RainbowMage.OverlayPlugin
 
         public const int DIB_RGB_COLORS = 0x0000;
 
-        [DllImport("user32.dll")]
+        [DllImport("user32.dll", EntryPoint = "SetWindowLong", SetLastError = true)]
         public static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
 
-        [DllImport("user32.dll")]
+        [DllImport("user32.dll", EntryPoint = "GetWindowLong", SetLastError = true)]
         public static extern int GetWindowLong(IntPtr hWnd, int nIndex);
 
         public const int GWL_EXSTYLE = -20;
         public const int WS_EX_TRANSPARENT = 0x00000020;
+        public const int WS_EX_TOOLWINDOW = 0x00000080;
 
         [DllImport("kernel32")]
         public static extern void CopyMemory(IntPtr dest, IntPtr src, uint count);
+
+
+        // For hide from ALT+TAB preview
+
+        [DllImport("user32.dll", EntryPoint = "SetWindowLongPtr", SetLastError = true)]
+        public static extern IntPtr SetWindowLongPtr(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
+
+        [DllImport("kernel32.dll", EntryPoint = "SetLastError")]
+        public static extern void SetLastError(int dwErrorCode);
+
+        private static int ToIntPtr32(IntPtr intPtr)
+        {
+            return unchecked((int)intPtr.ToInt64());
+        }
+
+        public static IntPtr SetWindowLongA(IntPtr hWnd, int nIndex, IntPtr dwNewLong)
+        {
+            int error = 0;
+            IntPtr result = IntPtr.Zero;
+
+            SetLastError(0);
+
+            if (IntPtr.Size == 4)
+            {
+                Int32 result32 = SetWindowLong(hWnd, nIndex, ToIntPtr32(dwNewLong));
+                error = Marshal.GetLastWin32Error();
+                result = new IntPtr(result32);
+            }
+            else
+            {
+                result = SetWindowLongPtr(hWnd, nIndex, dwNewLong);
+                error = Marshal.GetLastWin32Error();
+            }
+
+            if ((result == IntPtr.Zero) && (error != 0))
+            {
+                throw new System.ComponentModel.Win32Exception(error);
+            }
+
+            return result;
+        }
     }
 }

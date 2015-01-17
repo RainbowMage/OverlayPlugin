@@ -15,6 +15,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Files", "Files", "{84CCF15D
 		full.exclude = full.exclude
 		LICENSE.txt = LICENSE.txt
 		PS-Zip.psm1 = PS-Zip.psm1
+		README-en.md = README-en.md
 		README.md = README.md
 	EndProjectSection
 EndProject
