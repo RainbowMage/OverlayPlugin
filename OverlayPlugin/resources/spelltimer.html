@@ -407,6 +407,10 @@
 
                 var percentage = Math.max(0, Math.min(1, this.spellTimer.getRemaining() / this.spellTimer.startCount)) * 100;
                 barDiv.style.width = percentage.toFixed(2) + "%";
+                
+                setTimeout(function(barDiv) {
+                  barDiv.style.backgroundColor = "#FF0000";
+                }, Math.max(0, (this.spellTimer.getRemaining() - this.spellTimer.warningCount) * 1000), barDiv);
 
                 $(barDiv).animate(
                     { width: "0%" },
