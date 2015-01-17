@@ -67,6 +67,8 @@ namespace RainbowMage.OverlayPlugin
             this.Renderer.Render += renderer_Render;
 
             this.url = url;
+
+            Util.Hide(this);
         }
 
         public void Reload()
