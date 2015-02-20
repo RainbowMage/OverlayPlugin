@@ -1,0 +1,10 @@
+Release version 2.4.0.ezs.2015_02_20
+
+uses 2.4.0 as the base and adds:
+
+CTRL+M and CTRL+S windows keyboard hooks to toggle miniparse and spell timer windows regardless of whether or not ACT has focus.
+
+Adds Momokotomoko's custom miniparse and custom Icons
+
+Compiled using Visual Studio 2013 on February 20th, 2015
+No guarantees on using this, it didn't make my computer explode or burst into flame and its unlikely to do that to yours, but no guarantees are given or implied by use of this plugin.
