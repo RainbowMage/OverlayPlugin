@@ -45,7 +45,8 @@ namespace RainbowMage.OverlayPlugin
         {
             try
             {
-                this.Overlay = new OverlayForm("about:blank", this.Config.MaxFrameRate);
+                this.Overlay = new OverlayForm("about:blank", this.Config.MaxFrameRate, this.Name);
+                this.Overlay.OnHotkeyPressed += Overlay_OnHotkeyPressed;
 
                 // 画面外にウィンドウがある場合は、初期表示位置をシステムに設定させる
                 if (!Util.IsOnScreen(this.Overlay))
@@ -81,6 +82,33 @@ namespace RainbowMage.OverlayPlugin
             catch (Exception ex)
             {
                 Log(LogLevel.Error, "InitializeOverlay: {0}", this.Name, ex);
+            }
+        }
+
+        void Overlay_OnHotkeyPressed(string FormName, ModifierKeys ModifierKeys, Keys Keys)
+        {
+            switch (FormName)
+            {
+                case MiniParseOverlay.FormName:
+                    if (ModifierKeys == OverlayPlugin.ModifierKeys.Control && Keys == System.Windows.Forms.Keys.M)
+                    {
+                        this.Config.IsVisible = !this.Config.IsVisible;
+                    }
+                    break;
+                case SpellTimerOverlay.FormName:
+                    if (ModifierKeys == OverlayPlugin.ModifierKeys.Control && Keys == System.Windows.Forms.Keys.S)
+                    {
+                        this.Config.IsVisible = !this.Config.IsVisible;
+                    }
+                    break;
+            }
+            if (this.Config.IsVisible)
+            {
+                this.Overlay.Show();
+            }
+            else
+            {
+                this.Overlay.Hide();
             }
         }
 

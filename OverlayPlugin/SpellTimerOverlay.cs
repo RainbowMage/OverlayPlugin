@@ -16,9 +16,9 @@ namespace RainbowMage.OverlayPlugin
             new DataContractJsonSerializer(typeof(List<SerializableTimerFrameEntry>));
 
         IList<SerializableTimerFrameEntry> activatedTimers;
-
+        public const string FormName = "SpellTimerOverlay";
         public SpellTimerOverlay(OverlayConfig config)
-            : base(config, "SpellTimerOverlay")
+            : base(config, FormName)
         {
             this.activatedTimers = new List<SerializableTimerFrameEntry>();
 
