@@ -697,6 +697,13 @@
             instance.
             </summary>
         </member>
+        <member name="M:Xilium.CefGlue.CefBrowserHost.GetNavigationEntries(Xilium.CefGlue.CefNavigationEntryVisitor,System.Boolean)">
+            <summary>
+            Retrieve a snapshot of current navigation entries as values sent to the
+            specified visitor. If |current_only| is true only the current navigation
+            entry will be sent, otherwise all navigation entries will be sent.
+            </summary>
+        </member>
         <member name="M:Xilium.CefGlue.CefBrowserHost.SetMouseCursorChangeDisabled(System.Boolean)">
             <summary>
             Set whether mouse cursor change is disabled.
@@ -706,6 +713,11 @@
             <summary>
             If a misspelled word is currently selected in an editable node calling
             this method will replace it with the specified |word|.
+            </summary>
+        </member>
+        <member name="M:Xilium.CefGlue.CefBrowserHost.AddWordToDictionary(System.String)">
+            <summary>
+            Add the specified |word| to the spelling dictionary.
             </summary>
         </member>
         <member name="M:Xilium.CefGlue.CefBrowserHost.WasResized">
@@ -774,6 +786,12 @@
         <member name="M:Xilium.CefGlue.CefBrowserHost.SendCaptureLostEvent">
             <summary>
             Send a capture lost event to the browser.
+            </summary>
+        </member>
+        <member name="M:Xilium.CefGlue.CefBrowserHost.NotifyMoveOrResizeStarted">
+            <summary>
+            Notify the browser that the window hosting it is about to be moved or
+            resized. This method is only used on Windows and Linux.
             </summary>
         </member>
         <member name="M:Xilium.CefGlue.CefBrowserHost.GetNSTextInputContext">
@@ -2983,6 +3001,84 @@
             Returns the number of items in this menu.
             </summary>
         </member>
+        <member name="T:Xilium.CefGlue.CefNavigationEntry">
+            <summary>
+            Class used to represent an entry in navigation history.
+            </summary>
+        </member>
+        <member name="P:Xilium.CefGlue.CefNavigationEntry.IsValid">
+            <summary>
+            Returns true if this object is valid. Do not call any other methods if this
+            function returns false.
+            </summary>
+        </member>
+        <member name="P:Xilium.CefGlue.CefNavigationEntry.Url">
+            <summary>
+            Returns the actual URL of the page. For some pages this may be data: URL or
+            similar. Use GetDisplayURL() to return a display-friendly version.
+            </summary>
+        </member>
+        <member name="P:Xilium.CefGlue.CefNavigationEntry.GetDisplayUrl">
+            <summary>
+            Returns a display-friendly version of the URL.
+            </summary>
+        </member>
+        <member name="P:Xilium.CefGlue.CefNavigationEntry.OriginalUrl">
+            <summary>
+            Returns the original URL that was entered by the user before any redirects.
+            </summary>
+        </member>
+        <member name="P:Xilium.CefGlue.CefNavigationEntry.Title">
+            <summary>
+            Returns the title set by the page. This value may be empty.
+            </summary>
+        </member>
+        <member name="P:Xilium.CefGlue.CefNavigationEntry.TransitionType">
+            <summary>
+            Returns the transition type which indicates what the user did to move to
+            this page from the previous page.
+            </summary>
+        </member>
+        <member name="P:Xilium.CefGlue.CefNavigationEntry.HasPostData">
+            <summary>
+            Returns true if this navigation includes post data.
+            </summary>
+        </member>
+        <member name="P:Xilium.CefGlue.CefNavigationEntry.FrameName">
+            <summary>
+            Returns the name of the sub-frame that navigated or an empty value if the
+            main frame navigated.
+            </summary>
+        </member>
+        <member name="P:Xilium.CefGlue.CefNavigationEntry.CompletionTime">
+            <summary>
+            Returns the time for the last known successful navigation completion. A
+            navigation may be completed more than once if the page is reloaded. May be
+            0 if the navigation has not yet completed.
+            </summary>
+        </member>
+        <member name="P:Xilium.CefGlue.CefNavigationEntry.HttpStatusCode">
+            <summary>
+            Returns the HTTP status code for the last known successful navigation
+            response. May be 0 if the response has not yet been received or if the
+            navigation has not yet completed.
+            </summary>
+        </member>
+        <member name="T:Xilium.CefGlue.CefNavigationEntryVisitor">
+            <summary>
+            Callback interface for CefBrowserHost::GetNavigationEntries. The methods of
+            this class will be called on the browser process UI thread.
+            </summary>
+        </member>
+        <member name="M:Xilium.CefGlue.CefNavigationEntryVisitor.Visit(Xilium.CefGlue.CefNavigationEntry,System.Boolean,System.Int32,System.Int32)">
+            <summary>
+            Method that will be executed. Do not keep a reference to |entry| outside of
+            this callback. Return true to continue visiting entries or false to stop.
+            |current| is true if this entry is the currently loaded navigation entry.
+            |index| is the 0-based index of this entry and |total| is the total number
+            of entries.
+            </summary>
+        </member>
         <member name="T:Xilium.CefGlue.CefPostData">
             <summary>
             Class used to represent post data for a web request. The methods of this
@@ -3403,13 +3499,14 @@
             Called when an element should be painted. |type| indicates whether the
             element is the view or the popup widget. |buffer| contains the pixel data
             for the whole image. |dirtyRects| contains the set of rectangles that need
-            to be repainted. On Windows |buffer| will be |width|*|height|*4 bytes
-            in size and represents a BGRA image with an upper-left origin.
+            to be repainted. |buffer| will be |width|*|height|*4 bytes in size and
+            represents a BGRA image with an upper-left origin.
             </summary>
         </member>
-        <member name="M:Xilium.CefGlue.CefRenderHandler.OnCursorChange(Xilium.CefGlue.CefBrowser,System.IntPtr)">
+        <member name="M:Xilium.CefGlue.CefRenderHandler.OnCursorChange(Xilium.CefGlue.CefBrowser,System.IntPtr,Xilium.CefGlue.CefCursorType,Xilium.CefGlue.CefCursorInfo)">
             <summary>
-            Called when the browser window's cursor has changed.
+            Called when the browser's cursor has changed. If |type| is CT_CUSTOM then
+            |custom_cursor_info| will be populated with the custom cursor information.
             </summary>
         </member>
         <member name="M:Xilium.CefGlue.CefRenderHandler.StartDragging(Xilium.CefGlue.CefBrowser,Xilium.CefGlue.CefDragData,Xilium.CefGlue.CefDragOperationsMask,System.Int32,System.Int32)">
@@ -5188,6 +5285,11 @@
             Returns true if at end of the file contents.
             </summary>
         </member>
+        <member name="T:Xilium.CefGlue.CefCursorType">
+            <summary>
+            Cursor type values.
+            </summary>
+        </member>
         <member name="T:Xilium.CefGlue.CefDuplexMode">
             <summary>
             Print job duplex mode values.
@@ -6279,6 +6381,13 @@
             <summary>
             True if the focus is currently on an editable field on the page. This is
             useful for determining if standard key events should be intercepted.
+            </summary>
+        </member>
+        <member name="T:Xilium.CefGlue.CefCursorInfo">
+            <summary>
+            Structure representing cursor information. |buffer| will be
+            |size.width|*|size.height|*4 bytes in size and represents a BGRA image with
+            an upper-left origin.
             </summary>
         </member>
         <member name="T:Xilium.CefGlue.CefSettings">
