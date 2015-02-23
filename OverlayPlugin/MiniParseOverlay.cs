@@ -15,9 +15,9 @@ namespace RainbowMage.OverlayPlugin
         private string prevEncounterId { get; set; }
         private DateTime prevEndDateTime { get; set; }
         private bool prevEncounterActive { get; set; }
-
+        public const string FormName = "MiniParseOverlay";
         public MiniParseOverlay(MiniParseOverlayConfig config)
-            : base(config, "MiniParseOverlay")
+            : base(config, FormName)
         {
         }
 
