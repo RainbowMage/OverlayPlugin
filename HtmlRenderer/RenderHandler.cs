@@ -56,8 +56,9 @@ namespace RainbowMage.HtmlRenderer
             renderer.OnPaint(browser, buffer, width, height, dirtyRects);
         }
 
-        protected override void OnCursorChange(CefBrowser browser, IntPtr cursorHandle)
+        protected override void OnCursorChange(CefBrowser browser, IntPtr cursorHandle, CefCursorType type, CefCursorInfo customCursorInfo)
         {
+
         }
 
         protected override void OnScrollOffsetChanged(CefBrowser browser)
