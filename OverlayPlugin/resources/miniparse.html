@@ -62,8 +62,9 @@
         #combatantTableBody img {
             height: 20px;
             /* エンカウント情報とテーブルヘッダ内のテキストの設定 */
-            #encounter, #combatantTableHeader *;
-
+        }
+        
+        #encounter, #combatantTableHeader *
         {
             color: #DED7BE;
             text-shadow: -1px 0 2px #795516, 0 1px 2px #795516, 1px 0 2px #795516, 0 -1px 2px #795516;
@@ -345,20 +346,17 @@
 
     </script>
 </head>
-<div id="wrapper">
     <body>
+        <div id="wrapper">
+            <div id="encounter">
+                No data to show.
+                <!-- ここにエンカウント情報が入る -->
+            </div>
 
-        <div id="encounter">
-            No data to show.
-            <!-- ここにエンカウント情報が入る -->
+            <table id="combatantTable">
+                <!-- ここにヘッダが入る -->
+                <!-- ここに各キャラの情報が入る -->
+            </table>
         </div>
-
-        <table id="combatantTable">
-            <!-- ここにヘッダが入る -->
-            <!-- ここに各キャラの情報が入る -->
-        </table>
-
     </body>
-    <table id="combatantTable"></table>
-</div>
 </html>

@@ -1,3 +1,12 @@
+Release version 2.5.0.ezs.2015_02_23
+
+merges in 2.5.0 (x64 support)
+
+Fixes issue with merge in of Momokotomoko's custom miniparse to fix header colorings (not sure if this was an issue with the merge or with Momokotomoko's file, probably the merge though I think the merge picked up a couple of lines wrong when it was merging the japanese comments back in.
+
+Compiled using Visual Studio 2013 on February 23rd, 2015
+No guarantees on using this, it didn't make my computer explode or burst into flame and its unlikely to do that to yours, but no guarantees are given or implied by use of this plugin.
+
 Release version 2.4.0.ezs.2015_02_20
 
 uses 2.4.0 as the base and adds:
