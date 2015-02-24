@@ -3,7 +3,6 @@
     <meta charset="utf-8" />
     <title></title>
     <style>
-
         /*
             表示設定 (1)
         */
@@ -27,14 +26,11 @@
             background-repeat: no-repeat;
             box-sizing: border-box;
             height: 100%;
-
             /* 外枠 */
             /*border: 1px solid rgba(0,0,0,0.1);*/
-            
             /* はみ出た内容はスクロールバーを表示させずに隠す
              * 今のところ、ブラウザへの入力はできないので表示させても無意味 */
             overflow: hidden;
-            
             /* 背景色 */
             background-color: transparent;
         }
@@ -50,7 +46,6 @@
             color: #E2EBF5;
             text-shadow: -1px 0 3px #217AA2, 0 1px 3px #217AA2, 1px 0 3px #217AA2, 0 -1px 3px #217AA2;
             font-weight: 300;
-
             /* はみ出たテキストを「…」で省略する */
             overflow: hidden;
             white-space: nowrap;
@@ -70,7 +65,6 @@
         #combatantTableHeader tr {
             border-bottom: 1px solid #DED7BE;
         }
-
     </style>
     <script>
 
@@ -87,7 +81,7 @@
         // };
         //
         // データの更新は 1 秒毎。
-        // 
+        //
         // プラグインから onOverlayDataUpdate イベントが発行されるので、それを受信することもできる
         // イベントハンドラの第一引数の detail プロパティ内に上記のオブジェクトが入る
         //
@@ -108,31 +102,16 @@
             //{ text: "#", width: "5%", align: "center" },
             { text: "Name", width: "25%", align: "left" },
             { text: "Job", width: "8%", align: "center" },
-<<<<<<< HEAD
-            { text: "DPS", width: "5%", align: "center", span: 1 },
-            { text: "DPS %", width: "5%", align: "center", span: 1 },
-            { text: "Hit %", width: "5%", align: "center"},
-            { text: "Crt %", width: "5%", align: "center" },
-=======
             { text: "DPS (%)", width: "18%", align: "center", span: 2 },
             { text: "HPS (%)", width: "18%", align: "center", span: 2 },
             { text: "Acc.(%)", width: "16%", align: "right" },
             { text: "Crt.(%)", width: "14%", align: "right" },
->>>>>>> origin/Icons
         ];
 
         // 表示するデータの定義
         var bodyDefine =
         [
             //{ text: rankingText, width: "5%", align: "center", effect: deadYatsuEffect },
-<<<<<<< HEAD
-            { text: "{name}", width: "10%" },
-            { html: "<img src='./icons/{JobOrName}.png' onError=\"this.onerror=null;this.src='./icons/error.png';\" />", width: "5%", align: "center" },
-            { text: "{encdps}", width: "5%", align: "center" },
-            { text: "{damage%}", width: "5%", align: "center" },
-            { text: "{tohit}", width: "5%", align: "center"},
-            { text: "{crithit%}", width: "5%", align: "center" },
-=======
             { text: "{name}", width: "25%" },
             { text: "{Job}", width: "8%", align: "center" },
             { text: "{encdps}", width: "16%", align: "right" },
@@ -141,21 +120,20 @@
             { text: "{healed%}", width: "5%", align: "right" },
             { text: "{tohit}%", width: "16%", align: "right" },
             { text: "{crithit%}", width: "14%", align: "right" },
->>>>>>> origin/Icons
         ];
 
         // 順位を表示する（text に関数を指定する例）
         // 引数:
         //  combatant : キャラクターのデータ。combatant["..."]でデータを取得できる。
         //  index : キャラクターの並び順。一番上は 0 で、その後は 1 ずつ増える。
-        // 戻り値: 
+        // 戻り値:
         //  表示するテキスト。
         //  ACT のタグは展開されないので、展開したい場合は parseActFormat 関数を使用してください。
         function rankingText(combatant, index) {
             // 1 から始まる番号を返す
             return (index + 1).toString();
         }
-        
+
         // 死亡奴を赤くする（effect の例）
         // 引数:
         //  cell : セルの DOM 要素
@@ -264,8 +242,7 @@
             for (var combatantName in data.Combatant) {
                 var combatant = data.Combatant[combatantName];
                 var tableRow = newTableBody.insertRow(newTableBody.rows.length);
-                for (var i = 0; i < bodyDefine.length; i++)
-                {
+                for (var i = 0; i < bodyDefine.length; i++) {
                     var cell = tableRow.insertCell(i);
                     // テキスト設定
                     if (typeof bodyDefine[i].text !== 'undefined') {
@@ -289,7 +266,7 @@
                     cell.style.width = bodyDefine[i].width;
                     cell.style.maxWidth = bodyDefine[i].width;
                     // 行構え設定
-                    if (typeof(bodyDefine[i].align) !== 'undefined') {
+                    if (typeof (bodyDefine[i].align) !== 'undefined') {
                         cell.style.textAlign = bodyDefine[i].align;
                     }
                     // エフェクト実行
@@ -301,7 +278,7 @@
             }
 
             // tbody が既に存在していたら置換、そうでないならテーブルに追加
-            if (oldTableBody != void(0)) {
+            if (oldTableBody != void (0)) {
                 table.replaceChild(newTableBody, oldTableBody);
             }
             else {
@@ -310,8 +287,7 @@
         }
 
         // Miniparse フォーマット文字列を解析し、表示文字列を取得する
-        function parseActFormat(str, dictionary)
-        {
+        function parseActFormat(str, dictionary) {
             var result = "";
 
             var currentIndex = 0;
@@ -341,7 +317,7 @@
                     }
                 }
             } while (currentIndex < str.length);
-            
+
             return result;
         }
 
