@@ -1,3 +1,14 @@
+Release version 2.5.1.ezs.2015_02_25
+
+Merged in pull for better english documentation
+
+Added checkbox to enable/disable global hotkeys for miniparse and spell timer windows
+
+Added textbox to click in then hit your hotkey for custom hotkeys.
+
+Compiled using Visual Studio 2013 on February 23rd, 2015
+No guarantees on using this, it didn't make my computer explode or burst into flame and its unlikely to do that to yours, but no guarantees are given or implied by use of this plugin.
+
 Release version 2.5.0.ezs.2015_02_23
 
 merges in 2.5.0 (x64 support)
