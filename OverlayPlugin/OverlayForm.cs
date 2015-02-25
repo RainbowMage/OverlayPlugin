@@ -16,12 +16,9 @@ namespace RainbowMage.OverlayPlugin
 {
     public partial class OverlayForm : Form
     {
-        public delegate void HotkeyPressedDelegate(String FormName, ModifierKeys ModifierKeys, Keys Keys);
-        public event HotkeyPressedDelegate OnHotkeyPressed;
         private DIBitmap surfaceBuffer;
         private object surfaceBufferLocker = new object();
         private int maxFrameRate;
-        private KeyboardHook hook = new KeyboardHook();
         public Renderer Renderer { get; private set; }
         public new bool IsDisposed { get; private set; }
 
@@ -58,13 +55,13 @@ namespace RainbowMage.OverlayPlugin
 
         public bool IsLoaded { get; private set; }
         private string FormName { get; set; }
-        public OverlayForm(string url, int maxFrameRate = 30, String FormName = "")
+        public OverlayForm(string url, int maxFrameRate = 30, String formName = "", bool GlobalHotkeyEnabled = false, OverlayPlugin.ModifierKeys modifierKeys = OverlayPlugin.ModifierKeys.Control, Keys key = Keys.None)
         {
             InitializeComponent();
             Renderer.Initialize();
 
             this.maxFrameRate = maxFrameRate;
-            this.FormName = FormName;
+            this.FormName = formName;
             this.Renderer = new Renderer();
             this.Renderer.Render += renderer_Render;
 
@@ -72,28 +69,6 @@ namespace RainbowMage.OverlayPlugin
 
             // Alt+Tab を押したときに表示されるプレビューから除外する
             Util.HidePreview(this);
-            Keys key;
-            switch (this.FormName)
-            {
-                case SpellTimerOverlay.FormName:
-                    key = Keys.S;
-                    break;
-                case MiniParseOverlay.FormName:
-                default:
-                    key = Keys.M;
-                    break;
-            }
-            hook.KeyPressed += new EventHandler<KeyPressedEventArgs>(hook_KeyPressed);
-            hook.RegisterHotKey(global::RainbowMage.OverlayPlugin.ModifierKeys.Control, key);
-
-        }
-
-        private void hook_KeyPressed(object sender, KeyPressedEventArgs e)
-        {
-            if (OnHotkeyPressed != null)
-            {
-                OnHotkeyPressed.Invoke(this.FormName, e.Modifier, e.Key);
-            }
         }
 
         public void Reload()
@@ -309,7 +284,6 @@ namespace RainbowMage.OverlayPlugin
                     this.surfaceBuffer.Dispose();
                 }
             }
-
             this.IsDisposed = true;
         }
 
