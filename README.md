@@ -1,59 +1,63 @@
 # OverlayPlugin
 
-## �r���h���@
+## ビルド方法
 
-�� �����[�X�y�[�W�Ńr���h�ς݂̃o�C�i����z�z���Ă��܂��̂ŁA�ʓ|�ȕ��͂���������g�����������B
+※ リリースページでビルド済みのバイナリを配布していますので、面倒な方はそちらをお使いください。
 
-�菇:
+手順:
 
-* .NET Framework 4.5.1 ���C���X�g�[�����܂�
-* Microsoft Build Tools 2013 (http://www.microsoft.com/ja-jp/download/details.aspx?id=40760) ���C���X�g�[�����܂��iVisual Studio 2013 ���C���X�g�[������Ă���ꍇ�͕s�v�j
-* �\�[�X�R�[�h�ꎮ���`�F�b�N�A�E�g�A�܂��� ZIP �t�@�C���Ń_�E�����[�h���ĉ𓀂��܂�
-* Thirdparty �t�H���_�̒��ɂ��� ACT �t�H���_�ɁAACT �̎��s�t�@�C���iAdvanced Combat Tracker.exe�j���R�s�[���܂�
-* build.bat �����s���܂�
+* .NET Framework 4.5.1 をインストールします
+* Microsoft Build Tools 2013 (http://www.microsoft.com/ja-jp/download/details.aspx?id=40760) をインストールします（Visual Studio 2013 がインストールされている場合は不要）
+* ソースコード一式をチェックアウト、または ZIP ファイルでダウンロードして解凍します
+* Thirdparty フォルダの中にある ACT フォルダに、ACT の実行ファイル（Advanced Combat Tracker.exe）をコピーします
+* build.bat を実行します
 
-���܂������΁ABuild �t�H���_�̒��Ƀv���O�C������������܂��B
+うまくいけば、Build フォルダの中にプラグインが生成されます。
 
-## �g�p���@
+## 使用方法
 
-OverlayPlugin.dll ���v���O�C���Ƃ��� ACT �ɒǉ����܂��B
-OverlayPlugin.dll �P�̂𔲂��o���Ă̎g�p�͂ł��܂���B���̃t�H���_�Ɉڂ������Ƃ��́A�ق��̑S�Ẵt�@�C���ƈꏏ�Ɉړ������Ă��������B
+OverlayPlugin.dll をプラグインとして ACT に追加します。
+OverlayPlugin.dll 単体を抜き出しての使用はできません。他のフォルダに移したいときは、ほかの全てのファイルと一緒に移動させてください。
 
-�ǉ�����ƁA�uNo data to show�v�A�܂��� DPS ���\�����ꂽ�E�B���h�E���\������܂��B
-�񓧉ߕ������h���b�O����ƈړ��ł��A�E���̃n���h�����h���b�O����ƃT�C�Y�̕ύX���ł��܂��B
+追加すると、「No data to show」、または DPS が表示されたウィンドウが表示されます。
+非透過部分をドラッグすると移動でき、右下のハンドルをドラッグするとサイズの変更ができます。
 
-ACT �̃v���O�C���^�u�ɂ���uOverlayPlugin.dll�v�^�u�ŁA�\���̐؂�ւ���}�E�X�N���b�N�̓��߁A�\������t�@�C���̐ݒ�Ȃǂ��ł��܂��B
+ACT のプラグインタブにある「OverlayPlugin.dll」タブで、表示の切り替えやマウスクリックの透過、表示するファイルの設定などができます。
 
-## �g���u���V���[�e�B���O
+## トラブルシューティング
 
-�I�[�o�[���C�E�B���h�E�Ȃǂ��\������Ȃ��ꍇ�́A�uPlugins�v�^�u�ɂ���uOverlayPlugin.dll�v�^�u���̉����ɂ��郍�O�̃��b�Z�[�W���悭�m�F���Ă��������B
+オーバーレイウィンドウなどが表示されない場合は、「Plugins」タブにある「OverlayPlugin.dll」タブ内の下部にあるログのメッセージをよく確認してください。
 
-### `Error: AssemblyResolve: => System.NotSupportedException: �l�b�g���[�N��̏ꏊ����i�ȉ����j` �Ƃ������O���\�������
+### `Error: AssemblyResolve: => System.NotSupportedException: ネットワーク上の場所から（以下略）` というログが表示される
 
-�C���^�[�l�b�g����_�E�����[�h����ZIP�t�@�C�����E�B���h�E�Y�W����ZIP�W�J�@�\���g�p����ƁA�M���ł��Ȃ��t�@�C���Ƃ��ăt�@�C���Ƀt���O���t�^����邱�Ƃ�����܂��B
+インターネットからダウンロードしたZIPファイルをウィンドウズ標準のZIP展開機能を使用すると、信頼できないファイルとしてファイルにフラグが付与されることがあります。
 
-���̃t���O�����Ă���ꍇ�A���̐M���ł��Ȃ����s�t�@�C����DLL��ǂݍ��ނ��Ƃ��ł����A��L�̃G���[���������邱�Ƃ�����܂��B
+このフラグがついている場合、他の信頼できない実行ファイルやDLLを読み込むことができず、上記のエラーが発生することがあります。
 
-�G�N�X�v���[���[�Ńt�@�C�����E�N���b�N���ăv���p�e�B��I�����A�����ɂ���u�u���b�N�̉����v�{�^�����������Ƃł��̃t���O���������邱�Ƃ��ł��܂��̂ŁA���ׂĂ� DLL �t�@�C���̃t���O���������Ă��������B
+エクスプローラーでファイルを右クリックしてプロパティを選択し、下部にある「ブロックの解除」ボタンを押すことでこのフラグを解除することができますので、すべての DLL ファイルのフラグを解除してください。
 
-�܂��A�l�b�g���[�N�h���C�u���g�p���Ă���ꍇ�ɂ��A���̃G���[���o��\��������܂��B���[�J���h���C�u�Ƀt�@�C�����ڂ��Ă���g�p���Ă��������B
+また、ネットワークドライブを使用している場合にも、このエラーが出る可能性があります。ローカルドライブにファイルを移してから使用してください。
 
-### `Error: AssemblyResolve: => System.IO.FileNotFoundException: �w�肳�ꂽ�t�@�C�����i�ȉ����j` �Ƃ������O���\�������
+### `Error: AssemblyResolve: => System.IO.FileNotFoundException: 指定されたファイルが（以下略）` というログが表示される
 
-�v���O�C��������DLL�Ɠ����ꏊ�ɁA�K�v��DLL���z�u����Ă��܂���B
+プラグインがあるDLLと同じ場所に、必要なDLLが配置されていません。
 
-�g�p���@�ɂ������Ă���悤�ɁAOverlayPlugin.dll �P�̂�ʂ̏ꏊ�ɃR�s�[���Ďg�p���邱�Ƃ͂ł��܂���B�ړ�������ꍇ�͑��̃t�@�C���ƈꏏ�Ɉړ������Ă��������B
+使用方法にも書いているように、OverlayPlugin.dll 単体を別の場所にコピーして使用することはできません。移動させる場合は他のファイルと一緒に移動させてください。
 
-### ���̊Ԃɂ��őO�ʂ���Ȃ��Ȃ��Ă���
+### いつの間にか最前面じゃなくなっている
 
-�����炭�E�B���h�E�Y�̎d�l�ł��B��x��\���ɂ��čēx�\��������ƒ���܂��B
+おそらくウィンドウズの仕様です。一度非表示にして再度表示させると直ります。
 
-## �J�X�^�}�C�Y
+## カスタマイズ
 
-�v���O�C�����z�u����Ă���t�H���_�ɂ��� resources �t�H���_�̒��́Adefault.html ��ҏW���邱�ƂŃJ�X�^�}�C�Y���ł��܂��B 
+プラグインが配置されているフォルダにある resources フォルダの中の、default.html を編集することでカスタマイズができます。 
 
-JavaScript �� HTML �Ɋւ����b�I�Ȓm��������ΕҏW�ł���Ǝv���܂��B
+JavaScript と HTML に関する基礎的な知識があれば編集できると思います。
 
-## ���C�Z���X
+## ライセンス
 
-MIT ���C�Z���X�ł��B�ڍׂ� LICENSE.txt ���Q�Ƃ��Ă��������B
+MIT ライセンスです。詳細は LICENSE.txt を参照してください。
+
+## Other Languages:
+
+* [English (EN)](../master/README-en.md)
