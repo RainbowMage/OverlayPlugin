@@ -104,6 +104,10 @@
     <Compile Include="Util.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="resources\elizar2006_miniparse.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="resources\elizar2006_miniparse.jpg" />
     <Content Include="resources\icons\Acn.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -185,7 +189,8 @@
     <Content Include="resources\icons\Whm.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="resources\miniparse.html">
+    <Content Include="resources\miniparse.html" />
+    <Content Include="resources\momokotomoko_miniparse.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="resources\handle.png">
@@ -194,9 +199,14 @@
     <Content Include="resources\jquery-2.1.1.min.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="resources\momokotomoko_miniparse.jpg" />
     <Content Include="resources\spelltimer.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="resources\tristoune_miniparse.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="resources\tristoune_miniparse.jpg" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ControlPanel.ja-JP.resx">
