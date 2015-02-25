@@ -64,6 +64,9 @@ namespace RainbowMage.OverlayPlugin
             this.comboMiniParseSortType.DataSource = sortTypeDict;
             this.comboMiniParseSortType.SelectedValue = config.MiniParseOverlay.SortType;
             this.comboMiniParseSortType.SelectedIndexChanged += comboSortType_SelectedIndexChanged;
+            this.checkEnableGlobalHotkey.Checked = config.MiniParseOverlay.GlobalHotkeyEnabled;
+            this.textGlobalHotkey.Enabled = this.checkEnableGlobalHotkey.Checked;
+            this.textGlobalHotkey.Text = GetHotkeyString(config.MiniParseOverlay.GlobalHotkeyModifiers, config.MiniParseOverlay.GlobalHotkey);
             this.nudMiniParseMaxFrameRate.Value = config.MiniParseOverlay.MaxFrameRate;
         }
 
@@ -72,6 +75,9 @@ namespace RainbowMage.OverlayPlugin
             this.checkSpellTimerVisible.Checked = config.SpellTimerOverlay.IsVisible;
             this.checkSpellTimerClickThru.Checked = config.SpellTimerOverlay.IsClickThru;
             this.textSpellTimerUrl.Text = config.SpellTimerOverlay.Url;
+            this.checkSpellTimerEnableGlobalHotkey.Checked = config.SpellTimerOverlay.GlobalHotkeyEnabled;
+            this.textSpellTimerGlobalHotkey.Enabled = this.checkSpellTimerEnableGlobalHotkey.Checked;
+            this.textSpellTimerGlobalHotkey.Text = GetHotkeyString(config.SpellTimerOverlay.GlobalHotkeyModifiers, config.SpellTimerOverlay.GlobalHotkey);
             this.nudSpellTimerMaxFrameRate.Value = config.SpellTimerOverlay.MaxFrameRate;
         }
 
@@ -112,6 +118,28 @@ namespace RainbowMage.OverlayPlugin
                     this.comboMiniParseSortType.SelectedValue = e.NewSortType;
                 });
             };
+            this.config.MiniParseOverlay.GlobalHotkeyEnabledChanged += (o, e) =>
+            {
+                this.InvokeIfRequired(() =>
+                {
+                    this.checkEnableGlobalHotkey.Checked = e.NewGlobalHotkeyEnabled;
+                    this.textGlobalHotkey.Enabled = this.checkEnableGlobalHotkey.Checked;
+                });
+            };
+            this.config.MiniParseOverlay.GlobalHotkeyChanged += (o, e) =>
+            {
+                this.InvokeIfRequired(() =>
+                {
+                    this.textGlobalHotkey.Text = GetHotkeyString(this.config.MiniParseOverlay.GlobalHotkeyModifiers, e.NewHotkey);
+                });
+            };
+            this.config.MiniParseOverlay.GlobalHotkeyModifiersChanged += (o, e) =>
+            {
+                this.InvokeIfRequired(() =>
+                {
+                    this.textGlobalHotkey.Text = GetHotkeyString(e.NewHotkey, this.config.MiniParseOverlay.GlobalHotkey);
+                });
+            };
             this.config.MiniParseOverlay.MaxFrameRateChanged += (o, e) =>
             {
                 this.InvokeIfRequired(() =>
@@ -142,6 +170,28 @@ namespace RainbowMage.OverlayPlugin
                 this.InvokeIfRequired(() =>
                 {
                     this.textSpellTimerUrl.Text = e.NewUrl;
+                });
+            };
+            this.config.SpellTimerOverlay.GlobalHotkeyEnabledChanged += (o, e) =>
+            {
+                this.InvokeIfRequired(() =>
+                {
+                    this.checkSpellTimerEnableGlobalHotkey.Checked = e.NewGlobalHotkeyEnabled;
+                    this.textSpellTimerGlobalHotkey.Enabled = this.checkSpellTimerEnableGlobalHotkey.Checked;
+                });
+            };
+            this.config.SpellTimerOverlay.GlobalHotkeyChanged += (o, e) =>
+            {
+                this.InvokeIfRequired(() =>
+                {
+                    this.textSpellTimerGlobalHotkey.Text = GetHotkeyString(this.config.SpellTimerOverlay.GlobalHotkeyModifiers, e.NewHotkey);
+                });
+            };
+            this.config.SpellTimerOverlay.GlobalHotkeyModifiersChanged += (o, e) =>
+            {
+                this.InvokeIfRequired(() =>
+                {
+                    this.textSpellTimerGlobalHotkey.Text = GetHotkeyString(e.NewHotkey, this.config.SpellTimerOverlay.GlobalHotkey);
                 });
             };
             this.config.SpellTimerOverlay.MaxFrameRateChanged += (o, e) =>
@@ -233,6 +283,18 @@ namespace RainbowMage.OverlayPlugin
             this.config.MiniParseOverlay.SortType = value;
         }
 
+        private void checkEnableGlobalHotkey_CheckedChanged(object sender, EventArgs e)
+        {
+            this.config.MiniParseOverlay.GlobalHotkeyEnabled = this.checkEnableGlobalHotkey.Checked;
+            this.textGlobalHotkey.Enabled = this.config.MiniParseOverlay.GlobalHotkeyEnabled;
+        }
+        private void textGlobalHotkey_KeyDown(object sender, KeyEventArgs e)
+        {
+            e.SuppressKeyPress = true;
+            var key = RemoveModifiers(e.KeyCode, e.Modifiers);
+            this.config.MiniParseOverlay.GlobalHotkey = key;
+            this.config.MiniParseOverlay.GlobalHotkeyModifiers = e.Modifiers;
+        }
         private void nudMiniParseMaxFrameRate_ValueChanged(object sender, EventArgs e)
         {
             this.config.MiniParseOverlay.MaxFrameRate = (int)nudMiniParseMaxFrameRate.Value;
@@ -262,7 +324,18 @@ namespace RainbowMage.OverlayPlugin
                 this.config.SpellTimerOverlay.Url = new Uri(ofd.FileName).ToString();
             }
         }
-
+        private void checkSpelltimerEnableGlobalHotkey_CheckedChanged(object sender, EventArgs e)
+        {
+            this.config.SpellTimerOverlay.GlobalHotkeyEnabled = this.checkSpellTimerEnableGlobalHotkey.Checked;
+            this.textSpellTimerGlobalHotkey.Enabled = this.config.SpellTimerOverlay.GlobalHotkeyEnabled;
+        }
+        private void textSpellTimerGlobalHotkey_KeyDown(object sender, KeyEventArgs e)
+        {
+            e.SuppressKeyPress = true;
+            var key = RemoveModifiers(e.KeyCode, e.Modifiers);
+            this.config.SpellTimerOverlay.GlobalHotkey = key;
+            this.config.SpellTimerOverlay.GlobalHotkeyModifiers = e.Modifiers;
+        }
         private void buttonSpellTimerCopyActXiv_Click(object sender, EventArgs e)
         {
             var json = pluginMain.SpellTimerOverlay.CreateJsonData();
@@ -334,6 +407,50 @@ namespace RainbowMage.OverlayPlugin
                 sb.AppendLine();
             }
             Clipboard.SetText(sb.ToString());
+        }
+
+        //Generates human readable keypress string
+        //人間が読めるキー押下文字列を生成します
+        private string GetHotkeyString(Keys Modifier, Keys key, String defaultText = "")
+        {
+            StringBuilder sbKeys = new StringBuilder();
+            if ((Modifier & Keys.Shift) == Keys.Shift)
+            {
+                sbKeys.Append("Shift + ");
+            }
+            if ((Modifier & Keys.Control) == Keys.Control)
+            {
+                sbKeys.Append("Ctrl + ");
+            }
+            if ((Modifier & Keys.Alt) == Keys.Alt)
+            {
+                sbKeys.Append("Alt + ");
+            }
+            if ((Modifier & Keys.LWin) == Keys.LWin || (Modifier & Keys.RWin) == Keys.RWin)
+            {
+                sbKeys.Append("Win + ");
+            }
+            sbKeys.Append(Enum.ToObject(typeof(Keys), key).ToString());
+            return sbKeys.ToString();
+        }
+
+
+
+        //Removes stray references to Left/Right shifts, etc and modifications of the actual key value caused by bitwise operations
+        //ビット単位の操作に起因する左/右シフト、などと実際のキー値の変更に浮遊の参照を削除します。
+        private Keys RemoveModifiers(Keys KeyCode, Keys Modifiers)
+        {
+            var key = KeyCode;
+            var modifiers = new List<Keys>() { Keys.ControlKey, Keys.LControlKey, Keys.Alt, Keys.ShiftKey, Keys.Shift, Keys.LShiftKey, Keys.RShiftKey, Keys.Control, Keys.LWin, Keys.RWin };
+            foreach (var mod in modifiers)
+            {
+                if (key.HasFlag(mod))
+                {
+                    if (key == mod)
+                        key &= ~mod;
+                }
+            }
+            return key;
         }
     }
 }

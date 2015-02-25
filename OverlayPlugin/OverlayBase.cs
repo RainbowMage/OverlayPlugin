@@ -13,6 +13,7 @@ namespace RainbowMage.OverlayPlugin
         where TConfig: OverlayConfig
     {
         public event EventHandler<LogEventArgs> OnLog;
+        private KeyboardHook hook = new KeyboardHook();
 
         protected System.Timers.Timer timer;
 
@@ -45,8 +46,17 @@ namespace RainbowMage.OverlayPlugin
         {
             try
             {
-                this.Overlay = new OverlayForm("about:blank", this.Config.MaxFrameRate, this.Name);
-                this.Overlay.OnHotkeyPressed += Overlay_OnHotkeyPressed;
+                this.Overlay = new OverlayForm("about:blank", this.Config.MaxFrameRate);
+                if (this.Config.GlobalHotkeyEnabled)
+                {
+                    var modifierKeys = GetModifierKey(this.Config.GlobalHotkeyModifiers);
+                    var key = this.Config.GlobalHotkey;
+                    if (key != Keys.None)
+                    {
+                        hook.KeyPressed += new EventHandler<KeyPressedEventArgs>(Overlay_OnHotkeyPressed);
+                        hook.RegisterHotKey(modifierKeys, key);
+                    }
+                }
 
                 // 画面外にウィンドウがある場合は、初期表示位置をシステムに設定させる
                 if (!Util.IsOnScreen(this.Overlay))
@@ -85,31 +95,31 @@ namespace RainbowMage.OverlayPlugin
             }
         }
 
-        void Overlay_OnHotkeyPressed(string FormName, ModifierKeys ModifierKeys, Keys Keys)
+        private ModifierKeys GetModifierKey(Keys Modifier)
         {
-            switch (FormName)
+            ModifierKeys modifiers = new ModifierKeys();
+            if ((Modifier & Keys.Shift) == Keys.Shift)
             {
-                case MiniParseOverlay.FormName:
-                    if (ModifierKeys == OverlayPlugin.ModifierKeys.Control && Keys == System.Windows.Forms.Keys.M)
-                    {
-                        this.Config.IsVisible = !this.Config.IsVisible;
-                    }
-                    break;
-                case SpellTimerOverlay.FormName:
-                    if (ModifierKeys == OverlayPlugin.ModifierKeys.Control && Keys == System.Windows.Forms.Keys.S)
-                    {
-                        this.Config.IsVisible = !this.Config.IsVisible;
-                    }
-                    break;
+                modifiers |= ModifierKeys.Shift;
             }
-            if (this.Config.IsVisible)
+            if ((Modifier & Keys.Control) == Keys.Control)
             {
-                this.Overlay.Show();
+                modifiers |= ModifierKeys.Control;
             }
-            else
+            if ((Modifier & Keys.Alt) == Keys.Alt)
             {
-                this.Overlay.Hide();
+                modifiers |= ModifierKeys.Alt;
             }
+            if ((Modifier & Keys.LWin) == Keys.LWin || (Modifier & Keys.RWin) == Keys.RWin)
+            {
+                modifiers |= ModifierKeys.Win;
+            }
+            return modifiers;
+        }
+
+        void Overlay_OnHotkeyPressed(object sender, KeyPressedEventArgs e)
+        {
+            this.Config.IsVisible = !this.Config.IsVisible;
         }
 
         private bool CheckUrl(string url)
@@ -182,6 +192,7 @@ namespace RainbowMage.OverlayPlugin
                 timer.Stop();
                 this.Overlay.Close();
                 this.Overlay.Dispose();
+                hook.Dispose();
             }
             catch (Exception ex)
             {
