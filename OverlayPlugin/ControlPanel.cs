@@ -17,27 +17,12 @@ namespace RainbowMage.OverlayPlugin
         PluginMain pluginMain;
         PluginConfig config;
 
-        static readonly List<KeyValuePair<string, MiniParseSortType>> sortTypeDict = new List<KeyValuePair<string, MiniParseSortType>>()
-        {
-            new KeyValuePair<string, MiniParseSortType>(Localization.GetText(TextItem.DoNotSort), MiniParseSortType.None),
-            new KeyValuePair<string, MiniParseSortType>(Localization.GetText(TextItem.SortStringAscending), MiniParseSortType.StringAscending),
-            new KeyValuePair<string, MiniParseSortType>(Localization.GetText(TextItem.SortStringDescending), MiniParseSortType.StringDescending),
-            new KeyValuePair<string, MiniParseSortType>(Localization.GetText(TextItem.SortNumberAscending), MiniParseSortType.NumericAscending),
-            new KeyValuePair<string, MiniParseSortType>(Localization.GetText(TextItem.SortNumberDescending), MiniParseSortType.NumericDescending)
-        };
-
         public ControlPanel(PluginMain pluginMain, PluginConfig config)
         {
             InitializeComponent();
 
             this.pluginMain = pluginMain;
             this.config = config;
-
-            SetupMiniParseConfigHandlers();
-            SetupSpellTimerConfigHandlers();
-
-            SetupMiniParseTab();
-            SetupSpellTimerTab();
 
             this.menuFollowLatestLog.Checked = this.config.FollowLatestLog;
             this.listViewLog.VirtualListSize = pluginMain.Logs.Count;
@@ -51,147 +36,43 @@ namespace RainbowMage.OverlayPlugin
                 }
                 this.listViewLog.EndUpdate();
             };
+
+            InitializeOverlayConfigTabs();
+            UpdateOverlayListView();
         }
 
-        private void SetupMiniParseTab()
+        private void InitializeOverlayConfigTabs()
         {
-            this.checkMiniParseVisible.Checked = config.MiniParseOverlay.IsVisible;
-            this.checkMiniParseClickthru.Checked = config.MiniParseOverlay.IsClickThru;
-            this.textMiniParseUrl.Text = config.MiniParseOverlay.Url;
-            this.textMiniParseSortKey.Text = config.MiniParseOverlay.SortKey;
-            this.comboMiniParseSortType.DisplayMember = "Key";
-            this.comboMiniParseSortType.ValueMember = "Value";
-            this.comboMiniParseSortType.DataSource = sortTypeDict;
-            this.comboMiniParseSortType.SelectedValue = config.MiniParseOverlay.SortType;
-            this.comboMiniParseSortType.SelectedIndexChanged += comboSortType_SelectedIndexChanged;
-            this.nudMiniParseMaxFrameRate.Value = config.MiniParseOverlay.MaxFrameRate;
-        }
-
-        private void SetupSpellTimerTab()
-        {
-            this.checkSpellTimerVisible.Checked = config.SpellTimerOverlay.IsVisible;
-            this.checkSpellTimerClickThru.Checked = config.SpellTimerOverlay.IsClickThru;
-            this.textSpellTimerUrl.Text = config.SpellTimerOverlay.Url;
-            this.nudSpellTimerMaxFrameRate.Value = config.SpellTimerOverlay.MaxFrameRate;
-        }
-
-        private void SetupMiniParseConfigHandlers()
-        {
-            this.config.MiniParseOverlay.VisibleChanged += (o, e) =>
+            foreach (var overlay in this.pluginMain.Overlays)
             {
-                this.InvokeIfRequired(() =>
-                {
-                    this.checkMiniParseVisible.Checked = e.IsVisible;
-                });
-            };
-            this.config.MiniParseOverlay.ClickThruChanged += (o, e) =>
-            {
-                this.InvokeIfRequired(() =>
-                {
-                    this.checkMiniParseClickthru.Checked = e.IsClickThru;
-                });
-            };
-            this.config.MiniParseOverlay.UrlChanged += (o, e) =>
-            {
-                this.InvokeIfRequired(() =>
-                {
-                    this.textMiniParseUrl.Text = e.NewUrl;
-                });
-            };
-            this.config.MiniParseOverlay.SortKeyChanged += (o, e) =>
-            {
-                this.InvokeIfRequired(() =>
-                {
-                    this.textMiniParseSortKey.Text = e.NewSortKey;
-                });
-            };
-            this.config.MiniParseOverlay.SortTypeChanged += (o, e) =>
-            {
-                this.InvokeIfRequired(() =>
-                {
-                    this.comboMiniParseSortType.SelectedValue = e.NewSortType;
-                });
-            };
-            this.config.MiniParseOverlay.MaxFrameRateChanged += (o, e) =>
-            {
-                this.InvokeIfRequired(() =>
-                {
-                    this.nudMiniParseMaxFrameRate.Value = e.NewFrameRate;
-                });
-            };
-        }
-
-        private void SetupSpellTimerConfigHandlers()
-        {
-            this.config.SpellTimerOverlay.VisibleChanged += (o, e) =>
-            {
-                this.InvokeIfRequired(() =>
-                {
-                    this.checkSpellTimerVisible.Checked = e.IsVisible;
-                });
-            };
-            this.config.SpellTimerOverlay.ClickThruChanged += (o, e) =>
-            {
-                this.InvokeIfRequired(() =>
-                {
-                    this.checkSpellTimerClickThru.Checked = e.IsClickThru;
-                });
-            };
-            this.config.SpellTimerOverlay.UrlChanged += (o, e) =>
-            {
-                this.InvokeIfRequired(() =>
-                {
-                    this.textSpellTimerUrl.Text = e.NewUrl;
-                });
-            };
-            this.config.SpellTimerOverlay.MaxFrameRateChanged += (o, e) =>
-            {
-                this.InvokeIfRequired(() =>
-                {
-                    this.nudSpellTimerMaxFrameRate.Value = e.NewFrameRate;
-                });
-            };
-        }
-
-        private void InvokeIfRequired(Action action)
-        {
-            if (this.InvokeRequired)
-            {
-                this.Invoke(action);
-            }
-            else
-            {
-                action();
+                AddConfigTab(overlay);
             }
         }
 
-        private void checkWindowVisible_CheckedChanged(object sender, EventArgs e)
+        private void AddConfigTab(IOverlay overlay)
         {
-            this.config.MiniParseOverlay.IsVisible = checkMiniParseVisible.Checked;
+            var tabPage = new TabPage 
+            { 
+                Name = overlay.Name,
+                Text = overlay.Name
+            };
+
+            var control = PluginMain.CreateOverlayConfigControl(overlay);
+            control.Dock = DockStyle.Fill;
+            tabPage.Controls.Add(control);
+
+            this.tabControl.TabPages.Add(tabPage);
         }
 
-        private void checkMouseClickthru_CheckedChanged(object sender, EventArgs e)
+        private void UpdateOverlayListView()
         {
-            this.config.MiniParseOverlay.IsClickThru = checkMiniParseClickthru.Checked;
-        }
-
-        private void textUrl_TextChanged(object sender, EventArgs e)
-        {
-            this.config.MiniParseOverlay.Url = textMiniParseUrl.Text;
-        }
-
-        private void buttonReloadBrowser_Click(object sender, EventArgs e)
-        {
-            pluginMain.MiniParseOverlay.Navigate(config.MiniParseOverlay.Url);
-        }
-
-        private void buttonSelectFile_Click(object sender, EventArgs e)
-        {
-            var ofd = new OpenFileDialog();
-            
-            if (ofd.ShowDialog() == DialogResult.OK)
+            this.listViewOverlay.Items.Clear();
+            foreach (var overlay in this.pluginMain.Overlays)
             {
-                this.config.MiniParseOverlay.Url = new Uri(ofd.FileName).ToString();
+                var lvi = new ListViewItem();
+                lvi.Text = overlay.Name;
+                lvi.SubItems.Add(overlay.GetType().Name);
+                this.listViewOverlay.Items.Add(lvi);
             }
         }
 
@@ -211,75 +92,6 @@ namespace RainbowMage.OverlayPlugin
                 }
                 Clipboard.SetText(sb.ToString());
             }
-        }
-
-        private void buttonCopyActXiv_Click(object sender, EventArgs e)
-        {
-            var json = pluginMain.MiniParseOverlay.CreateJsonData();
-            if (!string.IsNullOrWhiteSpace(json))
-            {
-                Clipboard.SetText("var ActXiv = " + json + ";");
-            }
-        }
-
-        private void textSortKey_TextChanged(object sender, EventArgs e)
-        {
-            this.config.MiniParseOverlay.SortKey = this.textMiniParseSortKey.Text;
-        }
-
-        private void comboSortType_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            var value = (MiniParseSortType)this.comboMiniParseSortType.SelectedValue;
-            this.config.MiniParseOverlay.SortType = value;
-        }
-
-        private void nudMiniParseMaxFrameRate_ValueChanged(object sender, EventArgs e)
-        {
-            this.config.MiniParseOverlay.MaxFrameRate = (int)nudMiniParseMaxFrameRate.Value;
-        }
-
-        private void checkSpellTimerVisible_CheckedChanged(object sender, EventArgs e)
-        {
-            this.config.SpellTimerOverlay.IsVisible = this.checkSpellTimerVisible.Checked;
-        }
-
-        private void checkSpellTimerClickThru_CheckedChanged(object sender, EventArgs e)
-        {
-            this.config.SpellTimerOverlay.IsClickThru = this.checkSpellTimerClickThru.Checked;
-        }
-
-        private void textSpellTimerUrl_TextChanged(object sender, EventArgs e)
-        {
-            this.config.SpellTimerOverlay.Url = this.textSpellTimerUrl.Text;
-        }
-
-        private void buttonSpellTimerSelectFile_Click(object sender, EventArgs e)
-        {
-            var ofd = new OpenFileDialog();
-
-            if (ofd.ShowDialog() == DialogResult.OK)
-            {
-                this.config.SpellTimerOverlay.Url = new Uri(ofd.FileName).ToString();
-            }
-        }
-
-        private void buttonSpellTimerCopyActXiv_Click(object sender, EventArgs e)
-        {
-            var json = pluginMain.SpellTimerOverlay.CreateJsonData();
-            if (!string.IsNullOrWhiteSpace(json))
-            {
-                Clipboard.SetText("var ActXiv = " + json + ";");
-            }
-        }
-
-        private void buttonSpellTimerReloadBrowser_Click(object sender, EventArgs e)
-        {
-            pluginMain.SpellTimerOverlay.Navigate(config.SpellTimerOverlay.Url);
-        }
-
-        private void nudSpellTimerMaxFrameRate_ValueChanged(object sender, EventArgs e)
-        {
-            this.config.SpellTimerOverlay.MaxFrameRate = (int)nudSpellTimerMaxFrameRate.Value;
         }
 
         private void listViewLog_RetrieveVirtualItem(object sender, RetrieveVirtualItemEventArgs e)
@@ -334,6 +146,83 @@ namespace RainbowMage.OverlayPlugin
                 sb.AppendLine();
             }
             Clipboard.SetText(sb.ToString());
+        }
+
+        private void buttonNewOverlay_Click(object sender, EventArgs e)
+        {
+            var newOverlayDialog = new NewOverlayDialog();
+            newOverlayDialog.NameValidator = (name) =>
+                {
+                    // 空もしくは空白文字のみの名前は許容しない
+                    if (string.IsNullOrWhiteSpace(name))
+                    {
+                        MessageBox.Show("Name must not be empty or white space only.");
+                        return false;
+                    }
+                    // 名前の重複も許容しない
+                    else if (config.Overlays.Where(x => x.Name == name).Any())
+                    {
+                        MessageBox.Show("Name should be unique.");
+                        return false;
+                    }
+                    else
+                    {
+                        return true;
+                    }
+                };
+
+            if (newOverlayDialog.ShowDialog(this.ParentForm) == DialogResult.OK)
+            {
+                if (newOverlayDialog.OverlayType == OverlayType.MiniParse)
+                {
+                    CreateAndRegisterOverlay<MiniParseOverlayConfig>(newOverlayDialog.OverlayName);
+                }
+                else if (newOverlayDialog.OverlayType == OverlayType.SpellTimer)
+                {
+                    CreateAndRegisterOverlay<SpellTimerOverlayConfig>(newOverlayDialog.OverlayName);
+                }
+            }
+            newOverlayDialog.Dispose();
+        }
+
+        private IOverlay CreateAndRegisterOverlay<TConfig>(string name)
+            where TConfig : OverlayConfig
+        {
+            var config = PluginMain.CreateOverlayConfig<TConfig>(name);
+            this.config.Overlays.Add(config);
+
+            var overlay = PluginMain.CreateOverlayFromConfig(config);
+            pluginMain.RegisterOverlay(overlay);
+
+            AddConfigTab(overlay);
+            UpdateOverlayListView();
+
+            return overlay;
+        }
+
+        private void buttonRemoveOverlay_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem item in listViewOverlay.SelectedItems)
+            {
+                string selectedOverlayName = item.Text;
+
+                // コンフィグ削除
+                this.config.Overlays.RemoveAll(x => x.Name == selectedOverlayName);
+
+                // 動作中のオーバーレイを停止して削除
+                var overlays = this.pluginMain.Overlays.Where(x => x.Name == selectedOverlayName);
+                foreach (var overlay in overlays)
+                {
+                    overlay.Dispose();
+                }
+                this.pluginMain.Overlays.RemoveAll(x => x.Name == selectedOverlayName);
+
+                // タブページを削除
+                this.tabControl.TabPages.RemoveByKey(selectedOverlayName);
+
+                // リストビューを更新
+                UpdateOverlayListView();
+            }
         }
     }
 }

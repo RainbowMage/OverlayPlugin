@@ -15,7 +15,7 @@ using System.Text.RegularExpressions;
 
 namespace RainbowMage.OverlayPlugin
 {
-    public class PluginMain : IActPluginV1
+    public partial class PluginMain : IActPluginV1
     {
         TabPage tabPage;
         Label label;
@@ -24,6 +24,7 @@ namespace RainbowMage.OverlayPlugin
         string pluginDirectory;
 
         internal PluginConfig Config { get; private set; }
+        internal List<IOverlay> Overlays { get; private set; }
         internal MiniParseOverlay MiniParseOverlay { get; private set; }
         internal SpellTimerOverlay SpellTimerOverlay { get; private set; }
         internal BindingList<LogEntry> Logs { get; private set; }
@@ -31,7 +32,11 @@ namespace RainbowMage.OverlayPlugin
         public PluginMain()
         {
             this.Logs = new BindingList<LogEntry>();
+        }
 
+        static PluginMain()
+        {
+            RegisterOurOverlayTypes();
         }
 
         public void InitPlugin(TabPage pluginScreenSpace, Label pluginStatusText)
@@ -43,9 +48,10 @@ namespace RainbowMage.OverlayPlugin
 
 #if DEBUG
                 Log(LogLevel.Warning, "##################################");
-                Log(LogLevel.Warning, "           DEBUG BUILD");
+                Log(LogLevel.Warning, "    THIS IS THE DEBUG BUILD");
                 Log(LogLevel.Warning, "##################################");
 #endif
+
                 this.pluginDirectory = GetPluginDirectory();
                 Log(LogLevel.Info, "InitPlugin: PluginDirectory = {0}", this.pluginDirectory);
 
@@ -54,9 +60,6 @@ namespace RainbowMage.OverlayPlugin
 
                 // コンフィグ系読み込み
                 LoadConfig();
-                this.controlPanel = new ControlPanel(this, this.Config);
-                this.controlPanel.Dock = DockStyle.Fill;
-                this.tabPage.Controls.Add(this.controlPanel);
 
                 // ACT 終了時に CEF をシャットダウン（ゾンビ化防止）
                 Application.ApplicationExit += (o, e) =>
@@ -66,12 +69,17 @@ namespace RainbowMage.OverlayPlugin
                 };
 
                 // オーバーレイ初期化
-                this.MiniParseOverlay = new OverlayPlugin.MiniParseOverlay(this.Config.MiniParseOverlay);
-                this.MiniParseOverlay.OnLog += (o, e) => Log(e.Level, e.Message);
-                this.MiniParseOverlay.Start();
-                this.SpellTimerOverlay = new OverlayPlugin.SpellTimerOverlay(this.Config.SpellTimerOverlay);
-                this.SpellTimerOverlay.OnLog += (o, e) => Log(e.Level, e.Message);
-                this.SpellTimerOverlay.Start();
+                this.Overlays = new List<IOverlay>();
+                foreach (var overlayConfig in this.Config.Overlays)
+                {
+                    var overlay = CreateOverlayFromConfig(overlayConfig);
+                    RegisterOverlay(overlay);
+                }
+
+                // コンフィグUI系初期化
+                this.controlPanel = new ControlPanel(this, this.Config);
+                this.controlPanel.Dock = DockStyle.Fill;
+                this.tabPage.Controls.Add(this.controlPanel);
 
                 // ショートカットキー設定
                 ActGlobals.oFormActMain.KeyPreview = true;
@@ -89,11 +97,28 @@ namespace RainbowMage.OverlayPlugin
             }
         }
 
+        public void RegisterOverlay(IOverlay overlay)
+        {
+            overlay.OnLog += (o, e) => Log(e.Level, e.Message);
+            overlay.Start();
+            this.Overlays.Add(overlay);
+        }
+
+        public void RemoveOverlay(IOverlay overlay)
+        {
+            overlay.Dispose();
+            this.Overlays.Remove(overlay);
+        }
+
         public void DeInitPlugin()
         {
             SaveConfig();
-            this.MiniParseOverlay.Dispose();
-            this.SpellTimerOverlay.Dispose();
+
+            foreach (var overlay in this.Overlays)
+            {
+                overlay.Dispose();
+            }
+
             ActGlobals.oFormActMain.KeyDown -= oFormActMain_KeyDown;
 
             AppDomain.CurrentDomain.AssemblyResolve -= CustomAssemblyResolve;
@@ -143,7 +168,7 @@ namespace RainbowMage.OverlayPlugin
             try
             {
                 var result = Assembly.LoadFile(path);
-                Log(LogLevel.Debug, "AssemblyResolve: => Found assembly in {0}.", path);
+                Log(LogLevel.Debug, "AssemblyResolve: => Found assembly at {0}.", path);
                 return result;
             }
             catch (FileLoadException ex)
@@ -184,14 +209,14 @@ namespace RainbowMage.OverlayPlugin
             if (e.Control && e.KeyCode == Keys.M)
             {
                 // ミニパース表示非表示
-                this.Config.MiniParseOverlay.IsVisible = !this.Config.MiniParseOverlay.IsVisible;
-                ActGlobals.oFormActMain.Activate();
+                //this.Config.MiniParseOverlayObsolete.IsVisible = !this.Config.MiniParseOverlayObsolete.IsVisible;
+                //ActGlobals.oFormActMain.Activate();
             }
             else if (e.Control && e.KeyCode == Keys.S)
             {
                 // スペルタイマー表示非表示
-                this.Config.SpellTimerOverlay.IsVisible = !this.Config.SpellTimerOverlay.IsVisible;
-                ActGlobals.oFormActMain.Activate();
+                //this.Config.SpellTimerOverlayObsolete.IsVisible = !this.Config.SpellTimerOverlayObsolete.IsVisible;
+                //ActGlobals.oFormActMain.Activate();
             }
         }
 
@@ -206,18 +231,27 @@ namespace RainbowMage.OverlayPlugin
                 Log(LogLevel.Warning, "LoadConfig: {0}", e);
                 Log(LogLevel.Info, "LoadConfig: Creating new configuration.");
                 Config = new PluginConfig();
+                Config.SetDefaultOverlayConfigs();
             }
             finally
             {
-                if (string.IsNullOrWhiteSpace(Config.MiniParseOverlay.Url))
+                if (Config.IsFirstLaunch)
                 {
-                    Config.MiniParseOverlay.Url =
-                        new Uri(Path.Combine(pluginDirectory, "resources", "miniparse.html")).ToString();
-                }
-                if (string.IsNullOrWhiteSpace(Config.SpellTimerOverlay.Url))
-                {
-                    Config.SpellTimerOverlay.Url = 
-                        new Uri(Path.Combine(pluginDirectory, "resources", "spelltimer.html")).ToString();
+                    var defaultMiniParse = Config.Overlays.FirstOrDefault(x => x.Name == PluginConfig.DefaultMiniParseOverlayName);
+                    var defaultSpellTimer = Config.Overlays.FirstOrDefault(x => x.Name == PluginConfig.DefaultSpellTimerOverlayName);
+
+                    if (defaultMiniParse != null &&
+                        string.IsNullOrWhiteSpace(defaultMiniParse.Url))
+                    {
+                        defaultMiniParse.Url =
+                            new Uri(Path.Combine(pluginDirectory, "resources", "miniparse.html")).ToString();
+                    }
+                    if (defaultSpellTimer != null &&
+                        string.IsNullOrWhiteSpace(defaultSpellTimer.Url))
+                    {
+                        defaultSpellTimer.Url =
+                            new Uri(Path.Combine(pluginDirectory, "resources", "spelltimer.html")).ToString();
+                    }
                 }
             }
         }
@@ -226,10 +260,14 @@ namespace RainbowMage.OverlayPlugin
         {
             try
             {
-                Config.MiniParseOverlay.Position = this.MiniParseOverlay.Overlay.Location;
-                Config.MiniParseOverlay.Size = this.MiniParseOverlay.Overlay.Size;
-                Config.SpellTimerOverlay.Position = this.SpellTimerOverlay.Overlay.Location;
-                Config.SpellTimerOverlay.Size = this.SpellTimerOverlay.Overlay.Size;
+                foreach (var overlay in this.Overlays)
+                {
+                    overlay.SavePositionAndSize();
+                }
+                //Config.MiniParseOverlayObsolete.Position = this.MiniParseOverlay.Overlay.Location;
+                //Config.MiniParseOverlayObsolete.Size = this.MiniParseOverlay.Overlay.Size;
+                //Config.SpellTimerOverlayObsolete.Position = this.SpellTimerOverlay.Overlay.Location;
+                //Config.SpellTimerOverlayObsolete.Size = this.SpellTimerOverlay.Overlay.Size;
 
                 Config.SaveXml(GetConfigPath());
             }

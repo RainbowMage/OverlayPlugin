@@ -10,14 +10,14 @@ using System.Windows.Forms;
 
 namespace RainbowMage.OverlayPlugin
 {
-    class MiniParseOverlay : OverlayBase<MiniParseOverlayConfig>
+    public class MiniParseOverlay : OverlayBase<MiniParseOverlayConfig>
     {
         private string prevEncounterId { get; set; }
         private DateTime prevEndDateTime { get; set; }
         private bool prevEncounterActive { get; set; }
 
         public MiniParseOverlay(MiniParseOverlayConfig config)
-            : base(config, "MiniParseOverlay")
+            : base(config, config.Name)
         {
         }
 

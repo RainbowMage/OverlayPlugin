@@ -29,6 +29,8 @@
     <PlatformTarget>x64</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <NoWarn>
+    </NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -52,7 +54,6 @@
     <Reference Include="Advanced Combat Tracker, Version=3.1.5.246, Culture=neutral, PublicKeyToken=a946b61e93d97868, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Thirdparty\ACT\Advanced Combat Tracker.exe</HintPath>
-      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -78,9 +79,22 @@
       <DependentUpon>ControlPanel.cs</DependentUpon>
     </Compile>
     <Compile Include="DIBitmap.cs" />
+    <Compile Include="IOverlay.cs" />
+    <Compile Include="MiniParseConfigPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MiniParseConfigPanel.Designer.cs">
+      <DependentUpon>MiniParseConfigPanel.cs</DependentUpon>
+    </Compile>
     <Compile Include="MiniParseOverlay.cs" />
     <Compile Include="MiniParseOverlayConfig.cs" />
     <Compile Include="NativeMethods.cs" />
+    <Compile Include="NewOverlayDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="NewOverlayDialog.Designer.cs">
+      <DependentUpon>NewOverlayDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="OverlayBase.cs" />
     <Compile Include="OverlayConfig.cs" />
     <Compile Include="OverlayForm.cs">
@@ -89,6 +103,7 @@
     <Compile Include="OverlayForm.Designer.cs">
       <DependentUpon>OverlayForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="OverlayType.cs" />
     <Compile Include="PluginConfig.cs" />
     <Compile Include="PluginMain.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -98,8 +113,15 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="SerializableTimerFrameEntry.cs" />
+    <Compile Include="SpellTimerOverlayConfig.cs" />
     <Compile Include="SpellTimerOverlay.cs" />
     <Compile Include="Localization.cs" />
+    <Compile Include="SpellTimerConfigPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="SpellTimerConfigPanel.Designer.cs">
+      <DependentUpon>SpellTimerConfigPanel.cs</DependentUpon>
+    </Compile>
     <Compile Include="Util.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -123,6 +145,15 @@
     <EmbeddedResource Include="ControlPanel.resx">
       <DependentUpon>ControlPanel.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="MiniParseConfigPanel.ja-JP.resx">
+      <DependentUpon>MiniParseConfigPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MiniParseConfigPanel.resx">
+      <DependentUpon>MiniParseConfigPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NewOverlayDialog.resx">
+      <DependentUpon>NewOverlayDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="OverlayForm.resx">
       <DependentUpon>OverlayForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -130,12 +161,25 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="SpellTimerConfigPanel.ja-JP.resx">
+      <DependentUpon>SpellTimerConfigPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SpellTimerConfigPanel.resx">
+      <DependentUpon>SpellTimerConfigPanel.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CustomControls\CustomControls.csproj">
+      <Project>{b077d118-55df-478a-993c-014e616c98cb}</Project>
+      <Name>CustomControls</Name>
+    </ProjectReference>
     <ProjectReference Include="..\HtmlRenderer\HtmlRenderer.csproj">
       <Project>{e2bc6483-b966-4a4a-b4cc-d50a4bd73af3}</Project>
       <Name>HtmlRenderer</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="PluginMain.OverlayTypeDefine.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

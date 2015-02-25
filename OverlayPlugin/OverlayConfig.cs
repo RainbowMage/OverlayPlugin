@@ -9,12 +9,21 @@ using System.Xml.Serialization;
 namespace RainbowMage.OverlayPlugin
 {
     [Serializable]
-    public class OverlayConfig
+    public abstract class OverlayConfig
     {
         public event EventHandler<VisibleStateChangedEventArgs> VisibleChanged;
         public event EventHandler<ThruStateChangedEventArgs> ClickThruChanged;
         public event EventHandler<UrlChangedEventArgs> UrlChanged;
         public event EventHandler<MaxFrameRateChangedEventArgs> MaxFrameRateChanged;
+
+        //[XmlElement("Type")]
+        //public OverlayType OverlayType { get; set; }
+
+        [XmlElement("Name")]
+        public string Name { get; set; }
+
+        [XmlElement("UpdateInterval")]
+        public int UpdateInterval { get; set; }
 
         private bool isVisible;
         [XmlElement("IsVisible")]
@@ -106,8 +115,10 @@ namespace RainbowMage.OverlayPlugin
             }
         }
 
-        public OverlayConfig()
+        public OverlayConfig(string name)
         {
+            this.Name = name;
+            this.UpdateInterval = 1000;
             this.IsVisible = true;
             this.IsClickThru = false;
             this.Position = new Point(20, 20);

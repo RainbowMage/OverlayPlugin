@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 namespace RainbowMage.OverlayPlugin
 {
-    public abstract class OverlayBase<TConfig> : IDisposable
+    public abstract class OverlayBase<TConfig> : IOverlay
         where TConfig: OverlayConfig
     {
         public event EventHandler<LogEventArgs> OnLog;
@@ -19,7 +19,7 @@ namespace RainbowMage.OverlayPlugin
         public string Name { get; private set; }
         public OverlayForm Overlay { get; private set; }
 
-        protected TConfig Config { get; private set; }
+        public TConfig Config { get; private set; }
 
         protected OverlayBase(TConfig config, string name)
         {
@@ -70,6 +70,10 @@ namespace RainbowMage.OverlayPlugin
                 this.Overlay.Renderer.BrowserConsoleLog += (o, e) =>
                 {
                     Log(LogLevel.Info, "BrowserConsole: {0} (Source: {1}, Line: {2})", e.Message, e.Source, e.Line);
+                };
+                this.Config.UrlChanged += (o, e) =>
+                {
+                    Navigate(e.NewUrl);
                 };
 
                 Navigate(this.Config.Url);
@@ -173,17 +177,6 @@ namespace RainbowMage.OverlayPlugin
             }
         }
 
-        public class LogEventArgs : EventArgs
-        {
-            public string Message { get; private set; }
-            public LogLevel Level { get; private set; }
-            public LogEventArgs(LogLevel level, string message)
-            {
-                this.Message = message;
-                this.Level = level;
-            }
-        }
-
         protected void Log(LogLevel level, string message)
         {
             if (OnLog != null)
@@ -195,6 +188,13 @@ namespace RainbowMage.OverlayPlugin
         protected void Log(LogLevel level, string format, params object[] args)
         {
             Log(level, string.Format(format, args));
+        }
+
+
+        public void SavePositionAndSize()
+        {
+            this.Config.Position = this.Overlay.Location;
+            this.Config.Size = this.Overlay.Size;
         }
     }
 }

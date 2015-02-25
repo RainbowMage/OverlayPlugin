@@ -55,10 +55,16 @@ namespace RainbowMage.OverlayPlugin
             }
         }
 
-        public MiniParseOverlayConfig()
+        public MiniParseOverlayConfig(string name) : base(name)
         {
             this.sortKey = "encdps";
             this.sortType = MiniParseSortType.NumericDescending;
+        }
+
+        // XmlSerializer用
+        private MiniParseOverlayConfig() : base(null)
+        {
+
         }
     }
 

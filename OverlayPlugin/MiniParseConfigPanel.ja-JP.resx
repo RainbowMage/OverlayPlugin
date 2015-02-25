@@ -117,9 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="tabPage1.Text" xml:space="preserve">
-    <value>ミニパース</value>
-  </data>
   <data name="label13.Text" xml:space="preserve">
     <value>※最大フレームレートの変更を有効にするためにはプラグインの再起動が必要です</value>
   </data>
@@ -141,34 +138,13 @@
   <data name="label1.Text" xml:space="preserve">
     <value>表示するURL</value>
   </data>
+  <data name="label7.Text" xml:space="preserve">
+    <value>トグルキー</value>
+  </data>
   <data name="buttonMiniParseReloadBrowser.Text" xml:space="preserve">
     <value>オーバーレイの表示をリロード</value>
   </data>
   <data name="buttonMiniParseCopyActXiv.Text" xml:space="preserve">
-    <value>ActXiv変数をクリップボードにコピー</value>
-  </data>
-  <data name="tabPage2.Text" xml:space="preserve">
-    <value>スペルタイマー</value>
-  </data>
-  <data name="label12.Text" xml:space="preserve">
-    <value>※最大フレームレートの変更を有効にするためにはプラグインの再起動が必要です</value>
-  </data>
-  <data name="label7.Text" xml:space="preserve">
-    <value>最大フレームレート</value>
-  </data>
-  <data name="label8.Text" xml:space="preserve">
-    <value>クリックを透過させる</value>
-  </data>
-  <data name="label9.Text" xml:space="preserve">
-    <value>オーバーレイを表示する</value>
-  </data>
-  <data name="label10.Text" xml:space="preserve">
-    <value>表示するURL</value>
-  </data>
-  <data name="buttonSpellTimerReloadBrowser.Text" xml:space="preserve">
-    <value>オーバーレイの表示をリロード</value>
-  </data>
-  <data name="buttonSpellTimerCopyActXiv.Text" xml:space="preserve">
-    <value>ActXiv変数をクリップボードにコピー</value>
+    <value>変数をクリップボードにコピー</value>
   </data>
 </root>
