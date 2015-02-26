@@ -57,7 +57,7 @@ namespace RainbowMage.OverlayPlugin
                 Text = overlay.Name
             };
 
-            var control = PluginMain.CreateOverlayConfigControl(overlay);
+            var control = OverlayTypeManager.CreateOverlayConfigControl(overlay);
             control.Dock = DockStyle.Fill;
             tabPage.Controls.Add(control);
 
@@ -173,25 +173,17 @@ namespace RainbowMage.OverlayPlugin
 
             if (newOverlayDialog.ShowDialog(this.ParentForm) == DialogResult.OK)
             {
-                if (newOverlayDialog.OverlayType == OverlayType.MiniParse)
-                {
-                    CreateAndRegisterOverlay<MiniParseOverlayConfig>(newOverlayDialog.OverlayName);
-                }
-                else if (newOverlayDialog.OverlayType == OverlayType.SpellTimer)
-                {
-                    CreateAndRegisterOverlay<SpellTimerOverlayConfig>(newOverlayDialog.OverlayName);
-                }
+                CreateAndRegisterOverlay(newOverlayDialog.OverlayType, newOverlayDialog.OverlayName);
             }
             newOverlayDialog.Dispose();
         }
 
-        private IOverlay CreateAndRegisterOverlay<TConfig>(string name)
-            where TConfig : OverlayConfig
+        private IOverlay CreateAndRegisterOverlay(Type overlayType, string name)
         {
-            var config = PluginMain.CreateOverlayConfig<TConfig>(name);
+            var config = OverlayTypeManager.CreateOverlayConfigOf(overlayType, name);
             this.config.Overlays.Add(config);
 
-            var overlay = PluginMain.CreateOverlayFromConfig(config);
+            var overlay = OverlayTypeManager.CreateOverlayFromConfig(config);
             pluginMain.RegisterOverlay(overlay);
 
             AddConfigTab(overlay);

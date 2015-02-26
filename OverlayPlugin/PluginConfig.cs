@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RainbowMage.OverlayPlugin.Overlays;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -215,7 +216,7 @@ namespace RainbowMage.OverlayPlugin
             this.OverlaySizeObsolete = new Size(300, 300);
             this.UrlObsolete = "";
             this.SortKeyObsolete = "encdps";
-            this.SortTypeObsolete = OverlayPlugin.MiniParseSortType.NumericDescending;
+            this.SortTypeObsolete = MiniParseSortType.NumericDescending;
 #pragma warning restore 612, 618
             #endregion
 

@@ -109,7 +109,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.OverlayName = "NewOverlayDialog";
+            this.Name = "NewOverlayDialog";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.Text = "Create new overlay";

@@ -17,7 +17,7 @@ namespace RainbowMage.OverlayPlugin
         public ValidateNameDelegate NameValidator { get; set; }
 
         public string OverlayName { get; set; }
-        public OverlayType OverlayType { get; set; }
+        public Type OverlayType { get; set; }
 
         public NewOverlayDialog()
         {
@@ -26,19 +26,34 @@ namespace RainbowMage.OverlayPlugin
             // Default validator
             this.NameValidator = (name) => { return name != null; };
 
-            foreach (OverlayType type in Enum.GetValues(typeof(OverlayType)))
+            foreach (Type type in OverlayTypeManager.ConfigToOverlayDict.Values)
             {
                 comboBox1.Items.Add(type);
             }
-            comboBox1.SelectedItem = this.OverlayType;
+            if (this.OverlayType != null)
+            {
+                comboBox1.SelectedItem = this.OverlayType;
+            }
+            else
+            {
+                comboBox1.SelectedIndex = 0;
+            }
         }
 
         private void buttonOK_Click(object sender, EventArgs e)
         {
             if (this.NameValidator(this.textBox1.Text))
             {
-                this.OverlayName = textBox1.Text;
-                this.OverlayType = (OverlayType)comboBox1.SelectedItem;
+                if (comboBox1.SelectedItem == null)
+                {
+                    MessageBox.Show("Please select overlay type.");
+                    this.DialogResult = System.Windows.Forms.DialogResult.None;
+                }
+                else
+                {
+                    this.OverlayName = textBox1.Text;
+                    this.OverlayType = (Type)comboBox1.SelectedItem;
+                }
             }
             else
             {

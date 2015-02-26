@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace RainbowMage.OverlayPlugin
+namespace RainbowMage.OverlayPlugin.Overlays
 {
     [Serializable]
     public class MiniParseOverlayConfig : OverlayConfig

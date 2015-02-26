@@ -80,14 +80,14 @@
     </Compile>
     <Compile Include="DIBitmap.cs" />
     <Compile Include="IOverlay.cs" />
-    <Compile Include="MiniParseConfigPanel.cs">
+    <Compile Include="Overlays\MiniParseConfigPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="MiniParseConfigPanel.Designer.cs">
+    <Compile Include="Overlays\MiniParseConfigPanel.Designer.cs">
       <DependentUpon>MiniParseConfigPanel.cs</DependentUpon>
     </Compile>
-    <Compile Include="MiniParseOverlay.cs" />
-    <Compile Include="MiniParseOverlayConfig.cs" />
+    <Compile Include="Overlays\MiniParseOverlay.cs" />
+    <Compile Include="Overlays\MiniParseOverlayConfig.cs" />
     <Compile Include="NativeMethods.cs" />
     <Compile Include="NewOverlayDialog.cs">
       <SubType>Form</SubType>
@@ -103,7 +103,7 @@
     <Compile Include="OverlayForm.Designer.cs">
       <DependentUpon>OverlayForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="OverlayType.cs" />
+    <Compile Include="OverlayTypeManager.cs" />
     <Compile Include="PluginConfig.cs" />
     <Compile Include="PluginMain.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -113,13 +113,13 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="SerializableTimerFrameEntry.cs" />
-    <Compile Include="SpellTimerOverlayConfig.cs" />
-    <Compile Include="SpellTimerOverlay.cs" />
+    <Compile Include="Overlays\SpellTimerOverlayConfig.cs" />
+    <Compile Include="Overlays\SpellTimerOverlay.cs" />
     <Compile Include="Localization.cs" />
-    <Compile Include="SpellTimerConfigPanel.cs">
+    <Compile Include="Overlays\SpellTimerConfigPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="SpellTimerConfigPanel.Designer.cs">
+    <Compile Include="Overlays\SpellTimerConfigPanel.Designer.cs">
       <DependentUpon>SpellTimerConfigPanel.cs</DependentUpon>
     </Compile>
     <Compile Include="Util.cs" />
@@ -145,10 +145,10 @@
     <EmbeddedResource Include="ControlPanel.resx">
       <DependentUpon>ControlPanel.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="MiniParseConfigPanel.ja-JP.resx">
+    <EmbeddedResource Include="Overlays\MiniParseConfigPanel.ja-JP.resx">
       <DependentUpon>MiniParseConfigPanel.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="MiniParseConfigPanel.resx">
+    <EmbeddedResource Include="Overlays\MiniParseConfigPanel.resx">
       <DependentUpon>MiniParseConfigPanel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="NewOverlayDialog.resx">
@@ -161,10 +161,10 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="SpellTimerConfigPanel.ja-JP.resx">
+    <EmbeddedResource Include="Overlays\SpellTimerConfigPanel.ja-JP.resx">
       <DependentUpon>SpellTimerConfigPanel.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SpellTimerConfigPanel.resx">
+    <EmbeddedResource Include="Overlays\SpellTimerConfigPanel.resx">
       <DependentUpon>SpellTimerConfigPanel.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
@@ -177,9 +177,6 @@
       <Project>{e2bc6483-b966-4a4a-b4cc-d50a4bd73af3}</Project>
       <Name>HtmlRenderer</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="PluginMain.OverlayTypeDefine.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

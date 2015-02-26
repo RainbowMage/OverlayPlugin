@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RainbowMage.OverlayPlugin
+namespace RainbowMage.OverlayPlugin.Overlays
 {
     [Serializable]
     public class SpellTimerOverlayConfig : OverlayConfig

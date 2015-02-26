@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace RainbowMage.OverlayPlugin
+namespace RainbowMage.OverlayPlugin.Overlays
 {
     public partial class MiniParseConfigPanel : UserControl
     {

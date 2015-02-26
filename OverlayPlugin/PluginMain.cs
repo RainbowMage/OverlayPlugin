@@ -12,10 +12,11 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading;
 using System.Text.RegularExpressions;
+using RainbowMage.OverlayPlugin.Overlays;
 
 namespace RainbowMage.OverlayPlugin
 {
-    public partial class PluginMain : IActPluginV1
+    public class PluginMain : IActPluginV1
     {
         TabPage tabPage;
         Label label;
@@ -37,6 +38,21 @@ namespace RainbowMage.OverlayPlugin
         static PluginMain()
         {
             RegisterOurOverlayTypes();
+        }
+
+        private static void RegisterOurOverlayTypes()
+        {
+            OverlayTypeManager.RegisterOverlayType<MiniParseOverlay, MiniParseOverlayConfig, MiniParseConfigPanel>(
+                (config) => new MiniParseOverlay(config as MiniParseOverlayConfig),
+                (name) => new MiniParseOverlayConfig(name),
+                (overlay) => new MiniParseConfigPanel(overlay as MiniParseOverlay)
+                );
+
+            OverlayTypeManager.RegisterOverlayType<SpellTimerOverlay, SpellTimerOverlayConfig, SpellTimerConfigPanel>(
+                (config) => new SpellTimerOverlay(config as SpellTimerOverlayConfig),
+                (name) => new SpellTimerOverlayConfig(name),
+                (overlay) => new SpellTimerConfigPanel(overlay as SpellTimerOverlay)
+                );
         }
 
         public void InitPlugin(TabPage pluginScreenSpace, Label pluginStatusText)
@@ -72,7 +88,7 @@ namespace RainbowMage.OverlayPlugin
                 this.Overlays = new List<IOverlay>();
                 foreach (var overlayConfig in this.Config.Overlays)
                 {
-                    var overlay = CreateOverlayFromConfig(overlayConfig);
+                    var overlay = OverlayTypeManager.CreateOverlayFromConfig(overlayConfig);
                     RegisterOverlay(overlay);
                 }
 
