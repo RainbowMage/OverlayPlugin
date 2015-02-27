@@ -116,24 +116,26 @@
             // 
             // splitContainer1.Panel1
             // 
+            resources.ApplyResources(this.splitContainer1.Panel1, "splitContainer1.Panel1");
             this.splitContainer1.Panel1.Controls.Add(this.tabControl1);
             // 
             // splitContainer1.Panel2
             // 
+            resources.ApplyResources(this.splitContainer1.Panel2, "splitContainer1.Panel2");
             this.splitContainer1.Panel2.Controls.Add(this.listViewLog);
             // 
             // tabControl1
             // 
+            resources.ApplyResources(this.tabControl1, "tabControl1");
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
-            resources.ApplyResources(this.tabControl1, "tabControl1");
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
             // 
             // tabPage1
             // 
-            this.tabPage1.Controls.Add(this.tableLayoutPanel1);
             resources.ApplyResources(this.tabPage1, "tabPage1");
+            this.tabPage1.Controls.Add(this.tableLayoutPanel1);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
@@ -217,8 +219,8 @@
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.tableLayoutPanel3);
             resources.ApplyResources(this.panel1, "panel1");
+            this.panel1.Controls.Add(this.tableLayoutPanel3);
             this.panel1.Name = "panel1";
             // 
             // tableLayoutPanel3
@@ -315,8 +317,8 @@
             // 
             // tabPage2
             // 
-            this.tabPage2.Controls.Add(this.tableLayoutPanel4);
             resources.ApplyResources(this.tabPage2, "tabPage2");
+            this.tabPage2.Controls.Add(this.tableLayoutPanel4);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
@@ -401,8 +403,8 @@
             // 
             // panel2
             // 
-            this.panel2.Controls.Add(this.tableLayoutPanel5);
             resources.ApplyResources(this.panel2, "panel2");
+            this.panel2.Controls.Add(this.tableLayoutPanel5);
             this.panel2.Name = "panel2";
             // 
             // tableLayoutPanel5
@@ -471,12 +473,12 @@
             // 
             // listViewLog
             // 
+            resources.ApplyResources(this.listViewLog, "listViewLog");
             this.listViewLog.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
             this.columnHeader2,
             this.columnHeader3});
             this.listViewLog.ContextMenuStrip = this.contextMenuLogList;
-            resources.ApplyResources(this.listViewLog, "listViewLog");
             this.listViewLog.FullRowSelect = true;
             this.listViewLog.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.listViewLog.HideSelection = false;
@@ -500,6 +502,7 @@
             // 
             // contextMenuLogList
             // 
+            resources.ApplyResources(this.contextMenuLogList, "contextMenuLogList");
             this.contextMenuLogList.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.menuCopyLogAll,
             this.menuLogCopy,
@@ -508,41 +511,40 @@
             this.toolStripMenuItem2,
             this.menuClearLog});
             this.contextMenuLogList.Name = "contextMenuLogList";
-            resources.ApplyResources(this.contextMenuLogList, "contextMenuLogList");
             // 
             // menuCopyLogAll
             // 
-            this.menuCopyLogAll.Name = "menuCopyLogAll";
             resources.ApplyResources(this.menuCopyLogAll, "menuCopyLogAll");
+            this.menuCopyLogAll.Name = "menuCopyLogAll";
             this.menuCopyLogAll.Click += new System.EventHandler(this.menuCopyLogAll_Click);
             // 
             // menuLogCopy
             // 
-            this.menuLogCopy.Name = "menuLogCopy";
             resources.ApplyResources(this.menuLogCopy, "menuLogCopy");
+            this.menuLogCopy.Name = "menuLogCopy";
             this.menuLogCopy.Click += new System.EventHandler(this.menuLogCopy_Click);
             // 
             // toolStripMenuItem1
             // 
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
             resources.ApplyResources(this.toolStripMenuItem1, "toolStripMenuItem1");
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
             // 
             // menuFollowLatestLog
             // 
+            resources.ApplyResources(this.menuFollowLatestLog, "menuFollowLatestLog");
             this.menuFollowLatestLog.CheckOnClick = true;
             this.menuFollowLatestLog.Name = "menuFollowLatestLog";
-            resources.ApplyResources(this.menuFollowLatestLog, "menuFollowLatestLog");
             this.menuFollowLatestLog.Click += new System.EventHandler(this.menuFollowLatestLog_Click);
             // 
             // toolStripMenuItem2
             // 
-            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
             resources.ApplyResources(this.toolStripMenuItem2, "toolStripMenuItem2");
+            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
             // 
             // menuClearLog
             // 
-            this.menuClearLog.Name = "menuClearLog";
             resources.ApplyResources(this.menuClearLog, "menuClearLog");
+            this.menuClearLog.Name = "menuClearLog";
             this.menuClearLog.Click += new System.EventHandler(this.menuClearLog_Click);
             // 
             // ControlPanel
