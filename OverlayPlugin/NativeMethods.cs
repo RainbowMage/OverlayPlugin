@@ -184,5 +184,31 @@ namespace RainbowMage.OverlayPlugin
 
             return result;
         }
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetWindow(
+            IntPtr hWnd,  // 元ウィンドウのハンドル
+            uint uCmd     // 関係
+        );
+
+        public const uint GW_HWNDPREV = 0x0003;
+
+        [DllImport("user32.dll")]
+        public static extern bool SetWindowPos(
+            IntPtr hWnd,             // ウィンドウのハンドル
+            IntPtr hWndInsertAfter,  // 配置順序のハンドル
+            int X,                   // 横方向の位置
+            int Y,                   // 縦方向の位置
+            int cx,                  // 幅
+            int cy,                  // 高さ
+            uint uFlags              // ウィンドウ位置のオプション
+        );
+
+        public static readonly IntPtr HWND_TOP = new IntPtr(0);
+        public static readonly IntPtr HWND_TOPMOST = new IntPtr(-1);
+
+        public const uint SWP_NOSIZE = 0x0001;
+        public const uint SWP_NOMOVE = 0x0002;
+        public const uint SWP_NOACTIVATE = 0x0010;
     }
 }
