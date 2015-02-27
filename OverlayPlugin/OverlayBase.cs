@@ -13,6 +13,7 @@ namespace RainbowMage.OverlayPlugin
         where TConfig: OverlayConfig
     {
         public event EventHandler<LogEventArgs> OnLog;
+        private KeyboardHook hook = new KeyboardHook();
 
         protected System.Timers.Timer timer;
 
@@ -46,6 +47,16 @@ namespace RainbowMage.OverlayPlugin
             try
             {
                 this.Overlay = new OverlayForm("about:blank", this.Config.MaxFrameRate);
+                if (this.Config.GlobalHotkeyEnabled)
+                {
+                    var modifierKeys = GetModifierKey(this.Config.GlobalHotkeyModifiers);
+                    var key = this.Config.GlobalHotkey;
+                    if (key != Keys.None)
+                    {
+                        hook.KeyPressed += new EventHandler<KeyPressedEventArgs>(Overlay_OnHotkeyPressed);
+                        hook.RegisterHotKey(modifierKeys, key);
+                    }
+                }
 
                 // 画面外にウィンドウがある場合は、初期表示位置をシステムに設定させる
                 if (!Util.IsOnScreen(this.Overlay))
@@ -82,6 +93,33 @@ namespace RainbowMage.OverlayPlugin
             {
                 Log(LogLevel.Error, "InitializeOverlay: {0}", this.Name, ex);
             }
+        }
+
+        private ModifierKeys GetModifierKey(Keys Modifier)
+        {
+            ModifierKeys modifiers = new ModifierKeys();
+            if ((Modifier & Keys.Shift) == Keys.Shift)
+            {
+                modifiers |= ModifierKeys.Shift;
+            }
+            if ((Modifier & Keys.Control) == Keys.Control)
+            {
+                modifiers |= ModifierKeys.Control;
+            }
+            if ((Modifier & Keys.Alt) == Keys.Alt)
+            {
+                modifiers |= ModifierKeys.Alt;
+            }
+            if ((Modifier & Keys.LWin) == Keys.LWin || (Modifier & Keys.RWin) == Keys.RWin)
+            {
+                modifiers |= ModifierKeys.Win;
+            }
+            return modifiers;
+        }
+
+        void Overlay_OnHotkeyPressed(object sender, KeyPressedEventArgs e)
+        {
+            this.Config.IsVisible = !this.Config.IsVisible;
         }
 
         private bool CheckUrl(string url)
@@ -154,6 +192,7 @@ namespace RainbowMage.OverlayPlugin
                 timer.Stop();
                 this.Overlay.Close();
                 this.Overlay.Dispose();
+                hook.Dispose();
             }
             catch (Exception ex)
             {

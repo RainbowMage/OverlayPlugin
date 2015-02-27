@@ -56,14 +56,14 @@ namespace RainbowMage.OverlayPlugin
         }
 
         public bool IsLoaded { get; private set; }
-
-        public OverlayForm(string url, int maxFrameRate = 30)
+        private string FormName { get; set; }
+        public OverlayForm(string url, int maxFrameRate = 30, String formName = "", bool GlobalHotkeyEnabled = false, OverlayPlugin.ModifierKeys modifierKeys = OverlayPlugin.ModifierKeys.Control, Keys key = Keys.None)
         {
             InitializeComponent();
             Renderer.Initialize();
 
             this.maxFrameRate = maxFrameRate;
-
+            this.FormName = formName;
             this.Renderer = new Renderer();
             this.Renderer.Render += renderer_Render;
 
