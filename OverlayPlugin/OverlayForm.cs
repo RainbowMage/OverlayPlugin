@@ -63,7 +63,6 @@ namespace RainbowMage.OverlayPlugin
             Renderer.Initialize();
 
             this.maxFrameRate = maxFrameRate;
-
             this.Renderer = new Renderer();
             this.Renderer.Render += renderer_Render;
 

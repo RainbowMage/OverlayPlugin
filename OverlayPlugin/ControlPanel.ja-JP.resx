@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="label13.Text" xml:space="preserve">
-    <value>※最大フレームレートの変更を有効にするためにはプラグインの再起動が必要です</value>
+    <value>※最大フレームレートおよびホットキーの変更を有効にするためにはプラグインの再起動が必要です</value>
   </data>
   <data name="label6.Text" xml:space="preserve">
     <value>最大フレームレート</value>
@@ -144,11 +144,17 @@
   <data name="buttonMiniParseCopyActXiv.Text" xml:space="preserve">
     <value>ActXiv変数をクリップボードにコピー</value>
   </data>
+  <data name="label11.Text" xml:space="preserve">
+    <value>グローバルホットキーを使用</value>
+  </data>
+  <data name="label14.Text" xml:space="preserve">
+    <value>ホットキー</value>
+  </data>
   <data name="tabPage1.Text" xml:space="preserve">
     <value>ミニパース</value>
   </data>
   <data name="label12.Text" xml:space="preserve">
-    <value>※最大フレームレートの変更を有効にするためにはプラグインの再起動が必要です</value>
+    <value>※最大フレームレートおよびホットキーの変更を有効にするためにはプラグインの再起動が必要です</value>
   </data>
   <data name="label7.Text" xml:space="preserve">
     <value>最大フレームレート</value>
@@ -167,6 +173,12 @@
   </data>
   <data name="buttonSpellTimerCopyActXiv.Text" xml:space="preserve">
     <value>ActXiv変数をクリップボードにコピー</value>
+  </data>
+  <data name="label15.Text" xml:space="preserve">
+    <value>グローバルホットキーを使用</value>
+  </data>
+  <data name="label16.Text" xml:space="preserve">
+    <value>ホットキー</value>
   </data>
   <data name="tabPage2.Text" xml:space="preserve">
     <value>スペルタイマー</value>

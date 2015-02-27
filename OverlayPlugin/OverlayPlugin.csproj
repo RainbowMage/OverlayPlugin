@@ -78,6 +78,7 @@
       <DependentUpon>ControlPanel.cs</DependentUpon>
     </Compile>
     <Compile Include="DIBitmap.cs" />
+    <Compile Include="KeyboardHook.cs" />
     <Compile Include="MiniParseOverlay.cs" />
     <Compile Include="MiniParseOverlayConfig.cs" />
     <Compile Include="NativeMethods.cs" />
