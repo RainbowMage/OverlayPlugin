@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
@@ -19,9 +20,9 @@ namespace RainbowMage.OverlayPlugin
         private DIBitmap surfaceBuffer;
         private object surfaceBufferLocker = new object();
         private int maxFrameRate;
+        private System.Threading.Timer zorderCorrector;
 
         public Renderer Renderer { get; private set; }
-        public bool IsDisposed { get; private set; }
 
         private string url;
         public string Url
@@ -262,6 +263,17 @@ namespace RainbowMage.OverlayPlugin
 
             UpdateMouseClickThru();
             UpdateRender();
+
+            zorderCorrector = new System.Threading.Timer((state) =>
+            {
+                if (this.Visible)
+                {
+                    if (!this.IsOverlaysGameWindow())
+                    {
+                        this.EnsureTopMost();
+                    }
+                }
+            }, null, 0, 1000);
         }
 
         private void OverlayForm_FormClosed(object sender, FormClosedEventArgs e)
@@ -272,6 +284,11 @@ namespace RainbowMage.OverlayPlugin
         new public void Dispose()
         {
             this.Dispose(true);
+
+            if (zorderCorrector != null)
+            {
+                zorderCorrector.Dispose();
+            }
 
             if (this.Renderer != null)
             {
@@ -285,8 +302,6 @@ namespace RainbowMage.OverlayPlugin
                     this.surfaceBuffer.Dispose();
                 }
             }
-
-            this.IsDisposed = true;
         }
 
         private void OverlayForm_Resize(object sender, EventArgs e)
@@ -320,6 +335,68 @@ namespace RainbowMage.OverlayPlugin
         private void OverlayForm_MouseUp(object sender, MouseEventArgs e)
         {
             isDragging = false;
+        }
+
+        private bool IsOverlaysGameWindow()
+        {
+            var xivHandle = GetGameWindowHandle();
+            var handle = this.Handle;
+
+            while (handle != IntPtr.Zero)
+            {
+                // Overlayウィンドウよりも前面側にFF14のウィンドウがあった
+                if (handle == xivHandle)
+                {
+                    return false;
+                }
+
+                handle = NativeMethods.GetWindow(handle, NativeMethods.GW_HWNDPREV);
+            }
+
+            // 前面側にOverlayが存在する、もしくはFF14が起動していない
+            return true;
+        }
+
+        private void EnsureTopMost()
+        {
+            NativeMethods.SetWindowPos(
+                this.Handle,
+                NativeMethods.HWND_TOPMOST,
+                0, 0, 0, 0,
+                NativeMethods.SWP_NOSIZE | NativeMethods.SWP_NOMOVE | NativeMethods.SWP_NOACTIVATE);
+        }
+
+        private static object xivProcLocker = new object();
+        private static Process xivProc;
+        private static DateTime lastTry;
+        private static TimeSpan tryInterval = new TimeSpan(0, 0, 15);
+
+        private static IntPtr GetGameWindowHandle()
+        {
+            lock (xivProcLocker)
+            {
+                // プロセスがすでに終了してるならプロセス情報をクリア
+                if (xivProc != null && xivProc.HasExited)
+                {
+                    xivProc = null;
+                }
+
+                // プロセス情報がなく、tryIntervalよりも時間が経っているときは新たに取得を試みる
+                if (xivProc == null && DateTime.Now - lastTry > tryInterval)
+                {
+                    xivProc = Process.GetProcessesByName("ffxiv").FirstOrDefault();
+                    lastTry = DateTime.Now;
+                }
+
+                if (xivProc != null)
+                {
+                    return xivProc.MainWindowHandle;
+                }
+                else
+                {
+                    return IntPtr.Zero;
+                }
+            }
         }
     }
 }
