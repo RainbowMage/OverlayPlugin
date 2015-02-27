@@ -68,7 +68,9 @@ namespace RainbowMage.OverlayPlugin
             this.url = url;
 
             // Alt+Tab を押したときに表示されるプレビューから除外する
+#if !STREAMER
             Util.HidePreview(this);
+#endif
         }
 
         public void Reload()
