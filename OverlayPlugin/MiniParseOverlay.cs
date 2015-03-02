@@ -197,13 +197,21 @@ namespace RainbowMage.OverlayPlugin
                 var valueDict = new Dictionary<string, string>();
                 foreach (var exportValuePair in CombatantData.ExportVariables)
                 {
+                    // NAME タグには {NAME:8} のようにコロンで区切られたエクストラ情報が必要で、
+                    // プラグインの仕組み的に対応することができないので除外する
+                    if (exportValuePair.Key == "NAME")
+                    {
+                        continue;
+                    }
+
                     try
                     {
                         var value = exportValuePair.Value.GetExportString(ally, "");
                         valueDict.Add(exportValuePair.Key, value);
                     }
-                    catch
+                    catch (Exception e)
                     {
+                        Debug.Write(e);
                         continue;
                     }
                 }
