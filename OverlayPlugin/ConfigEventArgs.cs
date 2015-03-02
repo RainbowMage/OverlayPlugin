@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace RainbowMage.OverlayPlugin
 {
@@ -58,6 +59,24 @@ namespace RainbowMage.OverlayPlugin
         public MaxFrameRateChangedEventArgs(int frameRate)
         {
             this.NewFrameRate = frameRate;
+        }
+    }
+
+    public class GlobalHotkeyEnabledChangedEventArgs : EventArgs
+    {
+        public bool NewGlobalHotkeyEnabled { get; private set; }
+        public GlobalHotkeyEnabledChangedEventArgs(bool globalHotkeyEnabled)
+        {
+            this.NewGlobalHotkeyEnabled = globalHotkeyEnabled;
+        }
+    }
+
+    public class GlobalHotkeyChangedEventArgs : EventArgs
+    {
+        public Keys NewHotkey { get; private set; }
+        public GlobalHotkeyChangedEventArgs(Keys hotkey)
+        {
+            this.NewHotkey = hotkey;
         }
     }
 }

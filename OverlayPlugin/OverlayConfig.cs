@@ -4,26 +4,21 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using System.Xml.Serialization;
 
 namespace RainbowMage.OverlayPlugin
 {
     [Serializable]
-    public abstract class OverlayConfig
+    public class OverlayConfig
     {
         public event EventHandler<VisibleStateChangedEventArgs> VisibleChanged;
         public event EventHandler<ThruStateChangedEventArgs> ClickThruChanged;
         public event EventHandler<UrlChangedEventArgs> UrlChanged;
         public event EventHandler<MaxFrameRateChangedEventArgs> MaxFrameRateChanged;
-
-        //[XmlElement("Type")]
-        //public OverlayType OverlayType { get; set; }
-
-        [XmlElement("Name")]
-        public string Name { get; set; }
-
-        [XmlElement("UpdateInterval")]
-        public int UpdateInterval { get; set; }
+        public event EventHandler<GlobalHotkeyEnabledChangedEventArgs> GlobalHotkeyEnabledChanged;
+        public event EventHandler<GlobalHotkeyChangedEventArgs> GlobalHotkeyChanged;
+        public event EventHandler<GlobalHotkeyChangedEventArgs> GlobalHotkeyModifiersChanged;
 
         private bool isVisible;
         [XmlElement("IsVisible")]
@@ -115,16 +110,80 @@ namespace RainbowMage.OverlayPlugin
             }
         }
 
-        public OverlayConfig(string name)
+        private bool globalHotkeyEnabled;
+        [XmlElement("GlobalHotkeyEnabled")]
+        public bool GlobalHotkeyEnabled
         {
-            this.Name = name;
-            this.UpdateInterval = 1000;
+            get
+            {
+                return this.globalHotkeyEnabled;
+            }
+            set
+            {
+                if (this.globalHotkeyEnabled != value)
+                {
+                    this.globalHotkeyEnabled = value;
+                    if (GlobalHotkeyEnabledChanged != null)
+                    {
+                        GlobalHotkeyEnabledChanged(this, new GlobalHotkeyEnabledChangedEventArgs(this.globalHotkeyEnabled));
+                    }
+                }
+            }
+        }
+
+        private Keys globalHotkey;
+        [XmlElement("GlobalHotkey")]
+        public Keys GlobalHotkey
+        {
+            get
+            {
+                return this.globalHotkey;
+            }
+            set
+            {
+                if (this.globalHotkey != value)
+                {
+                    this.globalHotkey = value;
+                    if (GlobalHotkeyChanged != null)
+                    {
+                        GlobalHotkeyChanged(this, new GlobalHotkeyChangedEventArgs(this.globalHotkey));
+                    }
+                }
+            }
+        }
+
+        private Keys globalHotkeyModifiers;
+        [XmlElement("GlobalHotkeyModifiers")]
+        public Keys GlobalHotkeyModifiers
+        {
+            get
+            {
+                return this.globalHotkeyModifiers;
+            }
+            set
+            {
+                if (this.globalHotkeyModifiers != value)
+                {
+                    this.globalHotkeyModifiers = value;
+                    if (GlobalHotkeyModifiersChanged != null)
+                    {
+                        GlobalHotkeyModifiersChanged(this, new GlobalHotkeyChangedEventArgs(this.globalHotkeyModifiers));
+                    }
+                }
+            }
+        }
+
+        public OverlayConfig()
+        {
             this.IsVisible = true;
             this.IsClickThru = false;
             this.Position = new Point(20, 20);
             this.Size = new Size(300, 300);
             this.Url = "";
             this.MaxFrameRate = 30;
+            this.globalHotkeyEnabled = false;
+            this.GlobalHotkey = Keys.None;
+            this.globalHotkeyModifiers = Keys.None;
         }
     }
 }
