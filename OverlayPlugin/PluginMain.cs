@@ -43,12 +43,14 @@ namespace RainbowMage.OverlayPlugin
         private static void RegisterOurOverlayTypes()
         {
             OverlayTypeManager.RegisterOverlayType<MiniParseOverlay, MiniParseOverlayConfig, MiniParseConfigPanel>(
+                "Mini Parse",
                 (config) => new MiniParseOverlay(config as MiniParseOverlayConfig),
                 (name) => new MiniParseOverlayConfig(name),
                 (overlay) => new MiniParseConfigPanel(overlay as MiniParseOverlay)
                 );
 
             OverlayTypeManager.RegisterOverlayType<SpellTimerOverlay, SpellTimerOverlayConfig, SpellTimerConfigPanel>(
+                "Spell Timer",
                 (config) => new SpellTimerOverlay(config as SpellTimerOverlayConfig),
                 (name) => new SpellTimerOverlayConfig(name),
                 (overlay) => new SpellTimerConfigPanel(overlay as SpellTimerOverlay)
@@ -251,23 +253,18 @@ namespace RainbowMage.OverlayPlugin
             }
             finally
             {
-                if (Config.IsFirstLaunch)
-                {
-                    var defaultMiniParse = Config.Overlays.FirstOrDefault(x => x.Name == PluginConfig.DefaultMiniParseOverlayName);
-                    var defaultSpellTimer = Config.Overlays.FirstOrDefault(x => x.Name == PluginConfig.DefaultSpellTimerOverlayName);
+                var defaultMiniParse = Config.Overlays.FirstOrDefault(x => x.Name == PluginConfig.DefaultMiniParseOverlayName);
+                var defaultSpellTimer = Config.Overlays.FirstOrDefault(x => x.Name == PluginConfig.DefaultSpellTimerOverlayName);
 
-                    if (defaultMiniParse != null &&
-                        string.IsNullOrWhiteSpace(defaultMiniParse.Url))
-                    {
-                        defaultMiniParse.Url =
-                            new Uri(Path.Combine(pluginDirectory, "resources", "miniparse.html")).ToString();
-                    }
-                    if (defaultSpellTimer != null &&
-                        string.IsNullOrWhiteSpace(defaultSpellTimer.Url))
-                    {
-                        defaultSpellTimer.Url =
-                            new Uri(Path.Combine(pluginDirectory, "resources", "spelltimer.html")).ToString();
-                    }
+                if (defaultMiniParse != null && defaultMiniParse.Url == null)
+                {
+                    defaultMiniParse.Url =
+                        new Uri(Path.Combine(pluginDirectory, "resources", "miniparse.html")).ToString();
+                }
+                if (defaultSpellTimer != null && defaultSpellTimer.Url == null)
+                {
+                    defaultSpellTimer.Url =
+                        new Uri(Path.Combine(pluginDirectory, "resources", "spelltimer.html")).ToString();
                 }
             }
         }

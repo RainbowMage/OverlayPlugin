@@ -30,7 +30,6 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SpellTimerConfigPanel));
             this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
-            this.label12 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.nudMaxFrameRate = new System.Windows.Forms.NumericUpDown();
             this.label8 = new System.Windows.Forms.Label();
@@ -45,6 +44,11 @@
             this.tableLayoutPanel6 = new System.Windows.Forms.TableLayoutPanel();
             this.textBoxUrl = new System.Windows.Forms.TextBox();
             this.buttonSpellTimerSelectFile = new System.Windows.Forms.Button();
+            this.label12 = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.textGlobalHotkey = new System.Windows.Forms.TextBox();
+            this.checkEnableGlobalHotkey = new System.Windows.Forms.CheckBox();
             this.tableLayoutPanel4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudMaxFrameRate)).BeginInit();
             this.panel2.SuspendLayout();
@@ -55,7 +59,6 @@
             // tableLayoutPanel4
             // 
             resources.ApplyResources(this.tableLayoutPanel4, "tableLayoutPanel4");
-            this.tableLayoutPanel4.Controls.Add(this.label12, 1, 4);
             this.tableLayoutPanel4.Controls.Add(this.label7, 0, 3);
             this.tableLayoutPanel4.Controls.Add(this.nudMaxFrameRate, 1, 3);
             this.tableLayoutPanel4.Controls.Add(this.label8, 0, 1);
@@ -65,12 +68,12 @@
             this.tableLayoutPanel4.Controls.Add(this.checkBoxClickThru, 1, 1);
             this.tableLayoutPanel4.Controls.Add(this.panel2, 1, 7);
             this.tableLayoutPanel4.Controls.Add(this.tableLayoutPanel6, 1, 2);
+            this.tableLayoutPanel4.Controls.Add(this.label12, 1, 6);
+            this.tableLayoutPanel4.Controls.Add(this.label1, 0, 4);
+            this.tableLayoutPanel4.Controls.Add(this.label2, 0, 5);
+            this.tableLayoutPanel4.Controls.Add(this.textGlobalHotkey, 1, 5);
+            this.tableLayoutPanel4.Controls.Add(this.checkEnableGlobalHotkey, 1, 4);
             this.tableLayoutPanel4.Name = "tableLayoutPanel4";
-            // 
-            // label12
-            // 
-            resources.ApplyResources(this.label12, "label12");
-            this.label12.Name = "label12";
             // 
             // label7
             // 
@@ -129,8 +132,8 @@
             // 
             // panel2
             // 
-            resources.ApplyResources(this.panel2, "panel2");
             this.panel2.Controls.Add(this.tableLayoutPanel5);
+            resources.ApplyResources(this.panel2, "panel2");
             this.panel2.Name = "panel2";
             // 
             // tableLayoutPanel5
@@ -174,6 +177,34 @@
             this.buttonSpellTimerSelectFile.UseVisualStyleBackColor = true;
             this.buttonSpellTimerSelectFile.Click += new System.EventHandler(this.buttonSelectFile_Click);
             // 
+            // label12
+            // 
+            resources.ApplyResources(this.label12, "label12");
+            this.label12.Name = "label12";
+            // 
+            // label1
+            // 
+            resources.ApplyResources(this.label1, "label1");
+            this.label1.Name = "label1";
+            // 
+            // label2
+            // 
+            resources.ApplyResources(this.label2, "label2");
+            this.label2.Name = "label2";
+            // 
+            // textGlobalHotkey
+            // 
+            resources.ApplyResources(this.textGlobalHotkey, "textGlobalHotkey");
+            this.textGlobalHotkey.Name = "textGlobalHotkey";
+            this.textGlobalHotkey.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textGlobalHotkey_KeyDown);
+            // 
+            // checkEnableGlobalHotkey
+            // 
+            resources.ApplyResources(this.checkEnableGlobalHotkey, "checkEnableGlobalHotkey");
+            this.checkEnableGlobalHotkey.Name = "checkEnableGlobalHotkey";
+            this.checkEnableGlobalHotkey.UseVisualStyleBackColor = true;
+            this.checkEnableGlobalHotkey.CheckedChanged += new System.EventHandler(this.checkEnableGlobalHotkey_CheckedChanged);
+            // 
             // SpellTimerConfigPanel
             // 
             resources.ApplyResources(this, "$this");
@@ -210,5 +241,9 @@
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel6;
         private System.Windows.Forms.TextBox textBoxUrl;
         private System.Windows.Forms.Button buttonSpellTimerSelectFile;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TextBox textGlobalHotkey;
+        private System.Windows.Forms.CheckBox checkEnableGlobalHotkey;
     }
 }

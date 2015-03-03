@@ -80,6 +80,7 @@
     </Compile>
     <Compile Include="DIBitmap.cs" />
     <Compile Include="IOverlay.cs" />
+    <Compile Include="KeyboardHook.cs" />
     <Compile Include="Overlays\MiniParseConfigPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>

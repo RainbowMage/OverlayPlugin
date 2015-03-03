@@ -14,6 +14,7 @@ namespace RainbowMage.OverlayPlugin
     [Serializable]
     [XmlInclude(typeof(MiniParseOverlayConfig))]
     [XmlInclude(typeof(SpellTimerOverlayConfig))]
+    [XmlInclude(typeof(OverlayConfig))]
     public class PluginConfig
     {
         #region Config for version 0.1.2.0 or below
@@ -161,12 +162,10 @@ namespace RainbowMage.OverlayPlugin
 
         #region Config for version 0.2.5.0 or below
         [XmlElement("MiniParseOverlay")]
-        [Obsolete]
         public MiniParseOverlayConfig MiniParseOverlayObsolete { get; set; }
 
         [XmlElement("SpellTimerOverlay")]
-        [Obsolete]
-        public OverlayConfig SpellTimerOverlayObsolete { get; set; }
+        public SpellTimerOverlayConfig SpellTimerOverlayObsolete { get; set; }
         #endregion
 
         [XmlElement("Overlays")]
@@ -214,7 +213,7 @@ namespace RainbowMage.OverlayPlugin
             this.IsClickThruObsolete = false;
             this.OverlayPositionObsolete = new Point(20, 20);
             this.OverlaySizeObsolete = new Size(300, 300);
-            this.UrlObsolete = "";
+            this.UrlObsolete = null;
             this.SortKeyObsolete = "encdps";
             this.SortTypeObsolete = MiniParseSortType.NumericDescending;
 #pragma warning restore 612, 618
@@ -284,11 +283,24 @@ namespace RainbowMage.OverlayPlugin
         private void UpdateFromVersion0_1_2_0OrBelow()
         {
 #pragma warning disable 612, 618
-            this.MiniParseOverlayObsolete.IsVisible = this.IsVisibleObsolete;
-            this.MiniParseOverlayObsolete.IsClickThru = this.IsClickThruObsolete;
-            this.MiniParseOverlayObsolete.Position = this.OverlayPositionObsolete;
-            this.MiniParseOverlayObsolete.Size = this.OverlaySizeObsolete;
-            this.MiniParseOverlayObsolete.Url = this.UrlObsolete;
+            if (this.MiniParseOverlayObsolete == null)
+            {
+                this.MiniParseOverlayObsolete = new MiniParseOverlayConfig(DefaultMiniParseOverlayName);
+                this.MiniParseOverlayObsolete.IsVisible = this.IsVisibleObsolete;
+                this.MiniParseOverlayObsolete.IsClickThru = this.IsClickThruObsolete;
+                this.MiniParseOverlayObsolete.Position = this.OverlayPositionObsolete;
+                this.MiniParseOverlayObsolete.Size = this.OverlaySizeObsolete;
+                this.MiniParseOverlayObsolete.Url = this.UrlObsolete;
+            }
+            if (this.SpellTimerOverlayObsolete == null)
+            {
+                this.SpellTimerOverlayObsolete = new SpellTimerOverlayConfig(DefaultSpellTimerOverlayName);
+                this.SpellTimerOverlayObsolete.Position = new Point(20, 520);
+                this.SpellTimerOverlayObsolete.Size = new Size(200, 300);
+                this.SpellTimerOverlayObsolete.IsVisible = false;
+                this.SpellTimerOverlayObsolete.MaxFrameRate = 5;
+                this.SpellTimerOverlayObsolete.Url = null;
+            }
 #pragma warning restore 612, 618
         }
 

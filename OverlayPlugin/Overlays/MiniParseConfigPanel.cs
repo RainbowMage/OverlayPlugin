@@ -45,6 +45,9 @@ namespace RainbowMage.OverlayPlugin.Overlays
             this.comboMiniParseSortType.SelectedValue = config.SortType;
             this.comboMiniParseSortType.SelectedIndexChanged += comboSortType_SelectedIndexChanged;
             this.nudMaxFrameRate.Value = config.MaxFrameRate;
+            this.checkEnableGlobalHotkey.Checked = config.GlobalHotkeyEnabled;
+            this.textGlobalHotkey.Enabled = this.checkEnableGlobalHotkey.Checked;
+            this.textGlobalHotkey.Text = Util.GetHotkeyString(config.GlobalHotkeyModifiers, config.GlobalHotkey);
         }
 
         private void SetupConfigEventHandlers()
@@ -89,6 +92,28 @@ namespace RainbowMage.OverlayPlugin.Overlays
                 this.InvokeIfRequired(() =>
                 {
                     this.nudMaxFrameRate.Value = e.NewFrameRate;
+                });
+            };
+            this.config.GlobalHotkeyEnabledChanged += (o, e) =>
+            {
+                this.InvokeIfRequired(() =>
+                {
+                    this.checkEnableGlobalHotkey.Checked = e.NewGlobalHotkeyEnabled;
+                    this.textGlobalHotkey.Enabled = this.checkEnableGlobalHotkey.Checked;
+                });
+            };
+            this.config.GlobalHotkeyChanged += (o, e) =>
+            {
+                this.InvokeIfRequired(() =>
+                {
+                    this.textGlobalHotkey.Text = Util.GetHotkeyString(this.config.GlobalHotkeyModifiers, e.NewHotkey);
+                });
+            };
+            this.config.GlobalHotkeyModifiersChanged += (o, e) =>
+            {
+                this.InvokeIfRequired(() =>
+                {
+                    this.textGlobalHotkey.Text = Util.GetHotkeyString(e.NewHotkey, this.config.GlobalHotkey);
                 });
             };
         }
@@ -163,6 +188,20 @@ namespace RainbowMage.OverlayPlugin.Overlays
             //{
             //    Clipboard.SetText("var ActXiv = " + json + ";");
             //}
+        }
+
+        private void checkBoxEnableGlobalHotkey_CheckedChanged(object sender, EventArgs e)
+        {
+            this.config.GlobalHotkeyEnabled = this.checkEnableGlobalHotkey.Checked;
+            this.textGlobalHotkey.Enabled = this.config.GlobalHotkeyEnabled;
+        }
+
+        private void textBoxGlobalHotkey_KeyDown(object sender, KeyEventArgs e)
+        {
+            e.SuppressKeyPress = true;
+            var key = Util.RemoveModifiers(e.KeyCode, e.Modifiers);
+            this.config.GlobalHotkey = key;
+            this.config.GlobalHotkeyModifiers = e.Modifiers;
         }
     }
 }

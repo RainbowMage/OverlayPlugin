@@ -28,16 +28,12 @@ namespace RainbowMage.OverlayPlugin
 
             foreach (Type type in OverlayTypeManager.ConfigToOverlayDict.Values)
             {
-                comboBox1.Items.Add(type);
+                comboBox1.Items.Add(new ComboItem(type, OverlayTypeManager.GetFriendlyName(type)));
             }
-            if (this.OverlayType != null)
-            {
-                comboBox1.SelectedItem = this.OverlayType;
-            }
-            else
-            {
-                comboBox1.SelectedIndex = 0;
-            }
+
+            comboBox1.ValueMember = "OverlayType";
+            comboBox1.DisplayMember = "FriendlyName";
+            comboBox1.SelectedIndex = 0;
         }
 
         private void buttonOK_Click(object sender, EventArgs e)
@@ -52,12 +48,24 @@ namespace RainbowMage.OverlayPlugin
                 else
                 {
                     this.OverlayName = textBox1.Text;
-                    this.OverlayType = (Type)comboBox1.SelectedItem;
+                    this.OverlayType = ((ComboItem)comboBox1.SelectedItem).OverlayType;
                 }
             }
             else
             {
                 this.DialogResult = System.Windows.Forms.DialogResult.None;
+            }
+        }
+
+        private class ComboItem
+        {
+            public Type OverlayType { get; set; }
+            public string FriendlyName { get; set; }
+
+            public ComboItem(Type overlayType, string friendlyName)
+            {
+                OverlayType = overlayType;
+                FriendlyName = friendlyName;
             }
         }
     }

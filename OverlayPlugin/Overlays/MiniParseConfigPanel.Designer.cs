@@ -30,7 +30,6 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MiniParseConfigPanel));
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.label13 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.textMiniParseSortKey = new System.Windows.Forms.TextBox();
@@ -49,8 +48,11 @@
             this.buttonMiniParseSelectFile = new System.Windows.Forms.Button();
             this.comboMiniParseSortType = new System.Windows.Forms.ComboBox();
             this.nudMaxFrameRate = new System.Windows.Forms.NumericUpDown();
-            this.keyAssignControl1 = new RainbowMage.Controls.KeyAssignControl();
+            this.label13 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
+            this.checkEnableGlobalHotkey = new System.Windows.Forms.CheckBox();
+            this.textGlobalHotkey = new System.Windows.Forms.TextBox();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
@@ -74,15 +76,12 @@
             this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel2, 1, 2);
             this.tableLayoutPanel1.Controls.Add(this.comboMiniParseSortType, 1, 4);
             this.tableLayoutPanel1.Controls.Add(this.nudMaxFrameRate, 1, 5);
-            this.tableLayoutPanel1.Controls.Add(this.keyAssignControl1, 1, 7);
-            this.tableLayoutPanel1.Controls.Add(this.label13, 1, 6);
-            this.tableLayoutPanel1.Controls.Add(this.label7, 0, 7);
+            this.tableLayoutPanel1.Controls.Add(this.label13, 1, 8);
+            this.tableLayoutPanel1.Controls.Add(this.label7, 0, 6);
+            this.tableLayoutPanel1.Controls.Add(this.label8, 0, 7);
+            this.tableLayoutPanel1.Controls.Add(this.checkEnableGlobalHotkey, 1, 6);
+            this.tableLayoutPanel1.Controls.Add(this.textGlobalHotkey, 1, 7);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            // 
-            // label13
-            // 
-            resources.ApplyResources(this.label13, "label13");
-            this.label13.Name = "label13";
             // 
             // label6
             // 
@@ -210,16 +209,33 @@
             0});
             this.nudMaxFrameRate.ValueChanged += new System.EventHandler(this.nudMaxFrameRate_ValueChanged);
             // 
-            // keyAssignControl1
+            // label13
             // 
-            this.keyAssignControl1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            resources.ApplyResources(this.keyAssignControl1, "keyAssignControl1");
-            this.keyAssignControl1.Name = "keyAssignControl1";
+            resources.ApplyResources(this.label13, "label13");
+            this.label13.Name = "label13";
             // 
             // label7
             // 
             resources.ApplyResources(this.label7, "label7");
             this.label7.Name = "label7";
+            // 
+            // label8
+            // 
+            resources.ApplyResources(this.label8, "label8");
+            this.label8.Name = "label8";
+            // 
+            // checkEnableGlobalHotkey
+            // 
+            resources.ApplyResources(this.checkEnableGlobalHotkey, "checkEnableGlobalHotkey");
+            this.checkEnableGlobalHotkey.Name = "checkEnableGlobalHotkey";
+            this.checkEnableGlobalHotkey.UseVisualStyleBackColor = true;
+            this.checkEnableGlobalHotkey.CheckedChanged += new System.EventHandler(this.checkBoxEnableGlobalHotkey_CheckedChanged);
+            // 
+            // textGlobalHotkey
+            // 
+            resources.ApplyResources(this.textGlobalHotkey, "textGlobalHotkey");
+            this.textGlobalHotkey.Name = "textGlobalHotkey";
+            this.textGlobalHotkey.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxGlobalHotkey_KeyDown);
             // 
             // MiniParseConfigPanel
             // 
@@ -261,7 +277,9 @@
         private System.Windows.Forms.Button buttonMiniParseSelectFile;
         private System.Windows.Forms.ComboBox comboMiniParseSortType;
         private System.Windows.Forms.NumericUpDown nudMaxFrameRate;
-        private Controls.KeyAssignControl keyAssignControl1;
         private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.CheckBox checkEnableGlobalHotkey;
+        private System.Windows.Forms.TextBox textGlobalHotkey;
     }
 }

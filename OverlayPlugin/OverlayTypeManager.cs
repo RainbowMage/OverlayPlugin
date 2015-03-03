@@ -13,6 +13,8 @@ namespace RainbowMage.OverlayPlugin
         public delegate System.Windows.Forms.Control OverlayConfigControlFactoryDelegate(IOverlay overlay);
 
 
+        internal static Dictionary<Type, string> OverlayNameDict = new Dictionary<Type, string>();
+
         // オーバーレイ型からコンフィグ型への変換辞書（TOverlay => TConfig）
         internal static Dictionary<Type, Type> OverlayToConfigDict = new Dictionary<Type, Type>();
 
@@ -32,6 +34,7 @@ namespace RainbowMage.OverlayPlugin
         internal static Dictionary<Type, OverlayConfigControlFactoryDelegate> OverlayConfigControlFactories = new Dictionary<Type, OverlayConfigControlFactoryDelegate>();
 
         public static void RegisterOverlayType<TOverlay, TConfig, TConfigControl>(
+            string friendlyName,
             OverlayFactoryDelegate overlayFactory,
             OverlayConfigFactoryDelegate configFactory,
             OverlayConfigControlFactoryDelegate configControlFactory)
@@ -39,12 +42,18 @@ namespace RainbowMage.OverlayPlugin
             where TConfig : OverlayConfig
             where TConfigControl : System.Windows.Forms.Control
         {
+            OverlayNameDict.Add(typeof(TOverlay), friendlyName);
             OverlayToConfigDict.Add(typeof(TOverlay), typeof(TConfig));
             ConfigToOverlayDict.Add(typeof(TConfig), typeof(TOverlay));
             OverlayFactories.Add(typeof(TOverlay), overlayFactory);
             OverlayConfigFactories.Add(typeof(TConfig), configFactory);
             OverlayToConfigControlDict.Add(typeof(TOverlay), typeof(TConfigControl));
             OverlayConfigControlFactories.Add(typeof(TOverlay), configControlFactory);
+        }
+
+        public static string GetFriendlyName(Type overlayType)
+        {
+            return OverlayNameDict[overlayType];
         }
 
         public static Type GetConfigTypeFromOverlayType(Type overlayType)

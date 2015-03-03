@@ -30,6 +30,9 @@ namespace RainbowMage.OverlayPlugin.Overlays
             this.checkBoxClickThru.Checked = this.config.IsClickThru;
             this.textBoxUrl.Text = this.config.Url;
             this.nudMaxFrameRate.Value = this.config.MaxFrameRate;
+            this.checkEnableGlobalHotkey.Checked = config.GlobalHotkeyEnabled;
+            this.textGlobalHotkey.Enabled = this.checkEnableGlobalHotkey.Checked;
+            this.textGlobalHotkey.Text = Util.GetHotkeyString(config.GlobalHotkeyModifiers, config.GlobalHotkey);
         }
 
         private void SetupConfigEventHandlers()
@@ -60,6 +63,28 @@ namespace RainbowMage.OverlayPlugin.Overlays
                 this.InvokeIfRequired(() =>
                 {
                     this.nudMaxFrameRate.Value = e.NewFrameRate;
+                });
+            };
+            this.config.GlobalHotkeyEnabledChanged += (o, e) =>
+            {
+                this.InvokeIfRequired(() =>
+                {
+                    this.checkEnableGlobalHotkey.Checked = e.NewGlobalHotkeyEnabled;
+                    this.textGlobalHotkey.Enabled = this.checkEnableGlobalHotkey.Checked;
+                });
+            };
+            this.config.GlobalHotkeyChanged += (o, e) =>
+            {
+                this.InvokeIfRequired(() =>
+                {
+                    this.textGlobalHotkey.Text = Util.GetHotkeyString(this.config.GlobalHotkeyModifiers, e.NewHotkey);
+                });
+            };
+            this.config.GlobalHotkeyModifiersChanged += (o, e) =>
+            {
+                this.InvokeIfRequired(() =>
+                {
+                    this.textGlobalHotkey.Text = Util.GetHotkeyString(e.NewHotkey, this.config.GlobalHotkey);
                 });
             };
         }
@@ -123,6 +148,20 @@ namespace RainbowMage.OverlayPlugin.Overlays
         private void nudMaxFrameRate_ValueChanged(object sender, EventArgs e)
         {
             this.config.MaxFrameRate = (int)nudMaxFrameRate.Value;
+        }
+
+        private void checkEnableGlobalHotkey_CheckedChanged(object sender, EventArgs e)
+        {
+            this.config.GlobalHotkeyEnabled = this.checkEnableGlobalHotkey.Checked;
+            this.textGlobalHotkey.Enabled = this.config.GlobalHotkeyEnabled;
+        }
+
+        private void textGlobalHotkey_KeyDown(object sender, KeyEventArgs e)
+        {
+            e.SuppressKeyPress = true;
+            var key = Util.RemoveModifiers(e.KeyCode, e.Modifiers);
+            this.config.GlobalHotkey = key;
+            this.config.GlobalHotkeyModifiers = e.Modifiers;
         }
     }
 }
