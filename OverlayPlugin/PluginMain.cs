@@ -26,8 +26,6 @@ namespace RainbowMage.OverlayPlugin
 
         internal PluginConfig Config { get; private set; }
         internal List<IOverlay> Overlays { get; private set; }
-        internal MiniParseOverlay MiniParseOverlay { get; private set; }
-        internal SpellTimerOverlay SpellTimerOverlay { get; private set; }
         internal BindingList<LogEntry> Logs { get; private set; }
 
         public PluginMain()
