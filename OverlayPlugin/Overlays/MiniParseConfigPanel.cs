@@ -13,6 +13,7 @@ namespace RainbowMage.OverlayPlugin.Overlays
     public partial class MiniParseConfigPanel : UserControl
     {
         private MiniParseOverlayConfig config;
+        private MiniParseOverlay overlay;
 
         static readonly List<KeyValuePair<string, MiniParseSortType>> sortTypeDict = new List<KeyValuePair<string, MiniParseSortType>>()
         {
@@ -27,7 +28,8 @@ namespace RainbowMage.OverlayPlugin.Overlays
         {
             InitializeComponent();
 
-            this.config = overlay.Config as MiniParseOverlayConfig;
+            this.overlay = overlay;
+            this.config = overlay.Config;
 
             SetupControlProperties();
             SetupConfigEventHandlers();
@@ -168,7 +170,7 @@ namespace RainbowMage.OverlayPlugin.Overlays
 
         private void buttonReloadBrowser_Click(object sender, EventArgs e)
         {
-            this.config.Url = textMiniParseUrl.Text;
+            this.overlay.Navigate(this.config.Url);
         }
 
         private void buttonSelectFile_Click(object sender, EventArgs e)
@@ -183,11 +185,11 @@ namespace RainbowMage.OverlayPlugin.Overlays
 
         private void buttonCopyActXiv_Click(object sender, EventArgs e)
         {
-            //var json = pluginMain.MiniParseOverlay.CreateJsonData();
-            //if (!string.IsNullOrWhiteSpace(json))
-            //{
-            //    Clipboard.SetText("var ActXiv = " + json + ";");
-            //}
+            var json = overlay.CreateJsonData();
+            if (!string.IsNullOrWhiteSpace(json))
+            {
+                Clipboard.SetText("var ActXiv = " + json + ";");
+            }
         }
 
         private void checkBoxEnableGlobalHotkey_CheckedChanged(object sender, EventArgs e)

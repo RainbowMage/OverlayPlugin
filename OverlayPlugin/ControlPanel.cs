@@ -30,9 +30,9 @@ namespace RainbowMage.OverlayPlugin
             {
                 this.listViewLog.BeginUpdate();
                 this.listViewLog.VirtualListSize = pluginMain.Logs.Count;
-                if (this.config.FollowLatestLog && this.pluginMain.Logs.Count > 0)
+                if (this.config.FollowLatestLog && this.listViewLog.VirtualListSize > 0)
                 {
-                    this.listViewLog.EnsureVisible(this.pluginMain.Logs.Count - 1);
+                    this.listViewLog.EnsureVisible(this.listViewLog.VirtualListSize - 1);
                 }
                 this.listViewLog.EndUpdate();
             };

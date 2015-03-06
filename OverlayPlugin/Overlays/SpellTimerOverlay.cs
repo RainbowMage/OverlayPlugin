@@ -10,14 +10,14 @@ using System.Threading.Tasks;
 
 namespace RainbowMage.OverlayPlugin.Overlays
 {
-    public class SpellTimerOverlay : OverlayBase<OverlayConfig>
+    public class SpellTimerOverlay : OverlayBase<SpellTimerOverlayConfig>
     {
         static DataContractJsonSerializer jsonSerializer =
             new DataContractJsonSerializer(typeof(List<SerializableTimerFrameEntry>));
 
         IList<SerializableTimerFrameEntry> activatedTimers;
 
-        public SpellTimerOverlay(OverlayConfig config)
+        public SpellTimerOverlay(SpellTimerOverlayConfig config)
             : base(config, config.Name)
         {
             this.activatedTimers = new List<SerializableTimerFrameEntry>();

@@ -12,13 +12,15 @@ namespace RainbowMage.OverlayPlugin.Overlays
 {
     public partial class SpellTimerConfigPanel : UserControl
     {
+        private SpellTimerOverlay overlay;
         private SpellTimerOverlayConfig config;
 
         public SpellTimerConfigPanel(SpellTimerOverlay overlay)
         {
             InitializeComponent();
 
-            this.config = overlay.Config as SpellTimerOverlayConfig;
+            this.overlay = overlay;
+            this.config = overlay.Config;
 
             SetupConfigEventHandlers();
             SetupControlProperties();
@@ -133,16 +135,16 @@ namespace RainbowMage.OverlayPlugin.Overlays
 
         private void buttonCopyVariable_Click(object sender, EventArgs e)
         {
-            //var json = pluginMain.SpellTimerOverlay.CreateJsonData();
-            //if (!string.IsNullOrWhiteSpace(json))
-            //{
-            //    Clipboard.SetText("var ActXiv = " + json + ";");
-            //}
+            var json = this.overlay.CreateJsonData();
+            if (!string.IsNullOrWhiteSpace(json))
+            {
+                Clipboard.SetText("var ActXiv = " + json + ";");
+            }
         }
 
         private void buttonSpellTimerReloadBrowser_Click(object sender, EventArgs e)
         {
-            //pluginMain.SpellTimerOverlay.Navigate(config.SpellTimerOverlayObsolete.Url);
+            this.overlay.Navigate(this.config.Url);
         }
 
         private void nudMaxFrameRate_ValueChanged(object sender, EventArgs e)
