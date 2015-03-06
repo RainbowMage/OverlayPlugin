@@ -16,6 +16,10 @@ namespace RainbowMage.OverlayPlugin.Overlays
         private DateTime prevEndDateTime { get; set; }
         private bool prevEncounterActive { get; set; }
 
+        private static string updateStringCache = "";
+        private static DateTime updateStringCacheLastUpdate;
+        private static readonly TimeSpan updateStringCacheExpireInterval = new TimeSpan(0, 0, 0, 0, 500); // 500 msec
+
         public MiniParseOverlay(MiniParseOverlayConfig config)
             : base(config, config.Name)
         {
@@ -64,6 +68,11 @@ namespace RainbowMage.OverlayPlugin.Overlays
 
         internal string CreateJsonData()
         {
+            if (DateTime.Now - updateStringCacheLastUpdate < updateStringCacheExpireInterval)
+            {
+                return updateStringCache;
+            }
+
             if (!CheckIsActReady())
             {
                 return "";
@@ -75,11 +84,19 @@ namespace RainbowMage.OverlayPlugin.Overlays
 #endif
 
             var allies = ActGlobals.oFormActMain.ActiveZone.ActiveEncounter.GetAllies();
+            Dictionary<string, string> encounter = null;
+            List<KeyValuePair<CombatantData, Dictionary<string, string>>> combatant = null;
 
-            var encounter = GetEncounterDictionary(allies);
-            var combatant = GetCombatantList(allies);
-
-            SortCombatantList(combatant);
+            var encounterTask = Task.Run(() =>
+                {
+                    encounter = GetEncounterDictionary(allies);
+                });
+            var combatantTask = Task.Run(() =>
+                {
+                    combatant = GetCombatantList(allies);
+                    SortCombatantList(combatant);
+                });
+            Task.WaitAll(encounterTask, combatantTask);
 
             var builder = new StringBuilder();
             builder.Append("{");
@@ -135,7 +152,11 @@ namespace RainbowMage.OverlayPlugin.Overlays
             Log(LogLevel.Trace, "CreateUpdateScript: {0} msec", stopwatch.Elapsed.TotalMilliseconds);
 #endif
 
-            return builder.ToString();
+            var result = builder.ToString();
+            updateStringCache = result;
+            updateStringCacheLastUpdate = DateTime.Now;
+
+            return result;
         }
 
         private void SortCombatantList(List<KeyValuePair<CombatantData, Dictionary<string, string>>> combatant)
@@ -189,58 +210,116 @@ namespace RainbowMage.OverlayPlugin.Overlays
             }
         }
 
-        private static List<KeyValuePair<CombatantData, Dictionary<string, string>>> GetCombatantList(List<CombatantData> allies)
+        private List<KeyValuePair<CombatantData, Dictionary<string, string>>> GetCombatantList(List<CombatantData> allies)
         {
+#if DEBUG
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+#endif
+
             var combatantList = new List<KeyValuePair<CombatantData, Dictionary<string, string>>>();
-            foreach (var ally in allies)
+            Parallel.ForEach(allies, (ally) =>
+            //foreach (var ally in allies)
             {
                 var valueDict = new Dictionary<string, string>();
                 foreach (var exportValuePair in CombatantData.ExportVariables)
                 {
-                    // NAME タグには {NAME:8} のようにコロンで区切られたエクストラ情報が必要で、
-                    // プラグインの仕組み的に対応することができないので除外する
-                    if (exportValuePair.Key == "NAME")
-                    {
-                        continue;
-                    }
-
                     try
                     {
+                        // NAME タグには {NAME:8} のようにコロンで区切られたエクストラ情報が必要で、
+                        // プラグインの仕組み的に対応することができないので除外する
+                        if (exportValuePair.Key == "NAME")
+                        {
+                            continue;
+                        }
+
+                        // ACT_FFXIV_Plugin が提供する LastXXDPS は、
+                        // ally.Items[CombatantData.DamageTypeDataOutgoingDamage].Items に All キーが存在しない場合に、
+                        // プラグイン内で例外が発生してしまい、パフォーマンスが悪化するので代わりに空の文字列を挿入する
+                        if (exportValuePair.Key == "Last10DPS" ||
+                            exportValuePair.Key == "Last30DPS" ||
+                            exportValuePair.Key == "Last60DPS")
+                        {
+                            if (!ally.Items[CombatantData.DamageTypeDataOutgoingDamage].Items.ContainsKey("All"))
+                            {
+                                valueDict.Add(exportValuePair.Key, "");
+                                continue;
+                            }
+                        }
+
                         var value = exportValuePair.Value.GetExportString(ally, "");
                         valueDict.Add(exportValuePair.Key, value);
                     }
                     catch (Exception e)
                     {
-                        Debug.WriteLine(exportValuePair.Key);
-                        Debug.WriteLine(e);
+                        Log(LogLevel.Error, "GetCombatantList: {0}: {1}: {2}", ally.Name, exportValuePair.Key, e);
                         continue;
                     }
                 }
-                combatantList.Add(new KeyValuePair<CombatantData, Dictionary<string, string>>(ally, valueDict));
+
+                lock (combatantList)
+                {
+                    combatantList.Add(new KeyValuePair<CombatantData, Dictionary<string, string>>(ally, valueDict));
+                }
             }
+            );
+
+#if DEBUG
+            stopwatch.Stop();
+            Log(LogLevel.Trace, "GetCombatantList: {0} msec", stopwatch.Elapsed.TotalMilliseconds);
+#endif
+
             return combatantList;
         }
 
-        private static Dictionary<string, string> GetEncounterDictionary(List<CombatantData> allies)
+        private Dictionary<string, string> GetEncounterDictionary(List<CombatantData> allies)
         {
+#if DEBUG
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+#endif
+
             var encounterDict = new Dictionary<string, string>();
+            //Parallel.ForEach(EncounterData.ExportVariables, (exportValuePair) =>
             foreach (var exportValuePair in EncounterData.ExportVariables)
             {
                 try
                 {
+                    // ACT_FFXIV_Plugin が提供する LastXXDPS は、
+                    // ally.Items[CombatantData.DamageTypeDataOutgoingDamage].Items に All キーが存在しない場合に、
+                    // プラグイン内で例外が発生してしまい、パフォーマンスが悪化するので代わりに空の文字列を挿入する
+                    if (exportValuePair.Key == "Last10DPS" ||
+                        exportValuePair.Key == "Last30DPS" ||
+                        exportValuePair.Key == "Last60DPS")
+                    {
+                        if (!allies.All((ally) => ally.Items[CombatantData.DamageTypeDataOutgoingDamage].Items.ContainsKey("All")))
+                        {
+                            encounterDict.Add(exportValuePair.Key, "");
+                            continue;
+                        }
+                    }
+
                     var value = exportValuePair.Value.GetExportString(
                         ActGlobals.oFormActMain.ActiveZone.ActiveEncounter,
                         allies,
                         "");
-                    encounterDict.Add(exportValuePair.Key, value);
+                    //lock (encounterDict)
+                    //{
+                        encounterDict.Add(exportValuePair.Key, value);
+                    //}
                 }
                 catch (Exception e)
                 {
-                    Debug.WriteLine("GetEncounterDictionary: " + exportValuePair.Key);
-                    Debug.WriteLine("GetEncounterDictionary: " + e.ToString());
-                    continue;
+                    Log(LogLevel.Error, "GetEncounterDictionary: {0}: {1}", exportValuePair.Key, e);
                 }
             }
+            //);
+
+#if DEBUG
+            stopwatch.Stop();
+            Log(LogLevel.Trace, "GetEncounterDictionary: {0} msec", stopwatch.Elapsed.TotalMilliseconds);
+#endif
+
             return encounterDict;
         }
 
