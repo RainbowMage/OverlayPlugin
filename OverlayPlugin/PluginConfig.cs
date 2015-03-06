@@ -317,6 +317,10 @@ namespace RainbowMage.OverlayPlugin
                 miniParseOverlayConfig.Url = this.MiniParseOverlayObsolete.Url;
                 miniParseOverlayConfig.SortKey = this.MiniParseOverlayObsolete.SortKey;
                 miniParseOverlayConfig.SortType = this.MiniParseOverlayObsolete.SortType;
+                miniParseOverlayConfig.MaxFrameRate = this.MiniParseOverlayObsolete.MaxFrameRate;
+                miniParseOverlayConfig.GlobalHotkey = this.MiniParseOverlayObsolete.GlobalHotkey;
+                miniParseOverlayConfig.GlobalHotkeyEnabled = this.MiniParseOverlayObsolete.GlobalHotkeyEnabled;
+                miniParseOverlayConfig.GlobalHotkeyModifiers = this.MiniParseOverlayObsolete.GlobalHotkeyModifiers;
 
                 this.Overlays.RemoveAll(x => x.Name == miniParseOverlayConfig.Name);
                 this.Overlays.Add(miniParseOverlayConfig);
@@ -331,6 +335,10 @@ namespace RainbowMage.OverlayPlugin
                 spellTimerOverlayConfig.Position = this.SpellTimerOverlayObsolete.Position;
                 spellTimerOverlayConfig.Size = this.SpellTimerOverlayObsolete.Size;
                 spellTimerOverlayConfig.Url = this.SpellTimerOverlayObsolete.Url;
+                spellTimerOverlayConfig.MaxFrameRate = this.SpellTimerOverlayObsolete.MaxFrameRate;
+                spellTimerOverlayConfig.GlobalHotkey = this.SpellTimerOverlayObsolete.GlobalHotkey;
+                spellTimerOverlayConfig.GlobalHotkeyEnabled = this.SpellTimerOverlayObsolete.GlobalHotkeyEnabled;
+                spellTimerOverlayConfig.GlobalHotkeyModifiers = this.SpellTimerOverlayObsolete.GlobalHotkeyModifiers;
 
                 this.Overlays.RemoveAll(x => x.Name == spellTimerOverlayConfig.Name);
                 this.Overlays.Add(spellTimerOverlayConfig);
