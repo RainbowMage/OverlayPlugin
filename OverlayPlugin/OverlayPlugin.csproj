@@ -170,10 +170,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CustomControls\CustomControls.csproj">
-      <Project>{b077d118-55df-478a-993c-014e616c98cb}</Project>
-      <Name>CustomControls</Name>
-    </ProjectReference>
     <ProjectReference Include="..\HtmlRenderer\HtmlRenderer.csproj">
       <Project>{e2bc6483-b966-4a4a-b4cc-d50a4bd73af3}</Project>
       <Name>HtmlRenderer</Name>

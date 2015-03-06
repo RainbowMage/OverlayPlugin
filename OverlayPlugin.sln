@@ -19,8 +19,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Files", "Files", "{84CCF15D
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomControls", "CustomControls\CustomControls.csproj", "{B077D118-55DF-478A-993C-014E616C98CB}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -45,14 +43,6 @@ Global
 		{E2BC6483-B966-4A4A-B4CC-D50A4BD73AF3}.Release|x64.Build.0 = Release|x64
 		{E2BC6483-B966-4A4A-B4CC-D50A4BD73AF3}.Release|x86.ActiveCfg = Release|x86
 		{E2BC6483-B966-4A4A-B4CC-D50A4BD73AF3}.Release|x86.Build.0 = Release|x86
-		{B077D118-55DF-478A-993C-014E616C98CB}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{B077D118-55DF-478A-993C-014E616C98CB}.Debug|x64.Build.0 = Debug|Any CPU
-		{B077D118-55DF-478A-993C-014E616C98CB}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{B077D118-55DF-478A-993C-014E616C98CB}.Debug|x86.Build.0 = Debug|Any CPU
-		{B077D118-55DF-478A-993C-014E616C98CB}.Release|x64.ActiveCfg = Release|Any CPU
-		{B077D118-55DF-478A-993C-014E616C98CB}.Release|x64.Build.0 = Release|Any CPU
-		{B077D118-55DF-478A-993C-014E616C98CB}.Release|x86.ActiveCfg = Release|Any CPU
-		{B077D118-55DF-478A-993C-014E616C98CB}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
