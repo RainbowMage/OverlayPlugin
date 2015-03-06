@@ -12,9 +12,6 @@ using System.Xml.Serialization;
 namespace RainbowMage.OverlayPlugin
 {
     [Serializable]
-    [XmlInclude(typeof(MiniParseOverlayConfig))]
-    [XmlInclude(typeof(SpellTimerOverlayConfig))]
-    [XmlInclude(typeof(OverlayConfig))]
     public class PluginConfig
     {
         #region Config for version 0.1.2.0 or below
@@ -225,15 +222,13 @@ namespace RainbowMage.OverlayPlugin
             this.IsFirstLaunch = true;
         }
 
-
-
         public void SaveXml(string path)
         {
             this.Version = typeof(PluginMain).Assembly.GetName().Version;
 
             using (var stream = new FileStream(path, FileMode.Create, FileAccess.Write))
             {
-                XmlSerializer serializer = new XmlSerializer(typeof(PluginConfig));
+                XmlSerializer serializer = new XmlSerializer(typeof(PluginConfig), GetExtraTypes());
                 serializer.Serialize(stream, this);
             }
         }
@@ -247,7 +242,7 @@ namespace RainbowMage.OverlayPlugin
 
             using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read))
             {
-                XmlSerializer serializer = new XmlSerializer(typeof(PluginConfig));
+                XmlSerializer serializer = new XmlSerializer(typeof(PluginConfig), GetExtraTypes());
                 var result = (PluginConfig)serializer.Deserialize(stream);
 
                 result.IsFirstLaunch = false;
@@ -261,6 +256,11 @@ namespace RainbowMage.OverlayPlugin
 
                 return result;
             }
+        }
+
+        private static Type[] GetExtraTypes()
+        {
+            return OverlayTypeManager.ConfigToOverlayDict.Keys.ToArray();
         }
 
         public void SetDefaultOverlayConfigs()

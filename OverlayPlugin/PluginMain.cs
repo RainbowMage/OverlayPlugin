@@ -74,6 +74,9 @@ namespace RainbowMage.OverlayPlugin
                 // プラグインの配置してあるフォルダを検索するカスタムリゾルバーでアセンブリを解決する
                 AppDomain.CurrentDomain.AssemblyResolve += CustomAssemblyResolve;
 
+                // プラグイン読み込み
+                LoadAddons();
+
                 // コンフィグ系読み込み
                 LoadConfig();
 
@@ -96,10 +99,6 @@ namespace RainbowMage.OverlayPlugin
                 this.controlPanel = new ControlPanel(this, this.Config);
                 this.controlPanel.Dock = DockStyle.Fill;
                 this.tabPage.Controls.Add(this.controlPanel);
-
-                // ショートカットキー設定
-                ActGlobals.oFormActMain.KeyPreview = true;
-                ActGlobals.oFormActMain.KeyDown += oFormActMain_KeyDown;
 
                 Log(LogLevel.Info, "InitPlugin: Initialized.");
                 this.label.Text = "Initialized.";
@@ -135,8 +134,6 @@ namespace RainbowMage.OverlayPlugin
                 overlay.Dispose();
             }
 
-            ActGlobals.oFormActMain.KeyDown -= oFormActMain_KeyDown;
-
             AppDomain.CurrentDomain.AssemblyResolve -= CustomAssemblyResolve;
 
             Log(LogLevel.Info, "DeInitPlugin: Finalized.");
@@ -151,6 +148,14 @@ namespace RainbowMage.OverlayPlugin
         {
             Log(LogLevel.Debug, "AssemblyResolve: Resolving assembly for '{0}'...", e.Name);
 
+            // 自分自身の解決が必要なときは、Assembly.GetExecutingAssembly() を返す
+            if (e.Name == Assembly.GetExecutingAssembly().FullName)
+            {
+                Log(LogLevel.Debug, "AssemblyResolve: => Returns executing assembly.");
+                return Assembly.GetExecutingAssembly();
+            }
+
+            // それ以外のときは、プラグインのディレクトリを基準にアセンブリを検索する
             var asmPath = "";
             var match = assemblyNameParser.Match(e.Name);
             if (match.Success)
@@ -175,7 +180,7 @@ namespace RainbowMage.OverlayPlugin
                 return LoadAssembly(asmPath);
             }
 
-            Log(LogLevel.Debug, "AssemblyResolve: => Not found in plugin directory.");
+            Log(LogLevel.Debug, "AssemblyResolve: => Not found in the plugin directory.");
             return null;
         }
 
@@ -184,7 +189,7 @@ namespace RainbowMage.OverlayPlugin
             try
             {
                 var result = Assembly.LoadFile(path);
-                Log(LogLevel.Debug, "AssemblyResolve: => Found assembly at {0}.", path);
+                Log(LogLevel.Debug, "LoadAssembly: => Loaded successfully: {0}.", path);
                 return result;
             }
             catch (FileLoadException ex)
@@ -193,8 +198,8 @@ namespace RainbowMage.OverlayPlugin
                     Localization.GetText(TextItem.RequiredAssemblyFileCannotRead),
                     path
                     );
-                Log(LogLevel.Error, "AssemblyResolve: => {0}", message);
-                Log(LogLevel.Error, "AssemblyResolve: => {0}", ex);
+                Log(LogLevel.Error, "LoadAssembly: => {0}", message);
+                Log(LogLevel.Error, "LoadAssembly: => {0}", ex);
                 MessageBox.Show(message, Localization.GetText(TextItem.ErrorTitle), MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             catch (NotSupportedException ex)
@@ -203,8 +208,8 @@ namespace RainbowMage.OverlayPlugin
                     Localization.GetText(TextItem.RequiredAssemblyFileBlocked),
                     path
                     );
-                Log(LogLevel.Error, "AssemblyResolve: => {0}", message);
-                Log(LogLevel.Error, "AssemblyResolve: => {0}", ex);
+                Log(LogLevel.Error, "LoadAssembly: => {0}", message);
+                Log(LogLevel.Error, "LoadAssembly: => {0}", ex);
                 MessageBox.Show(message, Localization.GetText(TextItem.ErrorTitle), MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             catch (Exception ex)
@@ -213,26 +218,62 @@ namespace RainbowMage.OverlayPlugin
                     Localization.GetText(TextItem.RequiredAssemblyFileException),
                     path
                     );
-                Log(LogLevel.Error, "AssemblyResolve: => {0}", ex);
+                Log(LogLevel.Error, "LoadAssembly: => {0}", ex);
                 MessageBox.Show(message, Localization.GetText(TextItem.ErrorTitle), MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
             return null;
         }
 
-        void oFormActMain_KeyDown(object sender, KeyEventArgs e)
+        void LoadAddons()
         {
-            if (e.Control && e.KeyCode == Keys.M)
+            try
             {
-                // ミニパース表示非表示
-                //this.Config.MiniParseOverlayObsolete.IsVisible = !this.Config.MiniParseOverlayObsolete.IsVisible;
-                //ActGlobals.oFormActMain.Activate();
+                // <プラグイン本体があるディレクトリ>\plugins\*.dll を検索する
+                var directory = Path.Combine(pluginDirectory, "addons");
+                if (!Directory.Exists(directory))
+                {
+                    Directory.CreateDirectory(directory);
+                }
+                foreach (var pluginFile in Directory.GetFiles(directory, "*.dll"))
+                {
+                    try
+                    {
+                        Log(LogLevel.Info, "LoadAddons: {0}", pluginFile);
+
+                        // アセンブリが見つかったら読み込む
+                        var asm = LoadAssembly(pluginFile);
+
+                        // IOverlayAddon を実装した public クラスを列挙し...
+                        var types = asm.GetExportedTypes().Where(t => 
+                                typeof(IOverlayAddon).IsAssignableFrom(t) && t.IsClass);
+                        foreach (var type in types)
+                        {
+                            try
+                            {
+                                if (typeof(IOverlayAddon).IsAssignableFrom(type))
+                                {
+                                    // 各クラスの静的コンストラクタを呼び出す
+                                    System.Runtime.CompilerServices.
+                                        RuntimeHelpers.RunClassConstructor(type.TypeHandle);
+                                    Log(LogLevel.Info, "LoadAddons: {0}: Loaded", type.FullName);
+                                }
+                            }
+                            catch (Exception e)
+                            {
+                                Log(LogLevel.Error, "LoadAddons: {0}: {1}", type.FullName, e);
+                            }
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Log(LogLevel.Error, "LoadAddons: {0}: {1}", pluginFile, e);
+                    }
+                }
             }
-            else if (e.Control && e.KeyCode == Keys.S)
+            catch (Exception e)
             {
-                // スペルタイマー表示非表示
-                //this.Config.SpellTimerOverlayObsolete.IsVisible = !this.Config.SpellTimerOverlayObsolete.IsVisible;
-                //ActGlobals.oFormActMain.Activate();
+                Log(LogLevel.Error, "LoadAddons: {0}", e);
             }
         }
 
@@ -244,6 +285,7 @@ namespace RainbowMage.OverlayPlugin
             }
             catch (Exception e)
             {
+                // 設定ファイルが存在しない、もしくは破損している場合は作り直す
                 Log(LogLevel.Warning, "LoadConfig: {0}", e);
                 Log(LogLevel.Info, "LoadConfig: Creating new configuration.");
                 Config = new PluginConfig();
@@ -251,15 +293,18 @@ namespace RainbowMage.OverlayPlugin
             }
             finally
             {
+                // デフォルトオーバーレイの URL が空の場合はデフォルトの URL を設定する
                 var defaultMiniParse = Config.Overlays.FirstOrDefault(x => x.Name == PluginConfig.DefaultMiniParseOverlayName);
                 var defaultSpellTimer = Config.Overlays.FirstOrDefault(x => x.Name == PluginConfig.DefaultSpellTimerOverlayName);
 
-                if (defaultMiniParse != null && defaultMiniParse.Url == null)
+                if (defaultMiniParse != null && 
+                    string.IsNullOrEmpty(defaultMiniParse.Url))
                 {
                     defaultMiniParse.Url =
                         new Uri(Path.Combine(pluginDirectory, "resources", "miniparse.html")).ToString();
                 }
-                if (defaultSpellTimer != null && defaultSpellTimer.Url == null)
+                if (defaultSpellTimer != null && 
+                    string.IsNullOrEmpty(defaultSpellTimer.Url))
                 {
                     defaultSpellTimer.Url =
                         new Uri(Path.Combine(pluginDirectory, "resources", "spelltimer.html")).ToString();
@@ -275,10 +320,6 @@ namespace RainbowMage.OverlayPlugin
                 {
                     overlay.SavePositionAndSize();
                 }
-                //Config.MiniParseOverlayObsolete.Position = this.MiniParseOverlay.Overlay.Location;
-                //Config.MiniParseOverlayObsolete.Size = this.MiniParseOverlay.Overlay.Size;
-                //Config.SpellTimerOverlayObsolete.Position = this.SpellTimerOverlay.Overlay.Location;
-                //Config.SpellTimerOverlayObsolete.Size = this.SpellTimerOverlay.Overlay.Size;
 
                 Config.SaveXml(GetConfigPath());
             }
@@ -300,6 +341,8 @@ namespace RainbowMage.OverlayPlugin
 
         private string GetPluginDirectory()
         {
+            // ACT のプラグインリストからパスを取得する
+            // Assembly.LoadFrom(byte[]) で読み込まれているので、CodeBase からはパスを取得できない
             var plugin = ActGlobals.oFormActMain.ActPlugins.Where(x => x.pluginObj == this).FirstOrDefault();
             if (plugin != null)
             {

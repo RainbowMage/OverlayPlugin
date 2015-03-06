@@ -12,7 +12,6 @@ namespace RainbowMage.OverlayPlugin
         public delegate OverlayConfig OverlayConfigFactoryDelegate(string name);
         public delegate System.Windows.Forms.Control OverlayConfigControlFactoryDelegate(IOverlay overlay);
 
-
         internal static Dictionary<Type, string> OverlayNameDict = new Dictionary<Type, string>();
 
         // オーバーレイ型からコンフィグ型への変換辞書（TOverlay => TConfig）
