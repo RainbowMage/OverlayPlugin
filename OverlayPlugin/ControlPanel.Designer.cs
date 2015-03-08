@@ -33,6 +33,12 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tabControl = new System.Windows.Forms.TabControl();
             this.tabPageMain = new System.Windows.Forms.TabPage();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.buttonRemoveOverlay = new System.Windows.Forms.Button();
+            this.buttonNewOverlay = new System.Windows.Forms.Button();
+            this.listViewOverlay = new System.Windows.Forms.ListView();
+            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.listViewLog = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -44,20 +50,14 @@
             this.menuFollowLatestLog = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
             this.menuClearLog = new System.Windows.Forms.ToolStripMenuItem();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.listViewOverlay = new System.Windows.Forms.ListView();
-            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.buttonNewOverlay = new System.Windows.Forms.Button();
-            this.buttonRemoveOverlay = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             this.tabControl.SuspendLayout();
             this.tabPageMain.SuspendLayout();
-            this.contextMenuLogList.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            this.contextMenuLogList.SuspendLayout();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -67,34 +67,80 @@
             // 
             // splitContainer1.Panel1
             // 
+            resources.ApplyResources(this.splitContainer1.Panel1, "splitContainer1.Panel1");
             this.splitContainer1.Panel1.Controls.Add(this.tabControl);
             // 
             // splitContainer1.Panel2
             // 
+            resources.ApplyResources(this.splitContainer1.Panel2, "splitContainer1.Panel2");
             this.splitContainer1.Panel2.Controls.Add(this.listViewLog);
             // 
             // tabControl
             // 
-            this.tabControl.Controls.Add(this.tabPageMain);
             resources.ApplyResources(this.tabControl, "tabControl");
+            this.tabControl.Controls.Add(this.tabPageMain);
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
             // 
             // tabPageMain
             // 
-            this.tabPageMain.Controls.Add(this.groupBox2);
             resources.ApplyResources(this.tabPageMain, "tabPageMain");
+            this.tabPageMain.Controls.Add(this.groupBox2);
             this.tabPageMain.Name = "tabPageMain";
             this.tabPageMain.UseVisualStyleBackColor = true;
             // 
+            // groupBox2
+            // 
+            resources.ApplyResources(this.groupBox2, "groupBox2");
+            this.groupBox2.Controls.Add(this.buttonRemoveOverlay);
+            this.groupBox2.Controls.Add(this.buttonNewOverlay);
+            this.groupBox2.Controls.Add(this.listViewOverlay);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.TabStop = false;
+            // 
+            // buttonRemoveOverlay
+            // 
+            resources.ApplyResources(this.buttonRemoveOverlay, "buttonRemoveOverlay");
+            this.buttonRemoveOverlay.Name = "buttonRemoveOverlay";
+            this.buttonRemoveOverlay.UseVisualStyleBackColor = true;
+            this.buttonRemoveOverlay.Click += new System.EventHandler(this.buttonRemoveOverlay_Click);
+            // 
+            // buttonNewOverlay
+            // 
+            resources.ApplyResources(this.buttonNewOverlay, "buttonNewOverlay");
+            this.buttonNewOverlay.Name = "buttonNewOverlay";
+            this.buttonNewOverlay.UseVisualStyleBackColor = true;
+            this.buttonNewOverlay.Click += new System.EventHandler(this.buttonNewOverlay_Click);
+            // 
+            // listViewOverlay
+            // 
+            resources.ApplyResources(this.listViewOverlay, "listViewOverlay");
+            this.listViewOverlay.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader4,
+            this.columnHeader5});
+            this.listViewOverlay.FullRowSelect = true;
+            this.listViewOverlay.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+            this.listViewOverlay.HideSelection = false;
+            this.listViewOverlay.Name = "listViewOverlay";
+            this.listViewOverlay.UseCompatibleStateImageBehavior = false;
+            this.listViewOverlay.View = System.Windows.Forms.View.Details;
+            // 
+            // columnHeader4
+            // 
+            resources.ApplyResources(this.columnHeader4, "columnHeader4");
+            // 
+            // columnHeader5
+            // 
+            resources.ApplyResources(this.columnHeader5, "columnHeader5");
+            // 
             // listViewLog
             // 
+            resources.ApplyResources(this.listViewLog, "listViewLog");
             this.listViewLog.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
             this.columnHeader2,
             this.columnHeader3});
             this.listViewLog.ContextMenuStrip = this.contextMenuLogList;
-            resources.ApplyResources(this.listViewLog, "listViewLog");
             this.listViewLog.FullRowSelect = true;
             this.listViewLog.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.listViewLog.HideSelection = false;
@@ -118,6 +164,7 @@
             // 
             // contextMenuLogList
             // 
+            resources.ApplyResources(this.contextMenuLogList, "contextMenuLogList");
             this.contextMenuLogList.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.menuCopyLogAll,
             this.menuLogCopy,
@@ -126,86 +173,41 @@
             this.toolStripMenuItem2,
             this.menuClearLog});
             this.contextMenuLogList.Name = "contextMenuLogList";
-            resources.ApplyResources(this.contextMenuLogList, "contextMenuLogList");
             // 
             // menuCopyLogAll
             // 
-            this.menuCopyLogAll.Name = "menuCopyLogAll";
             resources.ApplyResources(this.menuCopyLogAll, "menuCopyLogAll");
+            this.menuCopyLogAll.Name = "menuCopyLogAll";
             this.menuCopyLogAll.Click += new System.EventHandler(this.menuCopyLogAll_Click);
             // 
             // menuLogCopy
             // 
-            this.menuLogCopy.Name = "menuLogCopy";
             resources.ApplyResources(this.menuLogCopy, "menuLogCopy");
+            this.menuLogCopy.Name = "menuLogCopy";
             this.menuLogCopy.Click += new System.EventHandler(this.menuLogCopy_Click);
             // 
             // toolStripMenuItem1
             // 
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
             resources.ApplyResources(this.toolStripMenuItem1, "toolStripMenuItem1");
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
             // 
             // menuFollowLatestLog
             // 
+            resources.ApplyResources(this.menuFollowLatestLog, "menuFollowLatestLog");
             this.menuFollowLatestLog.CheckOnClick = true;
             this.menuFollowLatestLog.Name = "menuFollowLatestLog";
-            resources.ApplyResources(this.menuFollowLatestLog, "menuFollowLatestLog");
             this.menuFollowLatestLog.Click += new System.EventHandler(this.menuFollowLatestLog_Click);
             // 
             // toolStripMenuItem2
             // 
-            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
             resources.ApplyResources(this.toolStripMenuItem2, "toolStripMenuItem2");
+            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
             // 
             // menuClearLog
             // 
-            this.menuClearLog.Name = "menuClearLog";
             resources.ApplyResources(this.menuClearLog, "menuClearLog");
+            this.menuClearLog.Name = "menuClearLog";
             this.menuClearLog.Click += new System.EventHandler(this.menuClearLog_Click);
-            // 
-            // groupBox2
-            // 
-            this.groupBox2.Controls.Add(this.buttonRemoveOverlay);
-            this.groupBox2.Controls.Add(this.buttonNewOverlay);
-            this.groupBox2.Controls.Add(this.listViewOverlay);
-            resources.ApplyResources(this.groupBox2, "groupBox2");
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.TabStop = false;
-            // 
-            // listViewOverlay
-            // 
-            resources.ApplyResources(this.listViewOverlay, "listViewOverlay");
-            this.listViewOverlay.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader4,
-            this.columnHeader5});
-            this.listViewOverlay.FullRowSelect = true;
-            this.listViewOverlay.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-            this.listViewOverlay.HideSelection = false;
-            this.listViewOverlay.Name = "listViewOverlay";
-            this.listViewOverlay.UseCompatibleStateImageBehavior = false;
-            this.listViewOverlay.View = System.Windows.Forms.View.Details;
-            // 
-            // columnHeader4
-            // 
-            resources.ApplyResources(this.columnHeader4, "columnHeader4");
-            // 
-            // columnHeader5
-            // 
-            resources.ApplyResources(this.columnHeader5, "columnHeader5");
-            // 
-            // buttonNewOverlay
-            // 
-            resources.ApplyResources(this.buttonNewOverlay, "buttonNewOverlay");
-            this.buttonNewOverlay.Name = "buttonNewOverlay";
-            this.buttonNewOverlay.UseVisualStyleBackColor = true;
-            this.buttonNewOverlay.Click += new System.EventHandler(this.buttonNewOverlay_Click);
-            // 
-            // buttonRemoveOverlay
-            // 
-            resources.ApplyResources(this.buttonRemoveOverlay, "buttonRemoveOverlay");
-            this.buttonRemoveOverlay.Name = "buttonRemoveOverlay";
-            this.buttonRemoveOverlay.UseVisualStyleBackColor = true;
-            this.buttonRemoveOverlay.Click += new System.EventHandler(this.buttonRemoveOverlay_Click);
             // 
             // ControlPanel
             // 
@@ -220,8 +222,8 @@
             this.splitContainer1.ResumeLayout(false);
             this.tabControl.ResumeLayout(false);
             this.tabPageMain.ResumeLayout(false);
-            this.contextMenuLogList.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
+            this.contextMenuLogList.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }

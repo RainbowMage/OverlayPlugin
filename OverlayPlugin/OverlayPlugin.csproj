@@ -147,6 +147,9 @@
     <EmbeddedResource Include="ControlPanel.resx">
       <DependentUpon>ControlPanel.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="NewOverlayDialog.ja-JP.resx">
+      <DependentUpon>NewOverlayDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Overlays\MiniParseConfigPanel.ja-JP.resx">
       <DependentUpon>MiniParseConfigPanel.cs</DependentUpon>
     </EmbeddedResource>

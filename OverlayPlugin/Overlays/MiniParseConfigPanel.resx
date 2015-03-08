@@ -709,7 +709,7 @@
     <value>19</value>
   </data>
   <data name="label13.Text" xml:space="preserve">
-    <value>※You need to restart this plugin to apply this framerate setting.</value>
+    <value>※You need restarting this plugin to apply framerate and hotkey settings.</value>
   </data>
   <data name="&gt;&gt;label13.Name" xml:space="preserve">
     <value>label13</value>
