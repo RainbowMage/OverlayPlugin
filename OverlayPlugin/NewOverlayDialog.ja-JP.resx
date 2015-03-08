@@ -117,65 +117,29 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="buttonRemoveOverlay.Text" xml:space="preserve">
-    <value>削除</value>
-  </data>
-  <data name="buttonNewOverlay.Text" xml:space="preserve">
-    <value>追加</value>
-  </data>
-  <data name="columnHeader4.Text" xml:space="preserve">
-    <value>名前</value>
-  </data>
-  <data name="columnHeader5.Text" xml:space="preserve">
-    <value>種類</value>
-  </data>
-  <data name="groupBox2.Text" xml:space="preserve">
-    <value>オーバーレイの管理</value>
-  </data>
-  <data name="tabPageMain.Text" xml:space="preserve">
-    <value>設定</value>
-  </data>
-  <data name="columnHeader1.Text" xml:space="preserve">
-    <value>時間</value>
-  </data>
-  <data name="columnHeader2.Text" xml:space="preserve">
-    <value>レベル</value>
-  </data>
-  <data name="columnHeader3.Text" xml:space="preserve">
-    <value>メッセージ</value>
+  <data name="buttonCancel.Text" xml:space="preserve">
+    <value>キャンセル</value>
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="menuCopyLogAll.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+  <data name="textBox1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>14, 29</value>
   </data>
-  <data name="menuCopyLogAll.Text" xml:space="preserve">
-    <value>全てのログをコピー</value>
+  <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>29, 12</value>
   </data>
-  <data name="menuLogCopy.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+  <data name="label1.Text" xml:space="preserve">
+    <value>名前</value>
   </data>
-  <data name="menuLogCopy.Text" xml:space="preserve">
-    <value>選択されたログをコピー</value>
+  <data name="label2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>29, 12</value>
   </data>
-  <data name="toolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>177, 6</value>
+  <data name="label2.Text" xml:space="preserve">
+    <value>種類</value>
   </data>
-  <data name="menuFollowLatestLog.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+  <data name="comboBox1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>14, 77</value>
   </data>
-  <data name="menuFollowLatestLog.Text" xml:space="preserve">
-    <value>最新のログを常に表示</value>
-  </data>
-  <data name="toolStripMenuItem2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>177, 6</value>
-  </data>
-  <data name="menuClearLog.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
-  </data>
-  <data name="menuClearLog.Text" xml:space="preserve">
-    <value>ログをクリア</value>
-  </data>
-  <data name="contextMenuLogList.Size" type="System.Drawing.Size, System.Drawing">
-    <value>181, 104</value>
+  <data name="$this.Text" xml:space="preserve">
+    <value>新しいオーバーレイ</value>
   </data>
 </root>

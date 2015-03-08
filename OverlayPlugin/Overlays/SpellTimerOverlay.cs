@@ -8,17 +8,17 @@ using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RainbowMage.OverlayPlugin
+namespace RainbowMage.OverlayPlugin.Overlays
 {
-    class SpellTimerOverlay : OverlayBase<OverlayConfig>
+    public class SpellTimerOverlay : OverlayBase<SpellTimerOverlayConfig>
     {
         static DataContractJsonSerializer jsonSerializer =
             new DataContractJsonSerializer(typeof(List<SerializableTimerFrameEntry>));
 
         IList<SerializableTimerFrameEntry> activatedTimers;
-        public const string FormName = "SpellTimerOverlay";
-        public SpellTimerOverlay(OverlayConfig config)
-            : base(config, FormName)
+
+        public SpellTimerOverlay(SpellTimerOverlayConfig config)
+            : base(config, config.Name)
         {
             this.activatedTimers = new List<SerializableTimerFrameEntry>();
 

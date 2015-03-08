@@ -19,6 +19,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Files", "Files", "{84CCF15D
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExternalOverlayTest", "ExternalOverlayTest\ExternalOverlayTest.csproj", "{B9BBE478-8FD7-43D9-BD50-C806B1EC672F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -43,6 +45,12 @@ Global
 		{E2BC6483-B966-4A4A-B4CC-D50A4BD73AF3}.Release|x64.Build.0 = Release|x64
 		{E2BC6483-B966-4A4A-B4CC-D50A4BD73AF3}.Release|x86.ActiveCfg = Release|x86
 		{E2BC6483-B966-4A4A-B4CC-D50A4BD73AF3}.Release|x86.Build.0 = Release|x86
+		{B9BBE478-8FD7-43D9-BD50-C806B1EC672F}.Debug|x64.ActiveCfg = Debug|x64
+		{B9BBE478-8FD7-43D9-BD50-C806B1EC672F}.Debug|x64.Build.0 = Debug|x64
+		{B9BBE478-8FD7-43D9-BD50-C806B1EC672F}.Debug|x86.ActiveCfg = Debug|x86
+		{B9BBE478-8FD7-43D9-BD50-C806B1EC672F}.Debug|x86.Build.0 = Debug|x86
+		{B9BBE478-8FD7-43D9-BD50-C806B1EC672F}.Release|x64.ActiveCfg = Release|x64
+		{B9BBE478-8FD7-43D9-BD50-C806B1EC672F}.Release|x86.ActiveCfg = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
