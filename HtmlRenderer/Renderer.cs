@@ -112,12 +112,7 @@ namespace RainbowMage.HtmlRenderer
 
         public void Dispose()
         {
-            var host = Browser.GetHost();
-            host.CloseBrowser(true);
-            host.Dispose();
-            host = null;
-            Browser.Dispose();
-            Browser = null;
+            this.EndRender();
         }
 
         static bool initialized = false;

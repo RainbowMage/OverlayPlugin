@@ -10,7 +10,7 @@ using System.Windows.Forms;
 namespace RainbowMage.OverlayPlugin
 {
     public abstract class OverlayBase<TConfig> : IOverlay
-        where TConfig: OverlayConfig
+        where TConfig: OverlayConfigBase
     {
         public event EventHandler<LogEventArgs> OnLog;
         private KeyboardHook hook = new KeyboardHook();

@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // アセンブリに関する一般情報は以下の属性セットをとおして制御されます。
 // アセンブリに関連付けられている情報を変更するには、
 // これらの属性値を変更してください。
-[assembly: AssemblyTitle("HtmlRenderer")]
-[assembly: AssemblyDescription("HTML based offscreen rendering library for the OverlayPlugin.")]
+[assembly: AssemblyTitle("OverlayPlugin.Core")]
+[assembly: AssemblyDescription("Core assembly of the OverlayPlugin")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("HtmlRenderer")]
+[assembly: AssemblyProduct("OverlayPlugin")]
 [assembly: AssemblyCopyright("Copyright © RainbowMage 2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // 次の GUID は、このプロジェクトが COM に公開される場合の、typelib の ID です
-[assembly: Guid("34a153eb-4d19-4209-88e1-5ce8f171da6c")]
+[assembly: Guid("87f048e2-5d39-47c9-ae5a-9d4c940e2e2a")]
 
 // アセンブリのバージョン情報は、以下の 4 つの値で構成されています:
 //
@@ -32,4 +32,4 @@ using System.Runtime.InteropServices;
 // すべての値を指定するか、下のように '*' を使ってビルドおよびリビジョン番号を 
 // 既定値にすることができます:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.2")]
+[assembly: AssemblyVersion("0.3.1.0")]

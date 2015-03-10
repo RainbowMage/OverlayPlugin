@@ -8,11 +8,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace ExternalOverlayTest
+namespace AddonExample
 {
-    public partial class ExternalOverlayConfigPanel : UserControl
+    public partial class AddonExampleOverlayConfigPanel : UserControl
     {
-        public ExternalOverlayConfigPanel()
+        public AddonExampleOverlayConfigPanel()
         {
             InitializeComponent();
         }

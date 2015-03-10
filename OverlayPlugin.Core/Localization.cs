@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RainbowMage.OverlayPlugin
 {
-    enum TextItem
+    public enum TextItem
     {
         ErrorTitle,
         RequiredAssemblyFileNotFound,
@@ -20,7 +20,7 @@ namespace RainbowMage.OverlayPlugin
         SortNumberDescending
     }
 
-    static class Localization
+    public static class Localization
     {
         private static LocalizationDict dict;
 

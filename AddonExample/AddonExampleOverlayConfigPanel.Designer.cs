@@ -1,6 +1,6 @@
-﻿namespace ExternalOverlayTest
+﻿namespace AddonExample
 {
-    partial class ExternalOverlayConfigPanel
+    partial class AddonExampleOverlayConfigPanel
     {
         /// <summary> 
         /// 必要なデザイナー変数です。

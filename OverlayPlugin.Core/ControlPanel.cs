@@ -25,11 +25,11 @@ namespace RainbowMage.OverlayPlugin
             this.config = config;
 
             this.menuFollowLatestLog.Checked = this.config.FollowLatestLog;
-            this.listViewLog.VirtualListSize = pluginMain.Logs.Count;
-            this.pluginMain.Logs.ListChanged += (o, e) =>
+            this.listViewLog.VirtualListSize = pluginMain.Logger.Logs.Count;
+            this.pluginMain.Logger.Logs.ListChanged += (o, e) =>
             {
                 this.listViewLog.BeginUpdate();
-                this.listViewLog.VirtualListSize = pluginMain.Logs.Count;
+                this.listViewLog.VirtualListSize = pluginMain.Logger.Logs.Count;
                 if (this.config.FollowLatestLog && this.listViewLog.VirtualListSize > 0)
                 {
                     this.listViewLog.EnsureVisible(this.listViewLog.VirtualListSize - 1);
@@ -51,17 +51,24 @@ namespace RainbowMage.OverlayPlugin
 
         private void AddConfigTab(IOverlay overlay)
         {
-            var tabPage = new TabPage 
-            { 
+            var tabPage = new TabPage
+            {
                 Name = overlay.Name,
                 Text = overlay.Name
             };
 
-            var control = OverlayTypeManager.CreateOverlayConfigControl(overlay);
-            control.Dock = DockStyle.Fill;
-            tabPage.Controls.Add(control);
+            var addon = pluginMain.Addons.FirstOrDefault(x => x.OverlayType == overlay.GetType());
+            if (addon != null)
+            {
+                var control = addon.CreateOverlayConfigControlInstance(overlay);
+                if (control != null)
+                {
+                    control.Dock = DockStyle.Fill;
+                    tabPage.Controls.Add(control);
 
-            this.tabControl.TabPages.Add(tabPage);
+                    this.tabControl.TabPages.Add(tabPage);
+                }
+            }
         }
 
         private void UpdateOverlayListView()
@@ -85,9 +92,9 @@ namespace RainbowMage.OverlayPlugin
                 {
                     sb.AppendFormat(
                         "{0}: {1}: {2}",
-                        pluginMain.Logs[index].Time,
-                        pluginMain.Logs[index].Level,
-                        pluginMain.Logs[index].Message);
+                        pluginMain.Logger.Logs[index].Time,
+                        pluginMain.Logger.Logs[index].Level,
+                        pluginMain.Logger.Logs[index].Message);
                     sb.AppendLine();
                 }
                 Clipboard.SetText(sb.ToString());
@@ -96,13 +103,13 @@ namespace RainbowMage.OverlayPlugin
 
         private void listViewLog_RetrieveVirtualItem(object sender, RetrieveVirtualItemEventArgs e)
         {
-            if (e.ItemIndex >= pluginMain.Logs.Count) 
+            if (e.ItemIndex >= pluginMain.Logger.Logs.Count) 
             {
                 e.Item = new ListViewItem();
                 return;
             };
 
-            var log = this.pluginMain.Logs[e.ItemIndex];
+            var log = this.pluginMain.Logger.Logs[e.ItemIndex];
             e.Item = new ListViewItem(log.Time.ToString());
             e.Item.UseItemStyleForSubItems = true;
             e.Item.SubItems.Add(log.Level.ToString());
@@ -130,13 +137,13 @@ namespace RainbowMage.OverlayPlugin
 
         private void menuClearLog_Click(object sender, EventArgs e)
         {
-            this.pluginMain.Logs.Clear();
+            this.pluginMain.Logger.Logs.Clear();
         }
 
         private void menuCopyLogAll_Click(object sender, EventArgs e)
         {
             var sb = new StringBuilder();
-            foreach (var log in this.pluginMain.Logs)
+            foreach (var log in this.pluginMain.Logger.Logs)
             {
                 sb.AppendFormat(
                     "{0}: {1}: {2}",
@@ -150,7 +157,7 @@ namespace RainbowMage.OverlayPlugin
 
         private void buttonNewOverlay_Click(object sender, EventArgs e)
         {
-            var newOverlayDialog = new NewOverlayDialog();
+            var newOverlayDialog = new NewOverlayDialog(pluginMain);
             newOverlayDialog.NameValidator = (name) =>
                 {
                     // 空もしくは空白文字のみの名前は許容しない
@@ -173,17 +180,17 @@ namespace RainbowMage.OverlayPlugin
 
             if (newOverlayDialog.ShowDialog(this.ParentForm) == DialogResult.OK)
             {
-                CreateAndRegisterOverlay(newOverlayDialog.OverlayType, newOverlayDialog.OverlayName);
+                CreateAndRegisterOverlay(newOverlayDialog.SelectedOverlayType, newOverlayDialog.OverlayName);
             }
             newOverlayDialog.Dispose();
         }
 
-        private IOverlay CreateAndRegisterOverlay(Type overlayType, string name)
+        private IOverlay CreateAndRegisterOverlay(IOverlayAddon overlayType, string name)
         {
-            var config = OverlayTypeManager.CreateOverlayConfigOf(overlayType, name);
+            var config = overlayType.CreateOverlayConfigInstance(name);
             this.config.Overlays.Add(config);
 
-            var overlay = OverlayTypeManager.CreateOverlayFromConfig(config);
+            var overlay = overlayType.CreateOverlayInstance(config);
             pluginMain.RegisterOverlay(overlay);
 
             AddConfigTab(overlay);
@@ -199,7 +206,11 @@ namespace RainbowMage.OverlayPlugin
                 string selectedOverlayName = item.Text;
 
                 // コンフィグ削除
-                this.config.Overlays.RemoveAll(x => x.Name == selectedOverlayName);
+                var configs = this.config.Overlays.Where(x => x.Name == selectedOverlayName);
+                foreach (var config in configs.ToArray())
+                {
+                    this.config.Overlays.Remove(config);
+                }
 
                 // 動作中のオーバーレイを停止して削除
                 var overlays = this.pluginMain.Overlays.Where(x => x.Name == selectedOverlayName);
@@ -207,7 +218,10 @@ namespace RainbowMage.OverlayPlugin
                 {
                     overlay.Dispose();
                 }
-                this.pluginMain.Overlays.RemoveAll(x => x.Name == selectedOverlayName);
+                foreach (var overlay in overlays.ToArray())
+                {
+                    this.pluginMain.Overlays.Remove(overlay);
+                }
 
                 // タブページを削除
                 this.tabControl.TabPages.RemoveByKey(selectedOverlayName);

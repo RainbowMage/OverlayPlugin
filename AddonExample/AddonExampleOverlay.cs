@@ -5,11 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ExternalOverlayTest
+namespace AddonExample
 {
-    public class ExternalOverlay : OverlayBase<ExternalOverlayConfig>
+    public class AddonExampleOverlay : OverlayBase<AddonExampleOverlayConfig>
     {
-        public ExternalOverlay(ExternalOverlayConfig config)
+        public AddonExampleOverlay(AddonExampleOverlayConfig config)
             : base(config, config.Name)
         {
             Navigate("http://www.yahoo.com/");

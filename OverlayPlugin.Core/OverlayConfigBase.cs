@@ -10,7 +10,7 @@ using System.Xml.Serialization;
 namespace RainbowMage.OverlayPlugin
 {
     [Serializable]
-    public abstract class OverlayConfig
+    public abstract class OverlayConfigBase : IOverlayConfig
     {
         public event EventHandler<VisibleStateChangedEventArgs> VisibleChanged;
         public event EventHandler<ThruStateChangedEventArgs> ClickThruChanged;
@@ -176,7 +176,7 @@ namespace RainbowMage.OverlayPlugin
             }
         }
 
-        public OverlayConfig(string name)
+        public OverlayConfigBase(string name)
         {
             this.Name = name;
             this.IsVisible = true;
@@ -189,5 +189,8 @@ namespace RainbowMage.OverlayPlugin
             this.GlobalHotkey = Keys.None;
             this.globalHotkeyModifiers = Keys.None;
         }
+
+        [XmlIgnore]
+        public abstract Type OverlayType { get; }
     }
 }

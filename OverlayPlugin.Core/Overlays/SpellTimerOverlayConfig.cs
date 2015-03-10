@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace RainbowMage.OverlayPlugin.Overlays
 {
     [Serializable]
-    public class SpellTimerOverlayConfig : OverlayConfig
+    public class SpellTimerOverlayConfig : OverlayConfigBase
     {
         public SpellTimerOverlayConfig(string name) : base(name)
         {
@@ -18,6 +18,11 @@ namespace RainbowMage.OverlayPlugin.Overlays
         private SpellTimerOverlayConfig() : base(null)
         {
 
+        }
+
+        public override Type OverlayType
+        {
+            get { return typeof(SpellTimerOverlay); }
         }
     }
 }

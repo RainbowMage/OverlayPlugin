@@ -9,7 +9,6 @@ namespace RainbowMage.OverlayPlugin
     public interface IOverlay : IDisposable
     {
         string Name { get; }
-        OverlayForm Overlay { get; }
         event EventHandler<LogEventArgs> OnLog;
 
         void Start();
@@ -27,5 +26,14 @@ namespace RainbowMage.OverlayPlugin
             this.Message = message;
             this.Level = level;
         }
+    }
+
+    public enum LogLevel
+    {
+        Trace,
+        Debug,
+        Info,
+        Warning,
+        Error
     }
 }

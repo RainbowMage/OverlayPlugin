@@ -166,35 +166,42 @@ namespace RainbowMage.OverlayPlugin
         #endregion
 
         [XmlElement("Overlays")]
-        public List<OverlayConfig> Overlays { get; set; }
+        public OverlayConfigList Overlays { get; set; }
 
         [XmlElement("FollowLatestLog")]
         public bool FollowLatestLog { get; set; }
 
         [XmlIgnore]
-        public Version Version { get; set; }
+        public Version Version 
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(this.VersionString))
+                {
+                    return null;
+                }
+                else
+                {
+                    return new Version(this.VersionString);
+                }
+            }
+            set
+            {
+                if (value != null)
+                {
+                    this.VersionString = value.ToString();
+                }
+                else
+                {
+                    this.VersionString = null;
+                }
+            }
+        }
 
         [XmlElement("Version")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        public string VersionString
-        {
-            get
-            {
-                return this.Version.ToString();
-            }
-            set
-            {
-                if (string.IsNullOrEmpty(value))
-                {
-                    this.Version = null;
-                }
-                else
-                {
-                    this.Version = new Version(value);
-                }
-            }
-        }
+        public string VersionString { get; set; }
 
         [XmlIgnore]
         public bool IsFirstLaunch { get; set; }
@@ -216,24 +223,24 @@ namespace RainbowMage.OverlayPlugin
 #pragma warning restore 612, 618
             #endregion
 
-            this.Overlays = new List<OverlayConfig>();
+            this.Overlays = new OverlayConfigList();
 
             this.FollowLatestLog = false;
             this.IsFirstLaunch = true;
         }
 
-        public void SaveXml(string path)
+        public void SaveXml(string pluginDirectory, string path)
         {
             this.Version = typeof(PluginMain).Assembly.GetName().Version;
 
             using (var stream = new FileStream(path, FileMode.Create, FileAccess.Write))
             {
-                XmlSerializer serializer = new XmlSerializer(typeof(PluginConfig), GetExtraTypes());
+                XmlSerializer serializer = new XmlSerializer(typeof(PluginConfig));
                 serializer.Serialize(stream, this);
             }
         }
 
-        public static PluginConfig LoadXml(string path)
+        public static PluginConfig LoadXml(string pluginDirectory, string path)
         {
             if (!File.Exists(path))
             {
@@ -242,14 +249,14 @@ namespace RainbowMage.OverlayPlugin
 
             using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read))
             {
-                XmlSerializer serializer = new XmlSerializer(typeof(PluginConfig), GetExtraTypes());
+                XmlSerializer serializer = new XmlSerializer(typeof(PluginConfig));
                 var result = (PluginConfig)serializer.Deserialize(stream);
 
                 result.IsFirstLaunch = false;
 
                 if (result.Version == null)
                 {
-                    result.UpdateFromVersion0_1_2_0OrBelow();
+                    result.UpdateFromVersion0_1_2_0OrBelow(pluginDirectory);
                     result.UpdateFromVersion0_2_5_0OrBelow();
                 }
 
@@ -258,29 +265,26 @@ namespace RainbowMage.OverlayPlugin
             }
         }
 
-        private static Type[] GetExtraTypes()
-        {
-            return OverlayTypeManager.ConfigToOverlayDict.Keys.ToArray();
-        }
-
-        public void SetDefaultOverlayConfigs()
+        public void SetDefaultOverlayConfigs(string pluginDirectory)
         {
             var miniparseOverlayConfig = new MiniParseOverlayConfig(DefaultMiniParseOverlayName);
             miniparseOverlayConfig.Position = new Point(20, 20);
             miniparseOverlayConfig.Size = new Size(500, 300);
+            miniparseOverlayConfig.Url = new Uri(Path.Combine(pluginDirectory, "resources", "miniparse.html")).ToString(); 
 
             var spellTimerOverlayConfig = new SpellTimerOverlayConfig(DefaultSpellTimerOverlayName);
             spellTimerOverlayConfig.Position = new Point(20, 520);
             spellTimerOverlayConfig.Size = new Size(200, 300);
             spellTimerOverlayConfig.IsVisible = true;
             spellTimerOverlayConfig.MaxFrameRate = 5;
+            miniparseOverlayConfig.Url = new Uri(Path.Combine(pluginDirectory, "resources", "spelltimer.html")).ToString(); 
 
-            this.Overlays = new List<OverlayConfig>();
+            this.Overlays = new OverlayConfigList();
             this.Overlays.Add(miniparseOverlayConfig);
             this.Overlays.Add(spellTimerOverlayConfig);
         }
 
-        private void UpdateFromVersion0_1_2_0OrBelow()
+        private void UpdateFromVersion0_1_2_0OrBelow(string pluginDirectory)
         {
 #pragma warning disable 612, 618
             if (this.MiniParseOverlayObsolete == null)
@@ -299,7 +303,7 @@ namespace RainbowMage.OverlayPlugin
                 this.SpellTimerOverlayObsolete.Size = new Size(200, 300);
                 this.SpellTimerOverlayObsolete.IsVisible = false;
                 this.SpellTimerOverlayObsolete.MaxFrameRate = 5;
-                this.SpellTimerOverlayObsolete.Url = null;
+                this.SpellTimerOverlayObsolete.Url = new Uri(Path.Combine(pluginDirectory, "resources", "spelltimer.html")).ToString(); ;
             }
 #pragma warning restore 612, 618
         }
@@ -322,7 +326,6 @@ namespace RainbowMage.OverlayPlugin
                 miniParseOverlayConfig.GlobalHotkeyEnabled = this.MiniParseOverlayObsolete.GlobalHotkeyEnabled;
                 miniParseOverlayConfig.GlobalHotkeyModifiers = this.MiniParseOverlayObsolete.GlobalHotkeyModifiers;
 
-                this.Overlays.RemoveAll(x => x.Name == miniParseOverlayConfig.Name);
                 this.Overlays.Add(miniParseOverlayConfig);
 
                 this.MiniParseOverlayObsolete = null;
@@ -340,7 +343,6 @@ namespace RainbowMage.OverlayPlugin
                 spellTimerOverlayConfig.GlobalHotkeyEnabled = this.SpellTimerOverlayObsolete.GlobalHotkeyEnabled;
                 spellTimerOverlayConfig.GlobalHotkeyModifiers = this.SpellTimerOverlayObsolete.GlobalHotkeyModifiers;
 
-                this.Overlays.RemoveAll(x => x.Name == spellTimerOverlayConfig.Name);
                 this.Overlays.Add(spellTimerOverlayConfig);
 
                 this.SpellTimerOverlayObsolete = null;

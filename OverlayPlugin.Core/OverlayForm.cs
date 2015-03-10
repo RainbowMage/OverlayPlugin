@@ -21,6 +21,7 @@ namespace RainbowMage.OverlayPlugin
         private object surfaceBufferLocker = new object();
         private int maxFrameRate;
         private System.Threading.Timer zorderCorrector;
+        private bool terminated = false;
 
         public Renderer Renderer { get; private set; }
 
@@ -120,7 +121,7 @@ namespace RainbowMage.OverlayPlugin
 
         private void UpdateLayeredWindowBitmap()
         {
-            if (surfaceBuffer.IsDisposed) { return; }
+            if (surfaceBuffer.IsDisposed || this.terminated) { return; }
 
             using (var gScreen = Graphics.FromHwnd(IntPtr.Zero))
             {
@@ -153,7 +154,7 @@ namespace RainbowMage.OverlayPlugin
                 IntPtr handle = IntPtr.Zero;
                 try
                 {
-                    if (!this.IsDisposed)
+                    if (!this.terminated)
                     {
                         if (this.InvokeRequired)
                         {
@@ -181,7 +182,7 @@ namespace RainbowMage.OverlayPlugin
                 }
                 catch (ObjectDisposedException)
                 {
-
+                    return;
                 }
 
                 NativeMethods.SelectObject(surfaceBuffer.DeviceContext, hOldBitmap);
@@ -227,24 +228,31 @@ namespace RainbowMage.OverlayPlugin
 
         void renderer_Render(object sender, RenderEventArgs e)
         {
-            lock (surfaceBufferLocker)
+            if (!this.terminated)
             {
-                if (surfaceBuffer != null &&
-                    (surfaceBuffer.Width != e.Width || surfaceBuffer.Height != e.Height))
+                try
                 {
-                    surfaceBuffer.Dispose();
-                    surfaceBuffer = null;
-                }
+                    if (surfaceBuffer != null &&
+                        (surfaceBuffer.Width != e.Width || surfaceBuffer.Height != e.Height))
+                    {
+                        surfaceBuffer.Dispose();
+                        surfaceBuffer = null;
+                    }
 
-                if (surfaceBuffer == null)
+                    if (surfaceBuffer == null)
+                    {
+                        surfaceBuffer = new DIBitmap(e.Width, e.Height);
+                    }
+
+                    // TODO: DirtyRect に対応
+                    surfaceBuffer.SetSurfaceData(e.Buffer, (uint)(e.Width * e.Height * 4));
+
+                    UpdateLayeredWindowBitmap();
+                }
+                catch
                 {
-                    surfaceBuffer = new DIBitmap(e.Width, e.Height);
+                    
                 }
-
-                // TODO: DirtyRect に対応
-                surfaceBuffer.SetSurfaceData(e.Buffer, (uint)(e.Width * e.Height * 4));
-
-                UpdateLayeredWindowBitmap();
             }
         }
 
@@ -277,13 +285,16 @@ namespace RainbowMage.OverlayPlugin
 
         private void OverlayForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-            
+            this.Renderer.EndRender();
+            terminated = true;
         }
 
-        new public void Dispose()
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
         {
-            this.Dispose(true);
-
             if (zorderCorrector != null)
             {
                 zorderCorrector.Dispose();
@@ -294,13 +305,17 @@ namespace RainbowMage.OverlayPlugin
                 this.Renderer.Dispose();
                 this.Renderer = null;
             }
-            lock (surfaceBufferLocker)
+
+            if (this.surfaceBuffer != null)
             {
-                if (this.surfaceBuffer != null)
-                {
-                    this.surfaceBuffer.Dispose();
-                }
+                this.surfaceBuffer.Dispose();
             }
+
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
         }
 
         private void OverlayForm_Resize(object sender, EventArgs e)
