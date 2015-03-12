@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace RainbowMage.OverlayPlugin
 {
-    internal class Logger
+    public class Logger
     {
-        internal BindingList<LogEntry> Logs { get; private set; }
+        public BindingList<LogEntry> Logs { get; private set; }
 
         public Logger()
         {
@@ -31,13 +31,13 @@ namespace RainbowMage.OverlayPlugin
             this.Logs.Add(new LogEntry(level, DateTime.Now, message));
         }
 
-        internal void Log(LogLevel level, string format, params object[] args)
+        public void Log(LogLevel level, string format, params object[] args)
         {
             Log(level, string.Format(format, args));
         }
     }
 
-    internal class LogEntry
+    public class LogEntry
     {
         public string Message { get; set; }
         public LogLevel Level { get; set; }
@@ -49,5 +49,25 @@ namespace RainbowMage.OverlayPlugin
             this.Level = level;
             this.Time = time;
         }
+    }
+
+    public class LogEventArgs : EventArgs
+    {
+        public string Message { get; private set; }
+        public LogLevel Level { get; private set; }
+        public LogEventArgs(LogLevel level, string message)
+        {
+            this.Message = message;
+            this.Level = level;
+        }
+    }
+
+    public enum LogLevel
+    {
+        Trace,
+        Debug,
+        Info,
+        Warning,
+        Error
     }
 }

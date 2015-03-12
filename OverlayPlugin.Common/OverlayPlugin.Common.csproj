@@ -44,6 +44,7 @@
     <Compile Include="IOverlay.cs" />
     <Compile Include="IOverlayAddon.cs" />
     <Compile Include="IOverlayConfig.cs" />
+    <Compile Include="Logger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

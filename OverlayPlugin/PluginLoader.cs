@@ -15,13 +15,19 @@ namespace RainbowMage.OverlayPlugin
     public class PluginLoader : IActPluginV1
     {
         PluginMain pluginMain;
+        Logger logger;
         AssemblyResolver asmResolver;
         string pluginDirectory;
 
         public void InitPlugin(TabPage pluginScreenSpace, Label pluginStatusText)
         {
             pluginDirectory = GetPluginDirectory();
-            asmResolver = new AssemblyResolver(pluginDirectory);
+
+            var directories = new List<string>();
+            directories.Add(pluginDirectory);
+            directories.Add(Path.Combine(pluginDirectory, "addon"));
+            asmResolver = new AssemblyResolver(directories);
+
             Initialize(pluginScreenSpace, pluginStatusText);
         }
 
@@ -30,7 +36,10 @@ namespace RainbowMage.OverlayPlugin
         [MethodImpl(MethodImplOptions.NoInlining)]
         private void Initialize(TabPage pluginScreenSpace, Label pluginStatusText)
         {
-            pluginMain = new PluginMain(pluginDirectory);
+            logger = new Logger();
+            asmResolver.ExceptionOccured += (o, e) => logger.Log(LogLevel.Error, "AssemblyResolver: Error: {0}", e.Exception);
+            asmResolver.AssemblyLoaded += (o, e) => logger.Log(LogLevel.Debug, "AssemblyResolver: Loaded: {0}", e.LoadedAssembly.FullName);
+            pluginMain = new PluginMain(pluginDirectory, logger);
             pluginMain.InitPlugin(pluginScreenSpace, pluginStatusText);
         }
 

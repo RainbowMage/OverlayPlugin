@@ -60,7 +60,6 @@
     </Compile>
     <Compile Include="DIBitmap.cs" />
     <Compile Include="KeyboardHook.cs" />
-    <Compile Include="Logger.cs" />
     <Compile Include="OverlayConfigList.cs" />
     <Compile Include="Overlays\MiniParseConfigPanel.cs">
       <SubType>UserControl</SubType>

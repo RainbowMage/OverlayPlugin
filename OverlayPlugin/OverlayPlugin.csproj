@@ -68,6 +68,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\OverlayPlugin.Common\OverlayPlugin.Common.csproj">
+      <Project>{423fcbfc-dd3b-415f-be29-7a4a46614b79}</Project>
+      <Name>OverlayPlugin.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\OverlayPlugin.Core\OverlayPlugin.Core.csproj">
       <Project>{dd6d2a9a-4ad4-47b8-a1d0-c8608ea37092}</Project>
       <Name>OverlayPlugin.Core</Name>

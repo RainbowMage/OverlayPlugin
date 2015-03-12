@@ -28,17 +28,16 @@ namespace RainbowMage.OverlayPlugin
         internal Logger Logger { get; set; }
         internal string PluginDirectory { get; private set; }
 
-        public PluginMain(string pluginDirectory)
+        public PluginMain(string pluginDirectory, Logger logger)
         {
             this.PluginDirectory = pluginDirectory;
+            this.Logger = logger;
         }
 
         public void InitPlugin(TabPage pluginScreenSpace, Label pluginStatusText)
         {
             try
             {
-                this.Logger = new Logger();
-
                 this.tabPage = pluginScreenSpace;
                 this.label = pluginStatusText;
 

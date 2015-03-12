@@ -15,12 +15,22 @@ namespace RainbowMage.OverlayPlugin
             @"(?<name>.+?), Version=(?<version>.+?), Culture=(?<culture>.+?), PublicKeyToken=(?<pubkey>.+)",
             RegexOptions.Compiled);
 
-        public string Directory { get; set; }
+        public List<string> Directories { get; set; }
 
-        public AssemblyResolver(string directory)
+        public AssemblyResolver(IEnumerable<string> directories)
         {
-            this.Directory = directory;
+            this.Directories = new List<string>();
+            if (directories != null)
+            {
+                this.Directories.AddRange(directories);
+            }
             AppDomain.CurrentDomain.AssemblyResolve += CustomAssemblyResolve;
+        }
+
+        public AssemblyResolver()
+            : this(null)
+        {
+
         }
 
         public void Dispose()
@@ -30,29 +40,34 @@ namespace RainbowMage.OverlayPlugin
 
         private Assembly CustomAssemblyResolve(object sender, ResolveEventArgs e)
         {
-            // Directory プロパティで指定されたディレクトリを基準にアセンブリを検索する
-            var asmPath = "";
-            var match = assemblyNameParser.Match(e.Name);
-            if (match.Success)
+            // Directories プロパティで指定されたディレクトリを基準にアセンブリを検索する
+            foreach (var directory in this.Directories)
             {
-                var asmFileName = match.Groups["name"].Value + ".dll";
-                if (match.Groups["culture"].Value == "neutral")
+                var asmPath = "";
+                var match = assemblyNameParser.Match(e.Name);
+                if (match.Success)
                 {
-                    asmPath = Path.Combine(Directory, asmFileName);
+                    var asmFileName = match.Groups["name"].Value + ".dll";
+                    if (match.Groups["culture"].Value == "neutral")
+                    {
+                        asmPath = Path.Combine(directory, asmFileName);
+                    }
+                    else
+                    {
+                        asmPath = Path.Combine(directory, match.Groups["culture"].Value, asmFileName);
+                    }
                 }
                 else
                 {
-                    asmPath = Path.Combine(Directory, match.Groups["culture"].Value, asmFileName);
+                    asmPath = Path.Combine(directory, e.Name + ".dll");
                 }
-            }
-            else
-            {
-                asmPath = Path.Combine(Directory, e.Name + ".dll");
-            }
 
-            if (File.Exists(asmPath))
-            {
-                return Assembly.LoadFile(asmPath);
+                if (File.Exists(asmPath))
+                {
+                    var asm = Assembly.LoadFile(asmPath);
+                    OnAssemblyLoaded(asm);
+                    return asm;
+                }
             }
 
             return null;
@@ -81,7 +96,16 @@ namespace RainbowMage.OverlayPlugin
             }
         }
 
-        public event EventHandler<ExceptionOccuredEventArgs> ExceptionOccured; 
+        protected void OnAssemblyLoaded(Assembly assembly)
+        {
+            if (this.AssemblyLoaded != null)
+            {
+                this.AssemblyLoaded(this, new AssemblyLoadEventArgs(assembly));
+            }
+        }
+
+        public event EventHandler<ExceptionOccuredEventArgs> ExceptionOccured;
+        public event EventHandler<AssemblyLoadEventArgs> AssemblyLoaded;
 
         public class ExceptionOccuredEventArgs : EventArgs
         {
