@@ -7,15 +7,41 @@ using System.Threading.Tasks;
 
 namespace RainbowMage.OverlayPlugin
 {
+    /// <summary>
+    /// デバイス独立ビットマップを表現するクラス。
+    /// </summary>
     class DIBitmap : IDisposable
     {
-        public int Width { get; set; }
-        public int Height { get; set; }
+        /// <summary>
+        /// ビットマップの幅を取得します。
+        /// </summary>
+        public int Width { get; private set; }
+        /// <summary>
+        /// ビットマップの高さを取得します。
+        /// </summary>
+        public int Height { get; private set; }
+        /// <summary>
+        /// ビットマップデータのアドレスを取得します。
+        /// </summary>
         public IntPtr Bits { get; private set; }
+        /// <summary>
+        /// デバイス独立ビットマップのハンドルを取得します。
+        /// </summary>
         public IntPtr Handle { get; private set; }
+        /// <summary>
+        /// デバイスコンテキストを取得します。
+        /// </summary>
         public IntPtr DeviceContext { get; private set; }
+        /// <summary>
+        /// デバイス独立ビットマップが破棄されているかどうかを取得します。
+        /// </summary>
         public bool IsDisposed { get; private set; }
 
+        /// <summary>
+        /// 幅と高さを指定してデバイス独立ビットマップを作成します。
+        /// </summary>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
         public DIBitmap(int width, int height)
         {
             this.IsDisposed = false;
@@ -44,6 +70,11 @@ namespace RainbowMage.OverlayPlugin
             this.Bits = biBits;
         }
 
+        /// <summary>
+        /// 指定されたサーフェイスデータをデバイス独立ビットマップにコピーします。
+        /// </summary>
+        /// <param name="srcSurfaceData"></param>
+        /// <param name="count"></param>
         public void SetSurfaceData(IntPtr srcSurfaceData, uint count)
         {
             NativeMethods.CopyMemory(this.Bits, srcSurfaceData, count);

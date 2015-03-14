@@ -165,12 +165,22 @@ namespace RainbowMage.OverlayPlugin
         public SpellTimerOverlayConfig SpellTimerOverlayObsolete { get; set; }
         #endregion
 
+        /// <summary>
+        /// オーバーレイ設定のリスト。
+        /// </summary>
         [XmlElement("Overlays")]
         public OverlayConfigList Overlays { get; set; }
 
+        /// <summary>
+        /// 設定タブのログにおいて、常に最新のログ行を表示するかどうかを取得または設定します。
+        /// </summary>
         [XmlElement("FollowLatestLog")]
         public bool FollowLatestLog { get; set; }
 
+        /// <summary>
+        /// 設定ファイルを生成したプラグインのバージョンを取得または設定します。
+        /// 設定が新規に作成された場合、またはバージョン0.3未満では null が設定されます。
+        /// </summary>
         [XmlIgnore]
         public Version Version 
         {
@@ -203,6 +213,9 @@ namespace RainbowMage.OverlayPlugin
         [Browsable(false)]
         public string VersionString { get; set; }
 
+        /// <summary>
+        /// 設定が新規に作成されたことを示すフラグを取得または設定します。
+        /// </summary>
         [XmlIgnore]
         public bool IsFirstLaunch { get; set; }
 
@@ -229,7 +242,11 @@ namespace RainbowMage.OverlayPlugin
             this.IsFirstLaunch = true;
         }
 
-        public void SaveXml(string pluginDirectory, string path)
+        /// <summary>
+        /// 指定したファイルパスに設定を保存します。
+        /// </summary>
+        /// <param name="path"></param>
+        public void SaveXml(string path)
         {
             this.Version = typeof(PluginMain).Assembly.GetName().Version;
 
@@ -240,6 +257,12 @@ namespace RainbowMage.OverlayPlugin
             }
         }
 
+        /// <summary>
+        /// 指定したファイルパスから設定を読み込みます。
+        /// </summary>
+        /// <param name="pluginDirectory"></param>
+        /// <param name="path"></param>
+        /// <returns></returns>
         public static PluginConfig LoadXml(string pluginDirectory, string path)
         {
             if (!File.Exists(path))
@@ -265,6 +288,10 @@ namespace RainbowMage.OverlayPlugin
             }
         }
 
+        /// <summary>
+        /// デフォルトのオーバーレイを作成します。
+        /// </summary>
+        /// <param name="pluginDirectory"></param>
         public void SetDefaultOverlayConfigs(string pluginDirectory)
         {
             var miniparseOverlayConfig = new MiniParseOverlayConfig(DefaultMiniParseOverlayName);
@@ -284,6 +311,10 @@ namespace RainbowMage.OverlayPlugin
             this.Overlays.Add(spellTimerOverlayConfig);
         }
 
+        /// <summary>
+        /// バージョン0.1.2.0以下からのアップデート用の処理を行います。
+        /// </summary>
+        /// <param name="pluginDirectory"></param>
         private void UpdateFromVersion0_1_2_0OrBelow(string pluginDirectory)
         {
 #pragma warning disable 612, 618
@@ -308,6 +339,9 @@ namespace RainbowMage.OverlayPlugin
 #pragma warning restore 612, 618
         }
 
+        /// <summary>
+        /// バージョン 0.2.5.0 以下からのアップデート処理を行います。
+        /// </summary>
         private void UpdateFromVersion0_2_5_0OrBelow()
         {
 #pragma warning disable 612, 618

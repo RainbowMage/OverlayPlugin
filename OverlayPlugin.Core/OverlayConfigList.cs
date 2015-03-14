@@ -8,6 +8,9 @@ using System.Xml.Serialization;
 
 namespace RainbowMage.OverlayPlugin
 {
+    /// <summary>
+    /// XmlSerializer でシリアライズ可能な IOverlayConfig のコレクション。
+    /// </summary>
     [Serializable]
     public class OverlayConfigList : Collection<IOverlayConfig>, IXmlSerializable
     {

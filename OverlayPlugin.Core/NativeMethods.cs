@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace RainbowMage.OverlayPlugin
 {
+    /// <summary>
+    /// ネイティブ関数を提供します。
+    /// </summary>
     static class NativeMethods
     {
         public struct BlendFunction

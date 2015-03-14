@@ -94,7 +94,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="SerializableTimerFrameEntry.cs" />
+    <Compile Include="Overlays\SerializableTimerFrameEntry.cs" />
     <Compile Include="Overlays\SpellTimerOverlayConfig.cs" />
     <Compile Include="Overlays\SpellTimerOverlay.cs" />
     <Compile Include="Localization.cs" />

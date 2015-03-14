@@ -12,7 +12,12 @@ namespace RainbowMage.OverlayPlugin
 {
     internal static class Util
     {
-        public static string CleanUpString(string str)
+        /// <summary>
+        /// JSON 用に文字列をエスケープします。
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public static string CreateJsonSafeString(string str)
         {
             return str
                 .Replace("\"", "\\\"")
@@ -23,6 +28,11 @@ namespace RainbowMage.OverlayPlugin
                 .Replace(double.NaN.ToString(), "---");
         }
 
+        /// <summary>
+        /// フォームがスクリーン上にあるかを判定します。
+        /// </summary>
+        /// <param name="form">判定するウィンドウ。</param>
+        /// <returns>スクリーン上にある場合は true、そうでない場合は false。</returns>
         public static bool IsOnScreen(Form form)
         {
             var screens = Screen.AllScreens;
@@ -40,6 +50,10 @@ namespace RainbowMage.OverlayPlugin
             return false;
         }
 
+        /// <summary>
+        /// 指定されたフォームを Windows の Alt+Tab の切り替え候補から除外します。
+        /// </summary>
+        /// <param name="form"></param>
         public static void HidePreview(System.Windows.Forms.Form form)
         {
             int ex = NativeMethods.GetWindowLong(form.Handle, NativeMethods.GWL_EXSTYLE);
@@ -47,24 +61,30 @@ namespace RainbowMage.OverlayPlugin
             NativeMethods.SetWindowLongA(form.Handle, NativeMethods.GWL_EXSTYLE, (IntPtr)ex);
         }
 
-        //Generates human readable keypress string
-        //人間が読めるキー押下文字列を生成します
-        public static string GetHotkeyString(Keys Modifier, Keys key, String defaultText = "")
+        /// <summary>
+        /// Generates human readable keypress string.
+        /// 人間が読めるキー押下文字列を生成します。
+        /// </summary>
+        /// <param name="modifier"></param>
+        /// <param name="key"></param>
+        /// <param name="defaultText"></param>
+        /// <returns></returns>
+        public static string GetHotkeyString(Keys modifier, Keys key, String defaultText = "")
         {
             StringBuilder sbKeys = new StringBuilder();
-            if ((Modifier & Keys.Shift) == Keys.Shift)
+            if ((modifier & Keys.Shift) == Keys.Shift)
             {
                 sbKeys.Append("Shift + ");
             }
-            if ((Modifier & Keys.Control) == Keys.Control)
+            if ((modifier & Keys.Control) == Keys.Control)
             {
                 sbKeys.Append("Ctrl + ");
             }
-            if ((Modifier & Keys.Alt) == Keys.Alt)
+            if ((modifier & Keys.Alt) == Keys.Alt)
             {
                 sbKeys.Append("Alt + ");
             }
-            if ((Modifier & Keys.LWin) == Keys.LWin || (Modifier & Keys.RWin) == Keys.RWin)
+            if ((modifier & Keys.LWin) == Keys.LWin || (modifier & Keys.RWin) == Keys.RWin)
             {
                 sbKeys.Append("Win + ");
             }
@@ -74,13 +94,19 @@ namespace RainbowMage.OverlayPlugin
 
 
 
-        //Removes stray references to Left/Right shifts, etc and modifications of the actual key value caused by bitwise operations
-        //ビット単位の操作に起因する左/右シフト、などと実際のキー値の変更に浮遊の参照を削除します。
-        public static Keys RemoveModifiers(Keys KeyCode, Keys Modifiers)
+        /// <summary>
+        /// Removes stray references to Left/Right shifts, etc and modifications of the actual 
+        /// key value caused by bitwise operations.
+        /// ビット単位の操作に起因する左/右シフト、などと実際のキー値の変更に浮遊の参照を削除します。
+        /// </summary>
+        /// <param name="keyCode"></param>
+        /// <param name="modifiers"></param>
+        /// <returns></returns>
+        public static Keys RemoveModifiers(Keys keyCode, Keys modifiers)
         {
-            var key = KeyCode;
-            var modifiers = new List<Keys>() { Keys.ControlKey, Keys.LControlKey, Keys.Alt, Keys.ShiftKey, Keys.Shift, Keys.LShiftKey, Keys.RShiftKey, Keys.Control, Keys.LWin, Keys.RWin };
-            foreach (var mod in modifiers)
+            var key = keyCode;
+            var modifierList = new List<Keys>() { Keys.ControlKey, Keys.LControlKey, Keys.Alt, Keys.ShiftKey, Keys.Shift, Keys.LShiftKey, Keys.RShiftKey, Keys.Control, Keys.LWin, Keys.RWin };
+            foreach (var mod in modifierList)
             {
                 if (key.HasFlag(mod))
                 {

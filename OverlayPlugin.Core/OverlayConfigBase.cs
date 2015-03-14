@@ -9,6 +9,10 @@ using System.Xml.Serialization;
 
 namespace RainbowMage.OverlayPlugin
 {
+    /// <summary>
+    /// IOverlayConfig を実装するオーバーレイ設定クラスの抽象クラス。
+    /// 実装する場合、XmlSerializer でシリアライズ可能である必要があります。
+    /// </summary>
     [Serializable]
     public abstract class OverlayConfigBase : IOverlayConfig
     {
@@ -20,10 +24,16 @@ namespace RainbowMage.OverlayPlugin
         public event EventHandler<GlobalHotkeyChangedEventArgs> GlobalHotkeyChanged;
         public event EventHandler<GlobalHotkeyChangedEventArgs> GlobalHotkeyModifiersChanged;
 
+        /// <summary>
+        /// ユーザーが設定したオーバーレイの名前を取得または設定します。
+        /// </summary>
         [XmlElement("Name")]
         public string Name { get; set; }
 
         private bool isVisible;
+        /// <summary>
+        /// オーバーレイが可視状態であるかどうかを取得または設定します。
+        /// </summary>
         [XmlElement("IsVisible")]
         public bool IsVisible
         {
@@ -45,6 +55,9 @@ namespace RainbowMage.OverlayPlugin
         }
 
         private bool isClickThru;
+        /// <summary>
+        /// オーバーレイがマウスの入力を透過するかどうかを取得または設定します。
+        /// </summary>
         [XmlElement("IsClickThru")]
         public bool IsClickThru
         {
@@ -65,13 +78,22 @@ namespace RainbowMage.OverlayPlugin
             }
         }
 
+        /// <summary>
+        /// オーバーレイの位置を取得または設定します。
+        /// </summary>
         [XmlElement("Position")]
         public Point Position { get; set; }
 
+        /// <summary>
+        /// オーバーレイの大きさを取得または設定します。
+        /// </summary>
         [XmlElement("Size")]
         public Size Size { get; set; }
 
         private string url;
+        /// <summary>
+        /// オーバーレイが表示する URL を取得または設定します。
+        /// </summary>
         [XmlElement("Url")]
         public string Url
         {
@@ -93,6 +115,9 @@ namespace RainbowMage.OverlayPlugin
         }
 
         private int maxFrameRate;
+        /// <summary>
+        /// オーバーレイの最大フレームレートを取得または設定します。
+        /// </summary>
         [XmlElement("MaxFrameRate")]
         public int MaxFrameRate
         {
@@ -114,6 +139,9 @@ namespace RainbowMage.OverlayPlugin
         }
 
         private bool globalHotkeyEnabled;
+        /// <summary>
+        /// オーバーレイに設定されたグローバルホットキーによって表示切替を行うかどうかを取得または設定します。
+        /// </summary>
         [XmlElement("GlobalHotkeyEnabled")]
         public bool GlobalHotkeyEnabled
         {
@@ -135,6 +163,9 @@ namespace RainbowMage.OverlayPlugin
         }
 
         private Keys globalHotkey;
+        /// <summary>
+        /// オーバーレイのグローバルホットキーを取得または設定します。
+        /// </summary>
         [XmlElement("GlobalHotkey")]
         public Keys GlobalHotkey
         {
@@ -156,6 +187,9 @@ namespace RainbowMage.OverlayPlugin
         }
 
         private Keys globalHotkeyModifiers;
+        /// <summary>
+        /// オーバーレイのグローバルホットキーの修飾キーを取得または設定します。
+        /// </summary>
         [XmlElement("GlobalHotkeyModifiers")]
         public Keys GlobalHotkeyModifiers
         {
@@ -176,7 +210,7 @@ namespace RainbowMage.OverlayPlugin
             }
         }
 
-        public OverlayConfigBase(string name)
+        protected OverlayConfigBase(string name)
         {
             this.Name = name;
             this.IsVisible = true;
@@ -191,6 +225,6 @@ namespace RainbowMage.OverlayPlugin
         }
 
         [XmlIgnore]
-        public abstract Type OverlayType { get; }
+        protected abstract Type OverlayType { get; }
     }
 }

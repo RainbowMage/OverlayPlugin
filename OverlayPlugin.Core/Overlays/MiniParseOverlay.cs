@@ -112,7 +112,7 @@ namespace RainbowMage.OverlayPlugin.Overlays
                 {
                     builder.Append(",");
                 }
-                builder.AppendFormat("\"{0}\":\"{1}\"", Util.CleanUpString(pair.Key), Util.CleanUpString(pair.Value));
+                builder.AppendFormat("\"{0}\":\"{1}\"", Util.CreateJsonSafeString(pair.Key), Util.CreateJsonSafeString(pair.Value));
             }
             builder.Append("},");
             builder.Append("\"Combatant\": {");
@@ -127,7 +127,7 @@ namespace RainbowMage.OverlayPlugin.Overlays
                 {
                     builder.Append(",");
                 }
-                builder.AppendFormat("\"{0}\": {{", Util.CleanUpString(pair.Key.Name));
+                builder.AppendFormat("\"{0}\": {{", Util.CreateJsonSafeString(pair.Key.Name));
                 var isFirst3 = true;
                 foreach (var pair2 in pair.Value)
                 {
@@ -139,7 +139,7 @@ namespace RainbowMage.OverlayPlugin.Overlays
                     {
                         builder.Append(",");
                     }
-                    builder.AppendFormat("\"{0}\":\"{1}\"", Util.CleanUpString(pair2.Key), Util.CleanUpString(pair2.Value));
+                    builder.AppendFormat("\"{0}\":\"{1}\"", Util.CreateJsonSafeString(pair2.Key), Util.CreateJsonSafeString(pair2.Value));
                 }
                 builder.Append("}");
             }

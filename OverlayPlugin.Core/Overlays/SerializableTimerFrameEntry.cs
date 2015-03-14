@@ -6,7 +6,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RainbowMage.OverlayPlugin
+namespace RainbowMage.OverlayPlugin.Overlays
 {
     [DataContract]
     class SerializableTimerFrameEntry

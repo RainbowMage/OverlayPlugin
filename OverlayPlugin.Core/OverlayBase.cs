@@ -12,14 +12,27 @@ namespace RainbowMage.OverlayPlugin
     public abstract class OverlayBase<TConfig> : IOverlay
         where TConfig: OverlayConfigBase
     {
-        public event EventHandler<LogEventArgs> OnLog;
         private KeyboardHook hook = new KeyboardHook();
-
         protected System.Timers.Timer timer;
 
+        /// <summary>
+        /// オーバーレイがログを出力したときに発生します。
+        /// </summary>
+        public event EventHandler<LogEventArgs> OnLog;
+
+        /// <summary>
+        /// ユーザーが設定したオーバーレイの名前を取得します。
+        /// </summary>
         public string Name { get; private set; }
+
+        /// <summary>
+        /// オーバーレイフォームを取得します。
+        /// </summary>
         public OverlayForm Overlay { get; private set; }
 
+        /// <summary>
+        /// オーバーレイの設定を取得します。
+        /// </summary>
         public TConfig Config { get; private set; }
 
         protected OverlayBase(TConfig config, string name)
@@ -32,28 +45,39 @@ namespace RainbowMage.OverlayPlugin
             InitializeConfigHandlers();
         }
 
+        /// <summary>
+        /// オーバーレイの更新を開始します。
+        /// </summary>
         public void Start()
         {
             timer.Start();
         }
 
+        /// <summary>
+        /// オーバーレイの更新を停止します。
+        /// </summary>
         public void Stop()
         {
             timer.Stop();
         }
 
+        /// <summary>
+        /// オーバーレイを初期化します。
+        /// </summary>
         protected virtual void InitializeOverlay()
         {
             try
             {
                 this.Overlay = new OverlayForm("about:blank", this.Config.MaxFrameRate);
+
+                // グローバルホットキーを設定
                 if (this.Config.GlobalHotkeyEnabled)
                 {
                     var modifierKeys = GetModifierKey(this.Config.GlobalHotkeyModifiers);
                     var key = this.Config.GlobalHotkey;
                     if (key != Keys.None)
                     {
-                        hook.KeyPressed += new EventHandler<KeyPressedEventArgs>(Overlay_OnHotkeyPressed);
+                        hook.KeyPressed += (o, e) => this.Config.IsVisible = !this.Config.IsVisible;
                         hook.RegisterHotKey(modifierKeys, key);
                     }
                 }
@@ -67,9 +91,12 @@ namespace RainbowMage.OverlayPlugin
                 {
                     this.Overlay.Location = this.Config.Position;
                 }
+
                 this.Overlay.Text = this.Name;
                 this.Overlay.Size = this.Config.Size;
                 this.Overlay.IsClickThru = this.Config.IsClickThru;
+
+                // イベントハンドラを設定
                 this.Overlay.Renderer.BrowserError += (o, e) =>
                 {
                     Log(LogLevel.Error, "BrowserError: {0}, {1}, {2}", e.ErrorCode, e.ErrorText, e.Url);
@@ -87,7 +114,14 @@ namespace RainbowMage.OverlayPlugin
                     Navigate(e.NewUrl);
                 };
 
-                Navigate(this.Config.Url);
+                if (!CheckUrl(this.Config.Url))
+                {
+                    Navigate(this.Config.Url);
+                }
+                else
+                {
+                    Navigate("about:blank");
+                }
 
                 this.Overlay.Show();
 
@@ -99,33 +133,33 @@ namespace RainbowMage.OverlayPlugin
             }
         }
 
-        private ModifierKeys GetModifierKey(Keys Modifier)
+        private ModifierKeys GetModifierKey(Keys modifier)
         {
             ModifierKeys modifiers = new ModifierKeys();
-            if ((Modifier & Keys.Shift) == Keys.Shift)
+            if ((modifier & Keys.Shift) == Keys.Shift)
             {
                 modifiers |= ModifierKeys.Shift;
             }
-            if ((Modifier & Keys.Control) == Keys.Control)
+            if ((modifier & Keys.Control) == Keys.Control)
             {
                 modifiers |= ModifierKeys.Control;
             }
-            if ((Modifier & Keys.Alt) == Keys.Alt)
+            if ((modifier & Keys.Alt) == Keys.Alt)
             {
                 modifiers |= ModifierKeys.Alt;
             }
-            if ((Modifier & Keys.LWin) == Keys.LWin || (Modifier & Keys.RWin) == Keys.RWin)
+            if ((modifier & Keys.LWin) == Keys.LWin || (modifier & Keys.RWin) == Keys.RWin)
             {
                 modifiers |= ModifierKeys.Win;
             }
             return modifiers;
         }
 
-        void Overlay_OnHotkeyPressed(object sender, KeyPressedEventArgs e)
-        {
-            this.Config.IsVisible = !this.Config.IsVisible;
-        }
-
+        /// <summary>
+        /// URL が妥当であり、さらにローカルファイルであれば存在するかどうかをチェックします。
+        /// </summary>
+        /// <param name="url"></param>
+        /// <returns></returns>
         private bool CheckUrl(string url)
         {
             try
@@ -157,6 +191,9 @@ namespace RainbowMage.OverlayPlugin
             return true;
         }
 
+        /// <summary>
+        /// タイマーを初期化します。
+        /// </summary>
         protected virtual void InitializeTimer()
         {
             timer = new System.Timers.Timer();
@@ -174,6 +211,9 @@ namespace RainbowMage.OverlayPlugin
             };
         }
 
+        /// <summary>
+        /// 設定クラスのイベントハンドラを設定します。
+        /// </summary>
         protected virtual void InitializeConfigHandlers()
         {
             this.Config.VisibleChanged += (o, e) =>
@@ -187,16 +227,31 @@ namespace RainbowMage.OverlayPlugin
             };
         }
 
+        /// <summary>
+        /// オーバーレイを更新します。
+        /// </summary>
         protected abstract void Update();
 
-        public void Dispose()
+        /// <summary>
+        /// オーバーレイのインスタンスを破棄します。
+        /// </summary>
+        public virtual void Dispose()
         {
             try
             {
-                timer.Stop();
-                this.Overlay.Close();
-                this.Overlay.Dispose();
-                hook.Dispose();
+                if (this.timer != null)
+                {
+                    this.timer.Stop();
+                }
+                if (this.Overlay != null)
+                {
+                    this.Overlay.Close();
+                    this.Overlay.Dispose();
+                }
+                if (this.hook != null)
+                {
+                    this.hook.Dispose();
+                }
             }
             catch (Exception ex)
             {

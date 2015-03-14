@@ -34,6 +34,11 @@ namespace RainbowMage.OverlayPlugin
             this.Logger = logger;
         }
 
+        /// <summary>
+        /// プラグインが有効化されたときに呼び出されます。
+        /// </summary>
+        /// <param name="pluginScreenSpace"></param>
+        /// <param name="pluginStatusText"></param>
         public void InitPlugin(TabPage pluginScreenSpace, Label pluginStatusText)
         {
             try
@@ -82,6 +87,9 @@ namespace RainbowMage.OverlayPlugin
             }
         }
 
+        /// <summary>
+        /// コンフィグのオーバーレイ設定を基に、オーバーレイを初期化・登録します。
+        /// </summary>
         private void InitializeOverlays()
         {
             // オーバーレイ初期化
@@ -101,19 +109,30 @@ namespace RainbowMage.OverlayPlugin
             }
         }
 
-        public void RegisterOverlay(IOverlay overlay)
+        /// <summary>
+        /// オーバーレイを登録します。
+        /// </summary>
+        /// <param name="overlay"></param>
+        internal void RegisterOverlay(IOverlay overlay)
         {
             overlay.OnLog += (o, e) => Logger.Log(e.Level, e.Message);
             overlay.Start();
             this.Overlays.Add(overlay);
         }
 
-        public void RemoveOverlay(IOverlay overlay)
+        /// <summary>
+        /// 登録されているオーバーレイを削除します。
+        /// </summary>
+        /// <param name="overlay">削除するオーバーレイ。</param>
+        internal void RemoveOverlay(IOverlay overlay)
         {
             overlay.Dispose();
             this.Overlays.Remove(overlay);
         }
 
+        /// <summary>
+        /// プラグインが無効化されたときに呼び出されます。
+        /// </summary>
         public void DeInitPlugin()
         {
             SaveConfig();
@@ -132,7 +151,10 @@ namespace RainbowMage.OverlayPlugin
             this.label.Text = "Finalized.";
         }
 
-        void LoadAddons()
+        /// <summary>
+        /// アドオンを読み込みます。
+        /// </summary>
+        private void LoadAddons()
         {
             try
             {
@@ -191,6 +213,9 @@ namespace RainbowMage.OverlayPlugin
             }
         }
 
+        /// <summary>
+        /// 設定を読み込みます。
+        /// </summary>
         private void LoadConfig()
         {
             try
@@ -207,6 +232,9 @@ namespace RainbowMage.OverlayPlugin
             }
         }
 
+        /// <summary>
+        /// 設定を保存します。
+        /// </summary>
         private void SaveConfig()
         {
             try
@@ -224,6 +252,10 @@ namespace RainbowMage.OverlayPlugin
             }
         }
 
+        /// <summary>
+        /// 設定ファイルのパスを取得します。
+        /// </summary>
+        /// <returns></returns>
         private static string GetConfigPath()
         {
             var path = System.IO.Path.Combine(
