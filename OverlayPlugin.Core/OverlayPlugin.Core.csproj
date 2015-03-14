@@ -86,7 +86,6 @@
       <DependentUpon>OverlayForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Overlays\SpellTimerOverlayAddon.cs" />
-    <Compile Include="OverlayTypeManager.cs" />
     <Compile Include="PluginConfig.cs" />
     <Compile Include="PluginMain.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
