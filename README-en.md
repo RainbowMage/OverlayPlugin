@@ -2,6 +2,14 @@
 
 Plugin to show customizable mini parse and timeline overlay for Advanced Combat Tracker.
 
+## Download
+
+You can download release and pre-release archives from [release page](https://github.com/RainbowMage/OverlayPlugin/releases).
+
+## System requirements
+
+* .NET Framework 4.5
+
 ## How to build
 
 * Install .NET Framework 4.5.1 or later.
