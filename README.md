@@ -2,6 +2,10 @@
 
 ACT に柔軟にカスタマイズ可能なミニパースやスペルタイマーのオーバーレイを追加します。
 
+## 動作環境
+
+* .NET Framework 4.5 以上がインストールされているシステム
+
 ## ダウンロード
 
 [リリースページ](https://github.com/RainbowMage/OverlayPlugin/releases)でビルド済みのバイナリを配布しています。
