@@ -225,6 +225,6 @@ namespace RainbowMage.OverlayPlugin
         }
 
         [XmlIgnore]
-        protected abstract Type OverlayType { get; }
+        public abstract Type OverlayType { get; }
     }
 }

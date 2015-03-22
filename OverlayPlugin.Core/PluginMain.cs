@@ -244,7 +244,7 @@ namespace RainbowMage.OverlayPlugin
                     overlay.SavePositionAndSize();
                 }
 
-                Config.SaveXml(this.PluginDirectory, GetConfigPath());
+                Config.SaveXml(GetConfigPath());
             }
             catch (Exception e)
             {
