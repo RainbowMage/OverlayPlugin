@@ -114,7 +114,7 @@ namespace RainbowMage.OverlayPlugin
                     Navigate(e.NewUrl);
                 };
 
-                if (!CheckUrl(this.Config.Url))
+                if (CheckUrl(this.Config.Url))
                 {
                     Navigate(this.Config.Url);
                 }
