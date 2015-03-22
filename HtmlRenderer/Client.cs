@@ -14,6 +14,7 @@ namespace RainbowMage.HtmlRenderer
         private readonly LifeSpanHandler lifeSpanHandler;
         private readonly LoadHandler loadHandler;
         private readonly DisplayHandler displayHandler;
+        private readonly MenuHandler menuHandler;
 
         public Client(Renderer renderer, int windowWidth, int windowHeight)
         {
@@ -22,6 +23,7 @@ namespace RainbowMage.HtmlRenderer
             this.lifeSpanHandler = new LifeSpanHandler(renderer);
             this.loadHandler = new LoadHandler(renderer);
             this.displayHandler = new DisplayHandler(renderer);
+            this.menuHandler = new MenuHandler();
         }
 
         protected override CefRenderHandler GetRenderHandler()
@@ -42,6 +44,11 @@ namespace RainbowMage.HtmlRenderer
         protected override CefDisplayHandler GetDisplayHandler()
         {
             return displayHandler;
+        }
+
+        protected override CefContextMenuHandler GetContextMenuHandler()
+        {
+            return menuHandler;
         }
 
         public void ResizeView(int width, int height)

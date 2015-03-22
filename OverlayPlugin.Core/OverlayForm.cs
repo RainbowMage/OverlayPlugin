@@ -333,6 +333,22 @@ namespace RainbowMage.OverlayPlugin
         {
             isDragging = true;
             offset = e.Location;
+
+            Xilium.CefGlue.CefMouseButtonType button = Xilium.CefGlue.CefMouseButtonType.Left;
+            if (e.Button == System.Windows.Forms.MouseButtons.Left)
+            {
+                button = Xilium.CefGlue.CefMouseButtonType.Left;
+            }
+            else if (e.Button == System.Windows.Forms.MouseButtons.Middle)
+            {
+                button = Xilium.CefGlue.CefMouseButtonType.Middle;
+            }
+            else if (e.Button == System.Windows.Forms.MouseButtons.Right)
+            {
+                button = Xilium.CefGlue.CefMouseButtonType.Right;
+            }
+
+            this.Renderer.SendMouseUpDown(e.X, e.Y, button, false);
         }
 
         private void OverlayForm_MouseMove(object sender, MouseEventArgs e)
@@ -344,11 +360,31 @@ namespace RainbowMage.OverlayPlugin
                     screenPosition.X - offset.X,
                     screenPosition.Y - offset.Y);
             }
+            else
+            {
+                this.Renderer.SendMouseMove(e.X, e.Y);
+            }
         }
 
         private void OverlayForm_MouseUp(object sender, MouseEventArgs e)
         {
             isDragging = false;
+
+            Xilium.CefGlue.CefMouseButtonType button = Xilium.CefGlue.CefMouseButtonType.Left;
+            if (e.Button == System.Windows.Forms.MouseButtons.Left)
+            {
+                button = Xilium.CefGlue.CefMouseButtonType.Left;
+            }
+            else if (e.Button == System.Windows.Forms.MouseButtons.Middle)
+            {
+                button = Xilium.CefGlue.CefMouseButtonType.Middle;
+            }
+            else if (e.Button == System.Windows.Forms.MouseButtons.Right)
+            {
+                button = Xilium.CefGlue.CefMouseButtonType.Right;
+            }
+
+            this.Renderer.SendMouseUpDown(e.X, e.Y, button, true);
         }
 
         private bool IsOverlaysGameWindow()

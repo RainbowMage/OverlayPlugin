@@ -17,6 +17,12 @@ namespace RainbowMage.HtmlRenderer
         public CefBrowser Browser { get; private set; }
         private Client Client { get; set; }
 
+        private int clickCount;
+        private CefMouseButtonType lastClickButton;
+        private DateTime lastClickTime;
+        private int lastClickPosX;
+        private int lastClickPosY;
+
         public Renderer()
         {
             
@@ -71,6 +77,63 @@ namespace RainbowMage.HtmlRenderer
                 this.Client.ResizeView(width, height);
                 this.Browser.GetHost().WasResized();
             }
+        }
+
+        public void SendMouseMove(int x, int y)
+        {
+            if (this.Browser != null)
+            {
+                var host = this.Browser.GetHost();
+                var mouseEvent = new CefMouseEvent { X = x, Y = y };
+                host.SendMouseMoveEvent(mouseEvent, false);
+            }
+        }
+
+        public void SendMouseUpDown(int x, int y, CefMouseButtonType button, bool isMouseUp)
+        {
+            if (this.Browser != null)
+            {
+                var host = this.Browser.GetHost();
+
+                if (!isMouseUp)
+                {
+                    if (IsContinuousClick(x, y, button))
+                    {
+                        clickCount++;
+                    }
+                    else
+                    {
+                        clickCount = 1;
+                    }
+                }
+
+                var mouseEvent = new CefMouseEvent { X = x, Y = y };
+                host.SendMouseClickEvent(mouseEvent, button, isMouseUp, clickCount);
+
+                lastClickPosX = x;
+                lastClickPosY = y;
+                lastClickButton = button;
+                lastClickTime = DateTime.Now;
+            }
+        }
+
+        private bool IsContinuousClick(int x, int y, CefMouseButtonType button)
+        {
+            // ダブルクリックとして認識するクリックの間隔よりも大きかった場合は継続的なクリックとみなさない
+            var delta = (DateTime.Now - lastClickTime).TotalMilliseconds;
+            if (delta > System.Windows.Forms.SystemInformation.DoubleClickTime)
+            {
+                Console.WriteLine("Delta: {0} (Threshold: {1})", delta, System.Windows.Forms.SystemInformation.DoubleClickTime);
+                return false;
+            }
+
+            // クリック位置が違う、もしくはボタンが違う場合にも継続的なクリックとはみなさない
+            if (lastClickPosX != x || lastClickPosY != y || lastClickButton != button)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         internal void OnCreated(CefBrowser browser)
