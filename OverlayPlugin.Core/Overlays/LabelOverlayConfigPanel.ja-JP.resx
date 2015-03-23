@@ -117,34 +117,37 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="label7.Text" xml:space="preserve">
-    <value>最大フレームレート</value>
+  <data name="label1.Text" xml:space="preserve">
+    <value>表示するテキスト</value>
   </data>
-  <data name="label8.Text" xml:space="preserve">
+  <data name="label2.Text" xml:space="preserve">
     <value>クリックを透過させる</value>
   </data>
-  <data name="label9.Text" xml:space="preserve">
+  <data name="label3.Text" xml:space="preserve">
     <value>オーバーレイを表示する</value>
   </data>
-  <data name="label10.Text" xml:space="preserve">
-    <value>表示するURL</value>
+  <data name="label7.Text" xml:space="preserve">
+    <value>グローバルホットキーを使用</value>
+  </data>
+  <data name="label8.Text" xml:space="preserve">
+    <value>グローバルホットキー</value>
+  </data>
+  <data name="label9.Text" xml:space="preserve">
+    <value>移動とリサイズを制限する</value>
+  </data>
+  <data name="label13.Text" xml:space="preserve">
+    <value>※ホットキーの変更を有効にするためにはプラグインの再起動が必要です</value>
   </data>
   <data name="buttonReloadBrowser.Text" xml:space="preserve">
     <value>オーバーレイの表示をリロード</value>
   </data>
-  <data name="buttonCopyVariable.Text" xml:space="preserve">
+  <data name="buttonCopyUpdateScript.Text" xml:space="preserve">
     <value>変数をクリップボードにコピー</value>
   </data>
-  <data name="label12.Text" xml:space="preserve">
-    <value>※最大フレームレート、およびホットキーの変更を有効にするためにはプラグインの再起動が必要です</value>
+  <data name="label4.Text" xml:space="preserve">
+    <value>表示するURL</value>
   </data>
-  <data name="label1.Text" xml:space="preserve">
-    <value>グローバルホットキーを使用</value>
-  </data>
-  <data name="label2.Text" xml:space="preserve">
-    <value>グローバルホットキー</value>
-  </data>
-  <data name="label3.Text" xml:space="preserve">
-    <value>移動とリサイズを制限する</value>
+  <data name="label5.Text" xml:space="preserve">
+    <value>テキストをHTMLとして表示</value>
   </data>
 </root>

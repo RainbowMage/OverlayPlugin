@@ -142,6 +142,9 @@
     <EmbeddedResource Include="NewOverlayDialog.ja-JP.resx">
       <DependentUpon>NewOverlayDialog.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Overlays\LabelOverlayConfigPanel.ja-JP.resx">
+      <DependentUpon>LabelOverlayConfigPanel.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Overlays\LabelOverlayConfigPanel.resx">
       <DependentUpon>LabelOverlayConfigPanel.cs</DependentUpon>
     </EmbeddedResource>
