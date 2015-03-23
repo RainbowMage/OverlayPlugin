@@ -63,7 +63,7 @@ namespace RainbowMage.OverlayPlugin.Overlays
         internal string CreateJson()
         {
             return string.Format(
-                "{{ \"text\": \"{0}\", \"isHTML\": {1} }}",
+                "{{ text: \"{0}\", isHTML: {1} }}",
                 Util.CreateJsonSafeString(this.Config.Text),
                 this.Config.HtmlModeEnabled ? "true" : "false");
         }

@@ -104,6 +104,7 @@ namespace RainbowMage.OverlayPlugin
                 this.Overlay.Renderer.BrowserLoad += (o, e) =>
                 {
                     Log(LogLevel.Debug, "BrowserLoad: {0}: {1}", e.HttpStatusCode, e.Url);
+                    NotifyOverlayState();
                 };
                 this.Overlay.Renderer.BrowserConsoleLog += (o, e) =>
                 {
@@ -116,6 +117,7 @@ namespace RainbowMage.OverlayPlugin
                 this.Config.LockChanged += (o, e) =>
                 {
                     this.Overlay.Locked = e.IsLocked;
+                    NotifyOverlayState();
                 };
 
                 if (CheckUrl(this.Config.Url))
@@ -293,6 +295,20 @@ namespace RainbowMage.OverlayPlugin
         {
             this.Config.Position = this.Overlay.Location;
             this.Config.Size = this.Overlay.Size;
+        }
+
+        private void NotifyOverlayState()
+        {
+            var updateScript = string.Format(
+                "document.dispatchEvent(new CustomEvent('onOverlayStateUpdate', {{ detail: {{ isLocked: {0} }} }}));",
+                this.Config.IsLocked ? "true" : "false");
+
+            if (this.Overlay != null &&
+                this.Overlay.Renderer != null &&
+                this.Overlay.Renderer.Browser != null)
+            {
+                this.Overlay.Renderer.Browser.GetMainFrame().ExecuteJavaScript(updateScript, null, 0);
+            }
         }
     }
 }

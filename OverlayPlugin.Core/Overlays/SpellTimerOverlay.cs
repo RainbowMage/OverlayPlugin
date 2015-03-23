@@ -129,7 +129,9 @@ namespace RainbowMage.OverlayPlugin.Overlays
 
                 if (!string.IsNullOrWhiteSpace(result))
                 {
-                    return string.Format("{0}{1}{2}", "{ timerFrames: ", result, "}");
+                    return string.Format(
+                        "{{ timerFrames: {0} }}",
+                        result);
                 }
                 else
                 {

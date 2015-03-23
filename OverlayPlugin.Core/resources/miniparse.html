@@ -19,13 +19,6 @@
         }
 
         html {
-            /* リサイズ用のハンドル
-             * リサイズができる場所はウィンドウ右下の16x16ピクセルの場所
-             * この部分が完全に透明だとマウス入力が透過してしまってサイズを変更できなくなる */
-            background-image: url(handle.png);
-            background-position: bottom right;
-            background-repeat: no-repeat;
-            box-sizing: border-box;
             height: 100%;
 
             /* 外枠 */
@@ -37,6 +30,16 @@
             
             /* 背景色 */
             background-color: transparent;
+        }
+
+        .resizeHandle {
+            /* リサイズ用のハンドル
+             * リサイズができる場所はウィンドウ右下の16x16ピクセルの場所
+             * この部分が完全に透明だとマウス入力が透過してしまってサイズを変更できなくなる */
+            background-image: url(handle.png);
+            background-position: bottom right;
+            background-repeat: no-repeat;
+            box-sizing: border-box;
         }
 
         #combatantTable {
@@ -160,6 +163,23 @@
         //
         // 以下表示用スクリプト
         //
+
+        // onOverlayStateUpdate イベントを購読
+        document.addEventListener("onOverlayStateUpdate", function (e) {
+            if (!e.detail.isLocked) {
+                displayResizeHandle();
+            } else {
+                hideResizeHandle();
+            }
+        });
+
+        function displayResizeHandle() {
+            document.documentElement.classList.add("resizeHandle");
+        }
+
+        function hideResizeHandle() {
+            document.documentElement.classList.remove("resizeHandle");
+        }
 
         // onOverlayDataUpdate イベントを購読
         document.addEventListener("onOverlayDataUpdate", function (e) {
