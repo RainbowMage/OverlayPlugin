@@ -8,6 +8,15 @@ using System.Windows.Forms;
 
 namespace RainbowMage.OverlayPlugin
 {
+    public class StateChangedEventArgs<T> : EventArgs
+    {
+        public T NewState { get; private set; }
+        public StateChangedEventArgs(T newState)
+        {
+            this.NewState = newState;
+        }
+    }
+
     public class VisibleStateChangedEventArgs : EventArgs
     {
         public bool IsVisible { get; private set; }
@@ -77,6 +86,15 @@ namespace RainbowMage.OverlayPlugin
         public GlobalHotkeyChangedEventArgs(Keys hotkey)
         {
             this.NewHotkey = hotkey;
+        }
+    }
+
+    public class LockStateChangedEventArgs : EventArgs
+    {
+        public bool IsLocked { get; private set; }
+        public LockStateChangedEventArgs(bool isLocked)
+        {
+            this.IsLocked = isLocked;
         }
     }
 }

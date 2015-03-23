@@ -118,6 +118,13 @@ namespace RainbowMage.OverlayPlugin.Overlays
                     this.textGlobalHotkey.Text = Util.GetHotkeyString(e.NewHotkey, this.config.GlobalHotkey);
                 });
             };
+            this.config.LockChanged += (o, e) =>
+            {
+                this.InvokeIfRequired(() =>
+                {
+                    this.checkLock.Checked = e.IsLocked;
+                });
+            };
         }
 
         private void InvokeIfRequired(Action action)
@@ -204,6 +211,11 @@ namespace RainbowMage.OverlayPlugin.Overlays
             var key = Util.RemoveModifiers(e.KeyCode, e.Modifiers);
             this.config.GlobalHotkey = key;
             this.config.GlobalHotkeyModifiers = e.Modifiers;
+        }
+
+        private void checkLock_CheckedChanged(object sender, EventArgs e)
+        {
+            this.config.IsLocked = this.checkLock.Checked;
         }
     }
 }

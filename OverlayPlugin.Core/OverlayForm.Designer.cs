@@ -32,6 +32,8 @@
             this.Text = "OverlayForm";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OverlayForm_FormClosed);
             this.Load += new System.EventHandler(this.OverlayForm_Load);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OverlayForm_KeyDown);
+            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.OverlayForm_KeyUp);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OverlayForm_MouseDown);
             this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.OverlayForm_MouseMove);
             this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.OverlayForm_MouseUp);

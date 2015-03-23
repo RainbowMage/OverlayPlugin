@@ -23,6 +23,7 @@ namespace RainbowMage.OverlayPlugin
         public event EventHandler<GlobalHotkeyEnabledChangedEventArgs> GlobalHotkeyEnabledChanged;
         public event EventHandler<GlobalHotkeyChangedEventArgs> GlobalHotkeyChanged;
         public event EventHandler<GlobalHotkeyChangedEventArgs> GlobalHotkeyModifiersChanged;
+        public event EventHandler<LockStateChangedEventArgs> LockChanged;
 
         /// <summary>
         /// ユーザーが設定したオーバーレイの名前を取得または設定します。
@@ -205,6 +206,30 @@ namespace RainbowMage.OverlayPlugin
                     if (GlobalHotkeyModifiersChanged != null)
                     {
                         GlobalHotkeyModifiersChanged(this, new GlobalHotkeyChangedEventArgs(this.globalHotkeyModifiers));
+                    }
+                }
+            }
+        }
+
+        private bool isLocked;
+        /// <summary>
+        /// オーバーレイがマウスの入力を透過するかどうかを取得または設定します。
+        /// </summary>
+        [XmlElement("IsLocked")]
+        public bool IsLocked
+        {
+            get
+            {
+                return this.isLocked;
+            }
+            set
+            {
+                if (this.isLocked != value)
+                {
+                    this.isLocked = value;
+                    if (LockChanged != null)
+                    {
+                        LockChanged(this, new LockStateChangedEventArgs(this.isLocked));
                     }
                 }
             }

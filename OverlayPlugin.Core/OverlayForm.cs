@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Xilium.CefGlue;
 
 namespace RainbowMage.OverlayPlugin
 {
@@ -22,6 +23,9 @@ namespace RainbowMage.OverlayPlugin
         private int maxFrameRate;
         private System.Threading.Timer zorderCorrector;
         private bool terminated = false;
+        private bool shiftKeyPressed = false;
+        private bool altKeyPressed = false;
+        private bool controlKeyPressed = false;
 
         public Renderer Renderer { get; private set; }
 
@@ -58,6 +62,8 @@ namespace RainbowMage.OverlayPlugin
 
         public bool IsLoaded { get; private set; }
 
+        public bool Locked { get; set; }
+
         public OverlayForm(string url, int maxFrameRate = 30)
         {
             InitializeComponent();
@@ -66,6 +72,7 @@ namespace RainbowMage.OverlayPlugin
             this.maxFrameRate = maxFrameRate;
             this.Renderer = new Renderer();
             this.Renderer.Render += renderer_Render;
+            this.MouseWheel += OverlayForm_MouseWheel;
 
             this.url = url;
 
@@ -105,7 +112,7 @@ namespace RainbowMage.OverlayPlugin
 
             const int gripSize = 16;
 
-            if (m.Msg == WM_NCHITTEST)
+            if (m.Msg == WM_NCHITTEST && !this.Locked)
             {
                 var posisiton = new Point(m.LParam.ToInt32() & 0xFFFF, m.LParam.ToInt32() >> 16);
                 posisiton = this.PointToClient(posisiton);
@@ -331,24 +338,13 @@ namespace RainbowMage.OverlayPlugin
 
         private void OverlayForm_MouseDown(object sender, MouseEventArgs e)
         {
-            isDragging = true;
-            offset = e.Location;
-
-            Xilium.CefGlue.CefMouseButtonType button = Xilium.CefGlue.CefMouseButtonType.Left;
-            if (e.Button == System.Windows.Forms.MouseButtons.Left)
+            if (!this.Locked)
             {
-                button = Xilium.CefGlue.CefMouseButtonType.Left;
-            }
-            else if (e.Button == System.Windows.Forms.MouseButtons.Middle)
-            {
-                button = Xilium.CefGlue.CefMouseButtonType.Middle;
-            }
-            else if (e.Button == System.Windows.Forms.MouseButtons.Right)
-            {
-                button = Xilium.CefGlue.CefMouseButtonType.Right;
+                isDragging = true;
+                offset = e.Location;
             }
 
-            this.Renderer.SendMouseUpDown(e.X, e.Y, button, false);
+            this.Renderer.SendMouseUpDown(e.X, e.Y, GetMouseButtonType(e), false);
         }
 
         private void OverlayForm_MouseMove(object sender, MouseEventArgs e)
@@ -362,7 +358,7 @@ namespace RainbowMage.OverlayPlugin
             }
             else
             {
-                this.Renderer.SendMouseMove(e.X, e.Y);
+                this.Renderer.SendMouseMove(e.X, e.Y, GetMouseButtonType(e));
             }
         }
 
@@ -370,21 +366,67 @@ namespace RainbowMage.OverlayPlugin
         {
             isDragging = false;
 
-            Xilium.CefGlue.CefMouseButtonType button = Xilium.CefGlue.CefMouseButtonType.Left;
+            this.Renderer.SendMouseUpDown(e.X, e.Y, GetMouseButtonType(e), true);
+        }
+
+        private void OverlayForm_MouseWheel(object sender, MouseEventArgs e)
+        {
+            var flags = GetMouseEventFlags(e);
+
+            this.Renderer.SendMouseWheel(e.X, e.Y, e.Delta, shiftKeyPressed);
+        }
+
+        private CefMouseButtonType GetMouseButtonType(MouseEventArgs e)
+        {
             if (e.Button == System.Windows.Forms.MouseButtons.Left)
             {
-                button = Xilium.CefGlue.CefMouseButtonType.Left;
+                return Xilium.CefGlue.CefMouseButtonType.Left;
             }
             else if (e.Button == System.Windows.Forms.MouseButtons.Middle)
             {
-                button = Xilium.CefGlue.CefMouseButtonType.Middle;
+                return Xilium.CefGlue.CefMouseButtonType.Middle;
             }
             else if (e.Button == System.Windows.Forms.MouseButtons.Right)
             {
-                button = Xilium.CefGlue.CefMouseButtonType.Right;
+                return Xilium.CefGlue.CefMouseButtonType.Right;
+            }
+            else
+            {
+                return CefMouseButtonType.Left; // 非対応のボタンは左クリックとして扱う
+            }
+        }
+
+        private CefEventFlags GetMouseEventFlags(MouseEventArgs e)
+        {
+            var flags = CefEventFlags.None;
+
+            if (e.Button == MouseButtons.Left)
+            {
+                flags |= CefEventFlags.LeftMouseButton;
+            }
+            else if (e.Button == MouseButtons.Middle)
+            {
+                flags |= CefEventFlags.MiddleMouseButton;
+            }
+            else if (e.Button == System.Windows.Forms.MouseButtons.Right)
+            {
+                flags |= CefEventFlags.RightMouseButton;
             }
 
-            this.Renderer.SendMouseUpDown(e.X, e.Y, button, true);
+            if (shiftKeyPressed)
+            {
+                flags |= CefEventFlags.ShiftDown;
+            }
+            if (altKeyPressed)
+            {
+                flags |= CefEventFlags.AltDown;
+            }
+            if (controlKeyPressed)
+            {
+                flags |= CefEventFlags.ControlDown;
+            }
+
+            return flags;
         }
 
         private bool IsOverlaysGameWindow()
@@ -447,6 +489,20 @@ namespace RainbowMage.OverlayPlugin
                     return IntPtr.Zero;
                 }
             }
+        }
+
+        private void OverlayForm_KeyDown(object sender, KeyEventArgs e)
+        {
+            this.altKeyPressed = e.Alt;
+            this.shiftKeyPressed = e.Shift;
+            this.controlKeyPressed = e.Control;
+        }
+
+        private void OverlayForm_KeyUp(object sender, KeyEventArgs e)
+        {
+            this.altKeyPressed = e.Alt;
+            this.shiftKeyPressed = e.Shift;
+            this.controlKeyPressed = e.Control;
         }
     }
 }

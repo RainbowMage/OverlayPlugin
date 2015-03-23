@@ -113,6 +113,10 @@ namespace RainbowMage.OverlayPlugin
                 {
                     Navigate(e.NewUrl);
                 };
+                this.Config.LockChanged += (o, e) =>
+                {
+                    this.Overlay.Locked = e.IsLocked;
+                };
 
                 if (CheckUrl(this.Config.Url))
                 {

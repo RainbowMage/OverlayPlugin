@@ -79,12 +79,25 @@ namespace RainbowMage.HtmlRenderer
             }
         }
 
-        public void SendMouseMove(int x, int y)
+        public void SendMouseMove(int x, int y, CefMouseButtonType button)
         {
             if (this.Browser != null)
             {
                 var host = this.Browser.GetHost();
                 var mouseEvent = new CefMouseEvent { X = x, Y = y };
+                if (button == CefMouseButtonType.Left)
+                {
+                    mouseEvent.Modifiers = CefEventFlags.LeftMouseButton;
+                }
+                else if (button == CefMouseButtonType.Middle)
+                {
+                    mouseEvent.Modifiers = CefEventFlags.MiddleMouseButton;
+                }
+                else if (button == CefMouseButtonType.Right)
+                {
+                    mouseEvent.Modifiers = CefEventFlags.RightMouseButton;
+                }
+
                 host.SendMouseMoveEvent(mouseEvent, false);
             }
         }
@@ -117,13 +130,22 @@ namespace RainbowMage.HtmlRenderer
             }
         }
 
+        public void SendMouseWheel(int x, int y, int delta, bool isVertical)
+        {
+            if (this.Browser != null)
+            {
+                var host = this.Browser.GetHost();
+                var mouseEvent = new CefMouseEvent { X = x, Y = y };
+                host.SendMouseWheelEvent(mouseEvent, isVertical ? delta : 0, !isVertical ? delta : 0);
+            }
+        }
+
         private bool IsContinuousClick(int x, int y, CefMouseButtonType button)
         {
             // ダブルクリックとして認識するクリックの間隔よりも大きかった場合は継続的なクリックとみなさない
             var delta = (DateTime.Now - lastClickTime).TotalMilliseconds;
             if (delta > System.Windows.Forms.SystemInformation.DoubleClickTime)
             {
-                Console.WriteLine("Delta: {0} (Threshold: {1})", delta, System.Windows.Forms.SystemInformation.DoubleClickTime);
                 return false;
             }
 

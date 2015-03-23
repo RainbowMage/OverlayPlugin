@@ -49,6 +49,8 @@
             this.label2 = new System.Windows.Forms.Label();
             this.textGlobalHotkey = new System.Windows.Forms.TextBox();
             this.checkEnableGlobalHotkey = new System.Windows.Forms.CheckBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.checkLock = new System.Windows.Forms.CheckBox();
             this.tableLayoutPanel4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudMaxFrameRate)).BeginInit();
             this.panel2.SuspendLayout();
@@ -59,20 +61,22 @@
             // tableLayoutPanel4
             // 
             resources.ApplyResources(this.tableLayoutPanel4, "tableLayoutPanel4");
-            this.tableLayoutPanel4.Controls.Add(this.label7, 0, 3);
-            this.tableLayoutPanel4.Controls.Add(this.nudMaxFrameRate, 1, 3);
+            this.tableLayoutPanel4.Controls.Add(this.label7, 0, 4);
+            this.tableLayoutPanel4.Controls.Add(this.nudMaxFrameRate, 1, 4);
             this.tableLayoutPanel4.Controls.Add(this.label8, 0, 1);
             this.tableLayoutPanel4.Controls.Add(this.label9, 0, 0);
-            this.tableLayoutPanel4.Controls.Add(this.label10, 0, 2);
+            this.tableLayoutPanel4.Controls.Add(this.label10, 0, 3);
             this.tableLayoutPanel4.Controls.Add(this.checkBoxVisible, 1, 0);
             this.tableLayoutPanel4.Controls.Add(this.checkBoxClickThru, 1, 1);
-            this.tableLayoutPanel4.Controls.Add(this.panel2, 1, 7);
-            this.tableLayoutPanel4.Controls.Add(this.tableLayoutPanel6, 1, 2);
-            this.tableLayoutPanel4.Controls.Add(this.label12, 1, 6);
-            this.tableLayoutPanel4.Controls.Add(this.label1, 0, 4);
-            this.tableLayoutPanel4.Controls.Add(this.label2, 0, 5);
-            this.tableLayoutPanel4.Controls.Add(this.textGlobalHotkey, 1, 5);
-            this.tableLayoutPanel4.Controls.Add(this.checkEnableGlobalHotkey, 1, 4);
+            this.tableLayoutPanel4.Controls.Add(this.panel2, 1, 8);
+            this.tableLayoutPanel4.Controls.Add(this.tableLayoutPanel6, 1, 3);
+            this.tableLayoutPanel4.Controls.Add(this.label12, 1, 7);
+            this.tableLayoutPanel4.Controls.Add(this.label1, 0, 5);
+            this.tableLayoutPanel4.Controls.Add(this.label2, 0, 6);
+            this.tableLayoutPanel4.Controls.Add(this.textGlobalHotkey, 1, 6);
+            this.tableLayoutPanel4.Controls.Add(this.checkEnableGlobalHotkey, 1, 5);
+            this.tableLayoutPanel4.Controls.Add(this.label3, 0, 2);
+            this.tableLayoutPanel4.Controls.Add(this.checkLock, 1, 2);
             this.tableLayoutPanel4.Name = "tableLayoutPanel4";
             // 
             // label7
@@ -205,6 +209,18 @@
             this.checkEnableGlobalHotkey.UseVisualStyleBackColor = true;
             this.checkEnableGlobalHotkey.CheckedChanged += new System.EventHandler(this.checkEnableGlobalHotkey_CheckedChanged);
             // 
+            // label3
+            // 
+            resources.ApplyResources(this.label3, "label3");
+            this.label3.Name = "label3";
+            // 
+            // checkLock
+            // 
+            resources.ApplyResources(this.checkLock, "checkLock");
+            this.checkLock.Name = "checkLock";
+            this.checkLock.UseVisualStyleBackColor = true;
+            this.checkLock.CheckedChanged += new System.EventHandler(this.checkLock_CheckedChanged);
+            // 
             // SpellTimerConfigPanel
             // 
             resources.ApplyResources(this, "$this");
@@ -245,5 +261,7 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox textGlobalHotkey;
         private System.Windows.Forms.CheckBox checkEnableGlobalHotkey;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.CheckBox checkLock;
     }
 }

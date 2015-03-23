@@ -53,6 +53,8 @@
             this.label8 = new System.Windows.Forms.Label();
             this.checkEnableGlobalHotkey = new System.Windows.Forms.CheckBox();
             this.textGlobalHotkey = new System.Windows.Forms.TextBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.checkLock = new System.Windows.Forms.CheckBox();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
@@ -63,24 +65,26 @@
             // tableLayoutPanel1
             // 
             resources.ApplyResources(this.tableLayoutPanel1, "tableLayoutPanel1");
-            this.tableLayoutPanel1.Controls.Add(this.label6, 0, 5);
-            this.tableLayoutPanel1.Controls.Add(this.label5, 0, 4);
-            this.tableLayoutPanel1.Controls.Add(this.textMiniParseSortKey, 1, 3);
-            this.tableLayoutPanel1.Controls.Add(this.label4, 0, 3);
+            this.tableLayoutPanel1.Controls.Add(this.label6, 0, 6);
+            this.tableLayoutPanel1.Controls.Add(this.label5, 0, 5);
+            this.tableLayoutPanel1.Controls.Add(this.textMiniParseSortKey, 1, 4);
+            this.tableLayoutPanel1.Controls.Add(this.label4, 0, 4);
             this.tableLayoutPanel1.Controls.Add(this.label2, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.label3, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.label1, 0, 2);
+            this.tableLayoutPanel1.Controls.Add(this.label1, 0, 3);
             this.tableLayoutPanel1.Controls.Add(this.checkMiniParseVisible, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.checkMiniParseClickthru, 1, 1);
-            this.tableLayoutPanel1.Controls.Add(this.panel1, 1, 9);
-            this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel2, 1, 2);
-            this.tableLayoutPanel1.Controls.Add(this.comboMiniParseSortType, 1, 4);
-            this.tableLayoutPanel1.Controls.Add(this.nudMaxFrameRate, 1, 5);
-            this.tableLayoutPanel1.Controls.Add(this.label13, 1, 8);
-            this.tableLayoutPanel1.Controls.Add(this.label7, 0, 6);
-            this.tableLayoutPanel1.Controls.Add(this.label8, 0, 7);
-            this.tableLayoutPanel1.Controls.Add(this.checkEnableGlobalHotkey, 1, 6);
-            this.tableLayoutPanel1.Controls.Add(this.textGlobalHotkey, 1, 7);
+            this.tableLayoutPanel1.Controls.Add(this.panel1, 1, 10);
+            this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel2, 1, 3);
+            this.tableLayoutPanel1.Controls.Add(this.comboMiniParseSortType, 1, 5);
+            this.tableLayoutPanel1.Controls.Add(this.nudMaxFrameRate, 1, 6);
+            this.tableLayoutPanel1.Controls.Add(this.label13, 1, 9);
+            this.tableLayoutPanel1.Controls.Add(this.label7, 0, 7);
+            this.tableLayoutPanel1.Controls.Add(this.label8, 0, 8);
+            this.tableLayoutPanel1.Controls.Add(this.checkEnableGlobalHotkey, 1, 7);
+            this.tableLayoutPanel1.Controls.Add(this.textGlobalHotkey, 1, 8);
+            this.tableLayoutPanel1.Controls.Add(this.label9, 0, 2);
+            this.tableLayoutPanel1.Controls.Add(this.checkLock, 1, 2);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             // 
             // label6
@@ -237,6 +241,18 @@
             this.textGlobalHotkey.Name = "textGlobalHotkey";
             this.textGlobalHotkey.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxGlobalHotkey_KeyDown);
             // 
+            // label9
+            // 
+            resources.ApplyResources(this.label9, "label9");
+            this.label9.Name = "label9";
+            // 
+            // checkLock
+            // 
+            resources.ApplyResources(this.checkLock, "checkLock");
+            this.checkLock.Name = "checkLock";
+            this.checkLock.UseVisualStyleBackColor = true;
+            this.checkLock.CheckedChanged += new System.EventHandler(this.checkLock_CheckedChanged);
+            // 
             // MiniParseConfigPanel
             // 
             resources.ApplyResources(this, "$this");
@@ -281,5 +297,7 @@
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.CheckBox checkEnableGlobalHotkey;
         private System.Windows.Forms.TextBox textGlobalHotkey;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.CheckBox checkLock;
     }
 }
