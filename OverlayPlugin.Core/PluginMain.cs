@@ -170,6 +170,7 @@ namespace RainbowMage.OverlayPlugin
                 // 内蔵アドオンを追加
                 this.Addons.Add(new MiniParseOverlayAddon());
                 this.Addons.Add(new SpellTimerOverlayAddon());
+                this.Addons.Add(new LabelOverlayAddon());
 
                 var version = typeof(PluginMain).Assembly.GetName().Version;
 
