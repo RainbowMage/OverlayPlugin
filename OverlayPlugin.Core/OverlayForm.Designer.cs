@@ -30,6 +30,8 @@
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "OverlayForm";
+            this.Activated += new System.EventHandler(this.OverlayForm_Activated);
+            this.Deactivate += new System.EventHandler(this.OverlayForm_Deactivate);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OverlayForm_FormClosed);
             this.Load += new System.EventHandler(this.OverlayForm_Load);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OverlayForm_KeyDown);

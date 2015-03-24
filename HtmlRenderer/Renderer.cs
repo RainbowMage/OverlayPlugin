@@ -140,6 +140,24 @@ namespace RainbowMage.HtmlRenderer
             }
         }
 
+        public void SendActivate()
+        {
+            if (this.Browser != null)
+            {
+                var host = this.Browser.GetHost();
+                host.SendFocusEvent(true);
+            }
+        }
+
+        public void SendDeactivate()
+        {
+            if (this.Browser != null)
+            {
+                var host = this.Browser.GetHost();
+                host.SendFocusEvent(false);
+            }
+        }
+
         private bool IsContinuousClick(int x, int y, CefMouseButtonType button)
         {
             // ダブルクリックとして認識するクリックの間隔よりも大きかった場合は継続的なクリックとみなさない
@@ -156,6 +174,16 @@ namespace RainbowMage.HtmlRenderer
             }
 
             return true;
+        }
+
+        public void SendKeyEvent(CefKeyEvent keyEvent)
+        {
+            if (this.Browser != null)
+            {
+                var host = this.Browser.GetHost();
+
+                host.SendKeyEvent(keyEvent);
+            }
         }
 
         internal void OnCreated(CefBrowser browser)

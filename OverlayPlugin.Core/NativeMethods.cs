@@ -213,5 +213,16 @@ namespace RainbowMage.OverlayPlugin
         public const uint SWP_NOSIZE = 0x0001;
         public const uint SWP_NOMOVE = 0x0002;
         public const uint SWP_NOACTIVATE = 0x0010;
+
+        [DllImport("user32.dll")]
+        public static extern short GetKeyState(int nVirtKey);
+
+
+        public const int WM_KEYDOWN = 0x0100;
+        public const int WM_KEYUP = 0x0101;
+        public const int WM_CHAR = 0x0102;
+        public const int WM_SYSKEYDOWN = 0x0104;
+        public const int WM_SYSKEYUP = 0x0105;
+        public const int WM_SYSCHAR = 0x0106;
     }
 }

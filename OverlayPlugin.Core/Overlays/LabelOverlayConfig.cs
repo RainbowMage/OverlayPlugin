@@ -58,7 +58,8 @@ namespace RainbowMage.OverlayPlugin.Overlays
         public LabelOverlayConfig(string name)
             : base(name)
         {
-
+            this.Text = "";
+            this.HtmlModeEnabled = false;
         }
 
         // XmlSerializer用

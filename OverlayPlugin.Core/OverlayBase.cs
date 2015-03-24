@@ -267,14 +267,7 @@ namespace RainbowMage.OverlayPlugin
 
         public virtual void Navigate(string url)
         {
-            if (this.Overlay.Url != url)
-            {
                 this.Overlay.Url = url;
-            }
-            else
-            {
-                this.Overlay.Reload();
-            }
         }
 
         protected void Log(LogLevel level, string message)

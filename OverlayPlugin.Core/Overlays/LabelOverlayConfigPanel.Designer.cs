@@ -100,12 +100,14 @@
             resources.ApplyResources(this.checkMiniParseVisible, "checkMiniParseVisible");
             this.checkMiniParseVisible.Name = "checkMiniParseVisible";
             this.checkMiniParseVisible.UseVisualStyleBackColor = true;
+            this.checkMiniParseVisible.CheckedChanged += new System.EventHandler(this.checkWindowVisible_CheckedChanged);
             // 
             // checkMiniParseClickthru
             // 
             resources.ApplyResources(this.checkMiniParseClickthru, "checkMiniParseClickthru");
             this.checkMiniParseClickthru.Name = "checkMiniParseClickthru";
             this.checkMiniParseClickthru.UseVisualStyleBackColor = true;
+            this.checkMiniParseClickthru.CheckedChanged += new System.EventHandler(this.checkMouseClickthru_CheckedChanged);
             // 
             // label7
             // 

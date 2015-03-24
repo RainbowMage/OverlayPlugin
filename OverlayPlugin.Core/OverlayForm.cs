@@ -35,11 +35,8 @@ namespace RainbowMage.OverlayPlugin
             get { return this.url; }
             set
             {
-                if (this.url != value)
-                {
-                    this.url = value;
-                    UpdateRender();
-                }
+                this.url = value;
+                UpdateRender();
             }
         }
 
@@ -124,6 +121,15 @@ namespace RainbowMage.OverlayPlugin
                 }
             }
             
+            if (m.Msg == NativeMethods.WM_KEYDOWN ||
+                m.Msg == NativeMethods.WM_KEYUP ||
+                m.Msg == NativeMethods.WM_CHAR ||
+                m.Msg == NativeMethods.WM_SYSKEYDOWN ||
+                m.Msg == NativeMethods.WM_SYSKEYUP ||
+                m.Msg == NativeMethods.WM_SYSCHAR)
+            {
+                OnKeyEvent(ref m);
+            }
         }
 
         private void UpdateLayeredWindowBitmap()
@@ -496,6 +502,7 @@ namespace RainbowMage.OverlayPlugin
             this.altKeyPressed = e.Alt;
             this.shiftKeyPressed = e.Shift;
             this.controlKeyPressed = e.Control;
+
         }
 
         private void OverlayForm_KeyUp(object sender, KeyEventArgs e)
@@ -503,6 +510,134 @@ namespace RainbowMage.OverlayPlugin
             this.altKeyPressed = e.Alt;
             this.shiftKeyPressed = e.Shift;
             this.controlKeyPressed = e.Control;
+        }
+
+        private void OnKeyEvent(ref Message m)
+        {
+
+            var keyEvent = new CefKeyEvent();
+            keyEvent.WindowsKeyCode = m.WParam.ToInt32();
+            keyEvent.NativeKeyCode = (int)m.LParam.ToInt64();
+            keyEvent.IsSystemKey = m.Msg == NativeMethods.WM_SYSCHAR ||
+                                   m.Msg == NativeMethods.WM_SYSKEYDOWN ||
+                                   m.Msg == NativeMethods.WM_SYSKEYUP;
+
+            if (m.Msg == NativeMethods.WM_KEYDOWN || m.Msg == NativeMethods.WM_SYSKEYDOWN)
+            {
+                keyEvent.EventType = CefKeyEventType.RawKeyDown;
+            }
+            else if (m.Msg == NativeMethods.WM_KEYUP || m.Msg == NativeMethods.WM_SYSKEYUP)
+            {
+                keyEvent.EventType = CefKeyEventType.KeyUp;
+            }
+            else
+            {
+                keyEvent.EventType = CefKeyEventType.Char;
+            }
+            keyEvent.Modifiers = GetKeyboardModifiers(ref m);
+
+            if (this.Renderer != null)
+            {
+                this.Renderer.SendKeyEvent(keyEvent);
+            }
+        }
+
+        private CefEventFlags GetKeyboardModifiers(ref Message m)
+        {
+            var modifiers = CefEventFlags.None;
+
+            if (IsKeyDown(Keys.Shift)) modifiers |= CefEventFlags.ShiftDown;
+            if (IsKeyDown(Keys.Control)) modifiers |= CefEventFlags.ControlDown;
+            if (IsKeyDown(Keys.Menu)) modifiers |= CefEventFlags.AltDown;
+
+            if (IsKeyToggled(Keys.NumLock)) modifiers |= CefEventFlags.NumLockOn;
+            if (IsKeyToggled(Keys.Capital)) modifiers |= CefEventFlags.CapsLockOn;
+
+            switch ((Keys)m.WParam)
+            {
+                case Keys.Return:
+                    if (((m.LParam.ToInt64() >> 48) & 0x0100) != 0)
+                        modifiers |= CefEventFlags.IsKeyPad;
+                    break;
+                case Keys.Insert:
+                case Keys.Delete:
+                case Keys.Home:
+                case Keys.End:
+                case Keys.Prior:
+                case Keys.Next:
+                case Keys.Up:
+                case Keys.Down:
+                case Keys.Left:
+                case Keys.Right:
+                    if (!(((m.LParam.ToInt64() >> 48) & 0x0100) != 0))
+                        modifiers |= CefEventFlags.IsKeyPad;
+                    break;
+                case Keys.NumLock:
+                case Keys.NumPad0:
+                case Keys.NumPad1:
+                case Keys.NumPad2:
+                case Keys.NumPad3:
+                case Keys.NumPad4:
+                case Keys.NumPad5:
+                case Keys.NumPad6:
+                case Keys.NumPad7:
+                case Keys.NumPad8:
+                case Keys.NumPad9:
+                case Keys.Divide:
+                case Keys.Multiply:
+                case Keys.Subtract:
+                case Keys.Add:
+                case Keys.Decimal:
+                case Keys.Clear:
+                    modifiers |= CefEventFlags.IsKeyPad;
+                    break;
+                case Keys.Shift:
+                    if (IsKeyDown(Keys.LShiftKey)) modifiers |= CefEventFlags.IsLeft;
+                    else modifiers |= CefEventFlags.IsRight;
+                    break;
+                case Keys.Control:
+                    if (IsKeyDown(Keys.LControlKey)) modifiers |= CefEventFlags.IsLeft;
+                    else modifiers |= CefEventFlags.IsRight;
+                    break;
+                case Keys.Alt:
+                    if (IsKeyDown(Keys.LMenu)) modifiers |= CefEventFlags.IsLeft;
+                    else modifiers |= CefEventFlags.IsRight;
+                    break;
+                case Keys.LWin:
+                    modifiers |= CefEventFlags.IsLeft;
+                    break;
+                case Keys.RWin:
+                    modifiers |= CefEventFlags.IsRight;
+                    break;
+            }
+
+            return modifiers;
+        }
+
+        private bool IsKeyDown(Keys key)
+        {
+            return (NativeMethods.GetKeyState((int)key) & 0x8000) != 0;
+        }
+
+        private bool IsKeyToggled(Keys key)
+        {
+            return (NativeMethods.GetKeyState((int)key) & 1) == 1;
+        }
+
+        private void OverlayForm_Activated(object sender, EventArgs e)
+        {
+            if (this.Renderer != null)
+            {
+                this.Renderer.SendActivate();
+            }
+        }
+
+        private void OverlayForm_Deactivate(object sender, EventArgs e)
+        {
+            if (this.Renderer != null)
+            {
+                this.Renderer.SendDeactivate();
+            }
         }
     }
 }
