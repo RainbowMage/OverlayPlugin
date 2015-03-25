@@ -7,7 +7,7 @@ using Xilium.CefGlue;
 
 namespace RainbowMage.HtmlRenderer
 {
-    public class Renderer : CefApp, IDisposable
+    public class Renderer : IDisposable
     {
         public event EventHandler<RenderEventArgs> Render;
         public event EventHandler<BrowserErrorEventArgs> BrowserError;
