@@ -112,7 +112,8 @@ namespace RainbowMage.OverlayPlugin.Overlays
                 {
                     builder.Append(",");
                 }
-                builder.AppendFormat("\"{0}\":\"{1}\"", Util.CreateJsonSafeString(pair.Key), Util.CreateJsonSafeString(pair.Value));
+                var valueString = Util.CreateJsonSafeString(Util.ReplaceNaNString(pair.Value, "---"));
+                builder.AppendFormat("\"{0}\":\"{1}\"", Util.CreateJsonSafeString(pair.Key), valueString);
             }
             builder.Append("},");
             builder.Append("\"Combatant\": {");
@@ -139,7 +140,8 @@ namespace RainbowMage.OverlayPlugin.Overlays
                     {
                         builder.Append(",");
                     }
-                    builder.AppendFormat("\"{0}\":\"{1}\"", Util.CreateJsonSafeString(pair2.Key), Util.CreateJsonSafeString(pair2.Value));
+                    var valueString = Util.CreateJsonSafeString(Util.ReplaceNaNString(pair2.Value, "---"));
+                    builder.AppendFormat("\"{0}\":\"{1}\"", Util.CreateJsonSafeString(pair2.Key), valueString);
                 }
                 builder.Append("}");
             }

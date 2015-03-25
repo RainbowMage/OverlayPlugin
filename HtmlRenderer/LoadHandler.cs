@@ -16,6 +16,15 @@ namespace RainbowMage.HtmlRenderer
             this.renderer = renderer;
         }
 
+        protected override void OnLoadStart(CefBrowser browser, CefFrame frame)
+        {
+            base.OnLoadStart(browser, frame);
+
+            var message = CefProcessMessage.Create("SetOverlayAPI");
+            message.Arguments.SetString(0, frame.Name);
+            browser.SendProcessMessage(CefProcessId.Renderer, message);
+        }
+
         protected override void OnLoadError(CefBrowser browser, CefFrame frame, CefErrorCode errorCode, string errorText, string failedUrl)
         {
             base.OnLoadError(browser, frame, errorCode, errorText, failedUrl);

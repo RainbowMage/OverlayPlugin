@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Xilium.CefGlue;
 
 namespace RainbowMage.OverlayPlugin
 {
@@ -301,6 +302,24 @@ namespace RainbowMage.OverlayPlugin
                 this.Overlay.Renderer.Browser != null)
             {
                 this.Overlay.Renderer.Browser.GetMainFrame().ExecuteJavaScript(updateScript, null, 0);
+            }
+        }
+
+        public void SendMessage(string message)
+        {
+            var script = string.Format(
+                "document.dispatchEvent(new CustomEvent('onBroadcastMessageReceive', {{ detail: {{ message: \"{0}\" }} }}));",
+                Util.CreateJsonSafeString(message));
+
+            if (this.Overlay != null &&
+                this.Overlay.Renderer != null &&
+                this.Overlay.Renderer.Browser != null)
+            {
+                foreach (var frameId in this.Overlay.Renderer.Browser.GetFrameIdentifiers())
+                {
+                    var frame = this.Overlay.Renderer.Browser.GetFrame(frameId);
+                    frame.ExecuteJavaScript(script, null, 0);
+                }
             }
         }
     }

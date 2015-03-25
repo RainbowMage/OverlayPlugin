@@ -46,5 +46,11 @@ namespace RainbowMage.OverlayPlugin
         /// オーバーレイの位置と大きさを保存します。
         /// </summary>
         void SavePositionAndSize();
+
+        /// <summary>
+        /// オーバーレイにメッセージを送信します。
+        /// </summary>
+        /// <param name="message">メッセージの内容。</param>
+        void SendMessage(string message);
     }
 }

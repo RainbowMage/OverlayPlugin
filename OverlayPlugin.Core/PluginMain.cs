@@ -13,6 +13,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Text.RegularExpressions;
 using RainbowMage.OverlayPlugin.Overlays;
+using System.Threading.Tasks;
 
 namespace RainbowMage.OverlayPlugin
 {
@@ -60,6 +61,30 @@ namespace RainbowMage.OverlayPlugin
 
                 // コンフィグ系読み込み
                 LoadConfig();
+
+                // プラグイン間のメッセージ関連
+                RainbowMage.HtmlRenderer.Renderer.BroadcastMessage += (o, e) =>
+                {
+                    Task.Run(() =>
+                    {
+                        foreach (var overlay in this.Overlays)
+                        {
+                            overlay.SendMessage(e.Message);
+                        }
+                    });
+                };
+                RainbowMage.HtmlRenderer.Renderer.SendMessage += (o, e) =>
+                {
+                    Task.Run(() =>
+                    {
+                        var targetOverlay = this.Overlays.FirstOrDefault(x => x.Name == e.Target);
+                        if (targetOverlay != null)
+                        {
+                            targetOverlay.SendMessage(e.Message);
+                        }
+                    });
+                };
+
 
                 // ACT 終了時に CEF をシャットダウン（ゾンビ化防止）
                 Application.ApplicationExit += (o, e) =>

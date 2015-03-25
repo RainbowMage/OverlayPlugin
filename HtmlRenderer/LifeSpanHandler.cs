@@ -15,7 +15,7 @@ namespace RainbowMage.HtmlRenderer
         {
             this.renderer = renderer;
         }
-
+        
         protected override void OnAfterCreated(CefBrowser browser)
         {
             base.OnAfterCreated(browser);

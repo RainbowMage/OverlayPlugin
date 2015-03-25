@@ -7,12 +7,15 @@ using Xilium.CefGlue;
 
 namespace RainbowMage.HtmlRenderer
 {
-    public class Renderer : IDisposable
+    public class Renderer : CefApp, IDisposable
     {
         public event EventHandler<RenderEventArgs> Render;
         public event EventHandler<BrowserErrorEventArgs> BrowserError;
         public event EventHandler<BrowserLoadEventArgs> BrowserLoad;
         public event EventHandler<BrowserConsoleLogEventArgs> BrowserConsoleLog;
+
+        public static event EventHandler<BroadcastMessageEventArgs> BroadcastMessage;
+        public static event EventHandler<SendMessageEventArgs> SendMessage;
 
         public CefBrowser Browser { get; private set; }
         private Client Client { get; set; }
@@ -220,6 +223,22 @@ namespace RainbowMage.HtmlRenderer
             if (BrowserConsoleLog != null)
             {
                 BrowserConsoleLog(this, new BrowserConsoleLogEventArgs(message, source, line));
+            }
+        }
+
+        internal static void OnBroadcastMessage(object sender, BroadcastMessageEventArgs e)
+        {
+            if (BroadcastMessage != null)
+            {
+                BroadcastMessage(sender, e);
+            }
+        }
+
+        internal static void OnSendMessage(object sender, SendMessageEventArgs e)
+        {
+            if (SendMessage != null)
+            {
+                SendMessage(sender, e);
             }
         }
 

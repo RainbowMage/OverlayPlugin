@@ -24,8 +24,18 @@ namespace RainbowMage.OverlayPlugin
                 .Replace("'", "\\'")
                 .Replace("\r", "\\r")
                 .Replace("\n", "\\n")
-                .Replace("\t", "\\t")
-                .Replace(double.NaN.ToString(), "---");
+                .Replace("\t", "\\t");
+        }
+
+        /// <summary>
+        /// 文字列中に含まれる double.NaN.ToString() で出力される文字列を指定した文字列で置換します。
+        /// </summary>
+        /// <param name="str"></param>
+        /// <param name="replace"></param>
+        /// <returns></returns>
+        public static string ReplaceNaNString(string str, string replace)
+        {
+            return str.Replace(double.NaN.ToString(), replace);
         }
 
         /// <summary>
