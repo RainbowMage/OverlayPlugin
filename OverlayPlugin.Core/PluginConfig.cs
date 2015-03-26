@@ -304,7 +304,7 @@ namespace RainbowMage.OverlayPlugin
             spellTimerOverlayConfig.Size = new Size(200, 300);
             spellTimerOverlayConfig.IsVisible = true;
             spellTimerOverlayConfig.MaxFrameRate = 5;
-            miniparseOverlayConfig.Url = new Uri(Path.Combine(pluginDirectory, "resources", "spelltimer.html")).ToString(); 
+            spellTimerOverlayConfig.Url = new Uri(Path.Combine(pluginDirectory, "resources", "spelltimer.html")).ToString(); 
 
             this.Overlays = new OverlayConfigList();
             this.Overlays.Add(miniparseOverlayConfig);
