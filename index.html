@@ -1,0 +1,115 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>OverlayPlugin by RainbowMage</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1 class="header">OverlayPlugin</h1>
+        <p class="header"></p>
+
+        <ul>
+          <li class="download"><a class="buttons" href="https://github.com/RainbowMage/OverlayPlugin/zipball/master">Download ZIP</a></li>
+          <li class="download"><a class="buttons" href="https://github.com/RainbowMage/OverlayPlugin/tarball/master">Download TAR</a></li>
+          <li><a class="buttons github" href="https://github.com/RainbowMage/OverlayPlugin">View On GitHub</a></li>
+        </ul>
+
+        <p class="header">This project is maintained by <a class="header name" href="https://github.com/RainbowMage">RainbowMage</a></p>
+
+
+      </header>
+      <section>
+        <h1>
+<a id="overlayplugin" class="anchor" href="#overlayplugin" aria-hidden="true"><span class="octicon octicon-link"></span></a>OverlayPlugin</h1>
+
+<p>ACT に柔軟にカスタマイズ可能なミニパースやスペルタイマーのオーバーレイを追加するプラグイン。</p>
+
+<h2>
+<a id="動作環境" class="anchor" href="#%E5%8B%95%E4%BD%9C%E7%92%B0%E5%A2%83" aria-hidden="true"><span class="octicon octicon-link"></span></a>動作環境</h2>
+
+<ul>
+<li>.NET Framework 4.5 以上がインストールされているシステム</li>
+</ul>
+
+<h2>
+<a id="ダウンロード" class="anchor" href="#%E3%83%80%E3%82%A6%E3%83%B3%E3%83%AD%E3%83%BC%E3%83%89" aria-hidden="true"><span class="octicon octicon-link"></span></a>ダウンロード</h2>
+
+<p><a href="https://github.com/RainbowMage/OverlayPlugin/releases">リリースページ</a>でビルド済みのバイナリを配布しています。</p>
+
+<p>ダウンロード後、ファイルを展開する前にダウンロードした ZIP ファイルを右クリックしてプロパティを開き、「ブロックを解除」ボタンを押してブロックを解除することを強く推奨します。</p>
+
+<h2>
+<a id="ビルド方法" class="anchor" href="#%E3%83%93%E3%83%AB%E3%83%89%E6%96%B9%E6%B3%95" aria-hidden="true"><span class="octicon octicon-link"></span></a>ビルド方法</h2>
+
+<p>手順:</p>
+
+<ul>
+<li>.NET Framework 4.5.1 をインストールします</li>
+<li>Microsoft Build Tools 2013 (<a href="http://www.microsoft.com/ja-jp/download/details.aspx?id=40760">http://www.microsoft.com/ja-jp/download/details.aspx?id=40760</a>) をインストールします（Visual Studio 2013 がインストールされている場合は不要）</li>
+<li>ソースコード一式をチェックアウト、または ZIP ファイルでダウンロードして解凍します</li>
+<li>Thirdparty フォルダの中にある ACT フォルダに、ACT の実行ファイル（Advanced Combat Tracker.exe）をコピーします</li>
+<li>build.bat を実行します</li>
+</ul>
+
+<p>うまくいけば、BuildX86 および BuildX64 フォルダの中にプラグインが生成されます。</p>
+
+<h2>
+<a id="使用方法" class="anchor" href="#%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95" aria-hidden="true"><span class="octicon octicon-link"></span></a>使用方法</h2>
+
+<p>OverlayPlugin.dll をプラグインとして ACT に追加します。</p>
+
+<p>追加すると、<code>No data to show</code> と表示されたオーバーレイか、 もしくはプレイヤーの DPS が表示されたオーバーレイが表示されます。
+オーバーレイの非透過部分をドラッグすると移動させることができ、右下のハンドルをドラッグするとオーバーレイのサイズの変更ができます。</p>
+
+<p>ACT のプラグインタブにある「OverlayPlugin.dll」タブで、オーバーレイの追加や削除、表示の切り替え、マウスクリックの透過、表示するファイルの設定などが行えます。</p>
+
+<h2>
+<a id="トラブルシューティング" class="anchor" href="#%E3%83%88%E3%83%A9%E3%83%96%E3%83%AB%E3%82%B7%E3%83%A5%E3%83%BC%E3%83%86%E3%82%A3%E3%83%B3%E3%82%B0" aria-hidden="true"><span class="octicon octicon-link"></span></a>トラブルシューティング</h2>
+
+<p>オーバーレイウィンドウなどが表示されない場合は、<code>Plugins</code> タブにある <code>OverlayPlugin.dll</code> タブ内の下部にあるログのメッセージをよく確認した上で <a href="https://github.com/RainbowMage/OverlayPlugin/wiki/%E3%83%88%E3%83%A9%E3%83%96%E3%83%AB%E3%82%B7%E3%83%A5%E3%83%BC%E3%83%86%E3%82%A3%E3%83%B3%E3%82%B0">トラブルシューティング</a>をお読みください。</p>
+
+<h2>
+<a id="カスタマイズ" class="anchor" href="#%E3%82%AB%E3%82%B9%E3%82%BF%E3%83%9E%E3%82%A4%E3%82%BA" aria-hidden="true"><span class="octicon octicon-link"></span></a>カスタマイズ</h2>
+
+<p>プラグインが配置されているフォルダにある resources フォルダの中の、<code>miniparse.html</code> および <code>spelltimer.html</code> を編集することでカスタマイズができます。 </p>
+
+<p>詳しい編集方法に関しては <a href="https://github.com/RainbowMage/OverlayPlugin/wiki/">Wiki</a> をご覧ください。JavaScript と HTML に関する基礎的な知識があれば編集できると思います。</p>
+
+<h2>
+<a id="アドオン" class="anchor" href="#%E3%82%A2%E3%83%89%E3%82%AA%E3%83%B3" aria-hidden="true"><span class="octicon octicon-link"></span></a>アドオン</h2>
+
+<p>本プラグインはアドオンをサポートしております。対応するアドオンをプラグインディレクトリ直下の <code>addon</code> ディレクトリに配置すると自動的に読み込まれます。</p>
+
+<p>仕様に関しては <code>AddonExample</code> プロジェクトをご確認ください。</p>
+
+<h2>
+<a id="ライセンス" class="anchor" href="#%E3%83%A9%E3%82%A4%E3%82%BB%E3%83%B3%E3%82%B9" aria-hidden="true"><span class="octicon octicon-link"></span></a>ライセンス</h2>
+
+<p>MIT ライセンスです。詳細は LICENSE.txt を参照してください。</p>
+
+<h2>
+<a id="other-languages" class="anchor" href="#other-languages" aria-hidden="true"><span class="octicon octicon-link"></span></a>Other Languages:</h2>
+
+<ul>
+<li><a href="../master/README-en.md">English (EN)</a></li>
+</ul>
+      </section>
+      <footer>
+        <p><small>Hosted on <a href="https://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+		
+  </body>
+</html>
