@@ -33,12 +33,14 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tabControl = new System.Windows.Forms.TabControl();
             this.tabPageMain = new System.Windows.Forms.TabPage();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.buttonRemoveOverlay = new System.Windows.Forms.Button();
             this.buttonNewOverlay = new System.Windows.Forms.Button();
             this.listViewOverlay = new System.Windows.Forms.ListView();
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.checkBoxAutoHide = new System.Windows.Forms.CheckBox();
             this.listViewLog = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -56,6 +58,7 @@
             this.splitContainer1.SuspendLayout();
             this.tabControl.SuspendLayout();
             this.tabPageMain.SuspendLayout();
+            this.tableLayoutPanel1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.contextMenuLogList.SuspendLayout();
             this.SuspendLayout();
@@ -85,9 +88,16 @@
             // tabPageMain
             // 
             resources.ApplyResources(this.tabPageMain, "tabPageMain");
-            this.tabPageMain.Controls.Add(this.groupBox2);
+            this.tabPageMain.Controls.Add(this.tableLayoutPanel1);
             this.tabPageMain.Name = "tabPageMain";
             this.tabPageMain.UseVisualStyleBackColor = true;
+            // 
+            // tableLayoutPanel1
+            // 
+            resources.ApplyResources(this.tableLayoutPanel1, "tableLayoutPanel1");
+            this.tableLayoutPanel1.Controls.Add(this.groupBox2, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.checkBoxAutoHide, 0, 1);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             // 
             // groupBox2
             // 
@@ -132,6 +142,13 @@
             // columnHeader5
             // 
             resources.ApplyResources(this.columnHeader5, "columnHeader5");
+            // 
+            // checkBoxAutoHide
+            // 
+            resources.ApplyResources(this.checkBoxAutoHide, "checkBoxAutoHide");
+            this.checkBoxAutoHide.Name = "checkBoxAutoHide";
+            this.checkBoxAutoHide.UseVisualStyleBackColor = true;
+            this.checkBoxAutoHide.CheckedChanged += new System.EventHandler(this.checkBoxAutoHide_CheckedChanged);
             // 
             // listViewLog
             // 
@@ -222,6 +239,8 @@
             this.splitContainer1.ResumeLayout(false);
             this.tabControl.ResumeLayout(false);
             this.tabPageMain.ResumeLayout(false);
+            this.tableLayoutPanel1.ResumeLayout(false);
+            this.tableLayoutPanel1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.contextMenuLogList.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -250,5 +269,7 @@
         private System.Windows.Forms.ListView listViewOverlay;
         private System.Windows.Forms.ColumnHeader columnHeader4;
         private System.Windows.Forms.ColumnHeader columnHeader5;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.CheckBox checkBoxAutoHide;
     }
 }

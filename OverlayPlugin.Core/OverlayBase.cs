@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -15,6 +16,7 @@ namespace RainbowMage.OverlayPlugin
     {
         private KeyboardHook hook = new KeyboardHook();
         protected System.Timers.Timer timer;
+        protected System.Timers.Timer xivWindowTimer;
 
         /// <summary>
         /// オーバーレイがログを出力したときに発生します。
@@ -36,6 +38,11 @@ namespace RainbowMage.OverlayPlugin
         /// </summary>
         public TConfig Config { get; private set; }
 
+        /// <summary>
+        /// プラグインの設定を取得します。
+        /// </summary>
+        public IPluginConfig PluginConfig { get; set; }
+
         protected OverlayBase(TConfig config, string name)
         {
             this.Config = config;
@@ -52,6 +59,7 @@ namespace RainbowMage.OverlayPlugin
         public void Start()
         {
             timer.Start();
+            xivWindowTimer.Start();
         }
 
         /// <summary>
@@ -60,6 +68,7 @@ namespace RainbowMage.OverlayPlugin
         public void Stop()
         {
             timer.Stop();
+            xivWindowTimer.Stop();
         }
 
         /// <summary>
@@ -214,6 +223,36 @@ namespace RainbowMage.OverlayPlugin
                 catch (Exception ex)
                 {
                     Log(LogLevel.Error, "Update: {0}", ex.ToString());
+                }
+            };
+
+            xivWindowTimer = new System.Timers.Timer();
+            xivWindowTimer.Interval = 1000;
+            xivWindowTimer.Elapsed += (o, e) =>
+            {
+                try
+                {
+                    if (Config.IsVisible && PluginConfig.HideOverlaysWhenNotActive)
+                    {
+                        uint pid;
+                        var hWndFg = NativeMethods.GetForegroundWindow();
+                        NativeMethods.GetWindowThreadProcessId(hWndFg, out pid);
+                        var exePath = Process.GetProcessById((int)pid).MainModule.FileName;
+
+                        if (Path.GetFileName(exePath.ToString()) == "ffxiv.exe" ||
+                            exePath.ToString() == Process.GetCurrentProcess().MainModule.FileName)
+                        {
+                            this.Overlay.Visible = true;
+                        }
+                        else
+                        {
+                            this.Overlay.Visible = false;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log(LogLevel.Error, "XivWindowWatcher: {0}", ex.ToString());
                 }
             };
         }

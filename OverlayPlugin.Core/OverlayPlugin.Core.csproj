@@ -60,7 +60,6 @@
     </Compile>
     <Compile Include="DIBitmap.cs" />
     <Compile Include="KeyboardHook.cs" />
-    <Compile Include="OverlayConfigList.cs" />
     <Compile Include="Overlays\LabelOverlay.cs" />
     <Compile Include="Overlays\LabelOverlayAddon.cs" />
     <Compile Include="Overlays\LabelOverlayConfig.cs" />

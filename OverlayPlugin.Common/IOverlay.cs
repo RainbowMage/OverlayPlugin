@@ -22,6 +22,11 @@ namespace RainbowMage.OverlayPlugin
         string Name { get; }
 
         /// <summary>
+        /// プラグインの設定を取得します。
+        /// </summary>
+        IPluginConfig PluginConfig { get; set; }
+
+        /// <summary>
         /// オーバーレイがログを出力したときに発生します。
         /// </summary>
         event EventHandler<LogEventArgs> OnLog;

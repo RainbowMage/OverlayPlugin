@@ -132,6 +132,9 @@
   <data name="groupBox2.Text" xml:space="preserve">
     <value>オーバーレイの管理</value>
   </data>
+  <data name="checkBoxAutoHide.Text" xml:space="preserve">
+    <value>非アクティブのときに自動的にオーバーレイを隠す</value>
+  </data>
   <data name="tabPageMain.Text" xml:space="preserve">
     <value>設定</value>
   </data>

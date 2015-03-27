@@ -141,6 +141,7 @@ namespace RainbowMage.OverlayPlugin
         internal void RegisterOverlay(IOverlay overlay)
         {
             overlay.OnLog += (o, e) => Logger.Log(e.Level, e.Message);
+            overlay.PluginConfig = (IPluginConfig)Config;
             overlay.Start();
             this.Overlays.Add(overlay);
         }

@@ -214,9 +214,17 @@ namespace RainbowMage.OverlayPlugin
         public const uint SWP_NOMOVE = 0x0002;
         public const uint SWP_NOACTIVATE = 0x0010;
 
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetForegroundWindow();
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern int GetModuleFileName(IntPtr hModule, StringBuilder lpFilename, int nSize); 
+
         [DllImport("user32.dll")]
         public static extern short GetKeyState(int nVirtKey);
-
 
         public const int WM_KEYDOWN = 0x0100;
         public const int WM_KEYUP = 0x0101;

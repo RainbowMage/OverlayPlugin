@@ -24,6 +24,8 @@ namespace RainbowMage.OverlayPlugin
             this.pluginMain = pluginMain;
             this.config = config;
 
+            this.checkBoxAutoHide.Checked = this.config.HideOverlaysWhenNotActive;
+
             this.menuFollowLatestLog.Checked = this.config.FollowLatestLog;
             this.listViewLog.VirtualListSize = pluginMain.Logger.Logs.Count;
             this.pluginMain.Logger.Logs.ListChanged += (o, e) =>
@@ -229,6 +231,11 @@ namespace RainbowMage.OverlayPlugin
                 // リストビューを更新
                 UpdateOverlayListView();
             }
+        }
+
+        private void checkBoxAutoHide_CheckedChanged(object sender, EventArgs e)
+        {
+            config.HideOverlaysWhenNotActive = checkBoxAutoHide.Checked;
         }
     }
 }
