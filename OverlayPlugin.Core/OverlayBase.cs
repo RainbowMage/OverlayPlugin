@@ -236,10 +236,15 @@ namespace RainbowMage.OverlayPlugin
                     {
                         uint pid;
                         var hWndFg = NativeMethods.GetForegroundWindow();
+                        if (hWndFg == IntPtr.Zero)
+                        {
+                            return;
+                        }
                         NativeMethods.GetWindowThreadProcessId(hWndFg, out pid);
                         var exePath = Process.GetProcessById((int)pid).MainModule.FileName;
 
                         if (Path.GetFileName(exePath.ToString()) == "ffxiv.exe" ||
+                            Path.GetFileName(exePath.ToString()) == "ffxiv_dx11.exe" ||
                             exePath.ToString() == Process.GetCurrentProcess().MainModule.FileName)
                         {
                             this.Overlay.Visible = true;
