@@ -39,6 +39,7 @@ namespace RainbowMage.OverlayPlugin.Overlays
         {
             this.checkMiniParseVisible.Checked = config.IsVisible;
             this.checkMiniParseClickthru.Checked = config.IsClickThru;
+            this.checkLock.Checked = config.IsLocked;
             this.textMiniParseUrl.Text = config.Url;
             this.textMiniParseSortKey.Text = config.SortKey;
             this.comboMiniParseSortType.DisplayMember = "Key";

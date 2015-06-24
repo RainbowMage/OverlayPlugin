@@ -124,11 +124,6 @@ namespace RainbowMage.OverlayPlugin
                 {
                     Navigate(e.NewUrl);
                 };
-                this.Config.LockChanged += (o, e) =>
-                {
-                    this.Overlay.Locked = e.IsLocked;
-                    NotifyOverlayState();
-                };
 
                 if (CheckUrl(this.Config.Url))
                 {
@@ -142,6 +137,8 @@ namespace RainbowMage.OverlayPlugin
                 this.Overlay.Show();
 
                 this.Overlay.Visible = this.Config.IsVisible;
+
+                this.Overlay.Locked = this.Config.IsLocked;
             }
             catch (Exception ex)
             {
@@ -275,6 +272,11 @@ namespace RainbowMage.OverlayPlugin
             this.Config.ClickThruChanged += (o, e) =>
             {
                 this.Overlay.IsClickThru = e.IsClickThru;
+            };
+            this.Config.LockChanged += (o, e) =>
+            {
+                this.Overlay.Locked = e.IsLocked;
+                NotifyOverlayState();
             };
         }
 
