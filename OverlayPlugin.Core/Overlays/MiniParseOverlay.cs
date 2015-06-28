@@ -254,7 +254,7 @@ namespace RainbowMage.OverlayPlugin.Overlays
                     }
                     catch (Exception e)
                     {
-                        Log(LogLevel.Error, "GetCombatantList: {0}: {1}: {2}", ally.Name, exportValuePair.Key, e);
+                        Log(LogLevel.Debug, "GetCombatantList: {0}: {1}: {2}", ally.Name, exportValuePair.Key, e);
                         continue;
                     }
                 }
@@ -312,7 +312,7 @@ namespace RainbowMage.OverlayPlugin.Overlays
                 }
                 catch (Exception e)
                 {
-                    Log(LogLevel.Error, "GetEncounterDictionary: {0}: {1}", exportValuePair.Key, e);
+                    Log(LogLevel.Debug, "GetEncounterDictionary: {0}: {1}", exportValuePair.Key, e);
                 }
             }
             //);
