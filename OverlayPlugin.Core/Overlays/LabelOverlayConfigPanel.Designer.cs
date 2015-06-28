@@ -124,6 +124,7 @@
             resources.ApplyResources(this.checkEnableGlobalHotkey, "checkEnableGlobalHotkey");
             this.checkEnableGlobalHotkey.Name = "checkEnableGlobalHotkey";
             this.checkEnableGlobalHotkey.UseVisualStyleBackColor = true;
+            this.checkEnableGlobalHotkey.CheckedChanged += new System.EventHandler(this.checkBoxEnableGlobalHotkey_CheckedChanged);
             // 
             // textGlobalHotkey
             // 
