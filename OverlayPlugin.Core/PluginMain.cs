@@ -22,6 +22,7 @@ namespace RainbowMage.OverlayPlugin
         TabPage tabPage;
         Label label;
         ControlPanel controlPanel;
+        CheckBox visibleAllOverlaysChangeButton;
 
         internal PluginConfig Config { get; private set; }
         internal List<IOverlay> Overlays { get; private set; }
@@ -100,6 +101,8 @@ namespace RainbowMage.OverlayPlugin
                 this.controlPanel.Dock = DockStyle.Fill;
                 this.tabPage.Controls.Add(this.controlPanel);
 
+                this.AddVisibleAllOverlaysChangeButton();
+
                 Logger.Log(LogLevel.Info, "InitPlugin: Initialized.");
                 this.label.Text = "Initialized.";
             }
@@ -162,6 +165,8 @@ namespace RainbowMage.OverlayPlugin
         public void DeInitPlugin()
         {
             SaveConfig();
+
+            this.RemoveVisibleAllOverlaysChangeButton();
 
             foreach (var overlay in this.Overlays)
             {
@@ -291,6 +296,55 @@ namespace RainbowMage.OverlayPlugin
                 "RainbowMage.OverlayPlugin.config.xml");
 
             return path;
+        }
+
+        /// <summary>
+        /// OverlayPlugin ボタンを初期化しActに追加します。
+        /// </summary>
+        private void AddVisibleAllOverlaysChangeButton()
+        {
+            var button = new CheckBox();
+            button.Appearance = System.Windows.Forms.Appearance.Button;
+            button.Name = "visibleAllOverlaysChangeButton";
+            button.Size = new System.Drawing.Size(90, 24);
+            button.Text = "OverlayPlugin";
+            button.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            button.UseVisualStyleBackColor = true;
+            button.Checked = this.Config.VisibleAllOverlays;
+            button.CheckedChanged += (s, e) => this.Config.VisibleAllOverlays = button.Checked;
+
+            this.visibleAllOverlaysChangeButton = button;
+
+            var actForm = ActGlobals.oFormActMain;
+            actForm.Resize += this.formActMain_Resize;
+            actForm.Controls.Add(button);
+            actForm.Controls.SetChildIndex(button, 0);
+
+            this.formActMain_Resize(null, null);
+        }
+
+        /// <summary>
+        /// show OverlayPlugin ボタンをActから削除します。
+        /// </summary>
+        private void RemoveVisibleAllOverlaysChangeButton()
+        {
+            if (this.visibleAllOverlaysChangeButton == null)
+            {
+                return;
+            }
+
+            var actForm = ActGlobals.oFormActMain;
+            actForm.Resize -= this.formActMain_Resize;
+            actForm.Controls.Remove(this.visibleAllOverlaysChangeButton);
+
+            this.visibleAllOverlaysChangeButton = null;
+        }
+
+        private void formActMain_Resize(object sender, EventArgs e)
+        {
+            var x = ActGlobals.oFormActMain.Size.Width - this.Config.ShowOverlayPluginButtonOffset;
+            var y = 0;
+            this.visibleAllOverlaysChangeButton.Location = new Point(x, y);
         }
     }
 }
