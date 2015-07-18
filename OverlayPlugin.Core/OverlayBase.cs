@@ -294,6 +294,10 @@ namespace RainbowMage.OverlayPlugin
                 {
                     this.timer.Stop();
                 }
+                if (this.xivWindowTimer != null)
+                {
+                    this.xivWindowTimer.Stop();
+                }
                 if (this.Overlay != null)
                 {
                     this.Overlay.Close();
