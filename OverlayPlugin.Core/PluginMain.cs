@@ -102,6 +102,7 @@ namespace RainbowMage.OverlayPlugin
                 this.tabPage.Controls.Add(this.controlPanel);
 
                 this.AddVisibleAllOverlaysChangeButton();
+                this.Config.ShowOverlayPluginButtonOffsetChanged += formActMain_Resize;
 
                 Logger.Log(LogLevel.Info, "InitPlugin: Initialized.");
                 this.label.Text = "Initialized.";
@@ -166,6 +167,7 @@ namespace RainbowMage.OverlayPlugin
         {
             SaveConfig();
 
+            this.Config.ShowOverlayPluginButtonOffsetChanged -= formActMain_Resize;
             this.RemoveVisibleAllOverlaysChangeButton();
 
             foreach (var overlay in this.Overlays)

@@ -25,6 +25,7 @@ namespace RainbowMage.OverlayPlugin
             this.config = config;
 
             this.checkBoxAutoHide.Checked = this.config.HideOverlaysWhenNotActive;
+            this.numericUpDown1.Value = this.config.ShowOverlayPluginButtonOffset;
 
             this.menuFollowLatestLog.Checked = this.config.FollowLatestLog;
             this.listViewLog.VirtualListSize = pluginMain.Logger.Logs.Count;
@@ -236,6 +237,11 @@ namespace RainbowMage.OverlayPlugin
         private void checkBoxAutoHide_CheckedChanged(object sender, EventArgs e)
         {
             config.HideOverlaysWhenNotActive = checkBoxAutoHide.Checked;
+        }
+
+        private void numericUpDown1_ValueChanged(object sender, EventArgs e)
+        {
+            config.ShowOverlayPluginButtonOffset = Decimal.ToInt32(numericUpDown1.Value);
         }
     }
 }

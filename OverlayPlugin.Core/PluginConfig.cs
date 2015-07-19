@@ -166,6 +166,7 @@ namespace RainbowMage.OverlayPlugin
         #endregion
 
         public event EventHandler VisibleAllOverlaysChanged;
+        public event EventHandler ShowOverlayPluginButtonOffsetChanged;
 
         /// <summary>
         /// オーバーレイ設定のリスト。
@@ -228,7 +229,14 @@ namespace RainbowMage.OverlayPlugin
             }
             set
             {
-                this.showOverlayPluginButtonOffset = value;
+                if (this.showOverlayPluginButtonOffset != value)
+                {
+                    this.showOverlayPluginButtonOffset = value;
+                    if (ShowOverlayPluginButtonOffsetChanged != null)
+                    {
+                        ShowOverlayPluginButtonOffsetChanged(this, EventArgs.Empty);
+                    }
+                }
             }
         }
 
