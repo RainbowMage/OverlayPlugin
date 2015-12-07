@@ -30,6 +30,7 @@ namespace RainbowMage.OverlayPlugin.Overlays
         {
             this.checkMiniParseVisible.Checked = config.IsVisible;
             this.checkMiniParseClickthru.Checked = config.IsClickThru;
+            this.checkLock.Checked = config.IsLocked;
             this.textUrl.Text = config.Url;
             this.checkEnableGlobalHotkey.Checked = config.GlobalHotkeyEnabled;
             this.textGlobalHotkey.Enabled = this.checkEnableGlobalHotkey.Checked;

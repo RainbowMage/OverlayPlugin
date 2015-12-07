@@ -30,6 +30,7 @@ namespace RainbowMage.OverlayPlugin.Overlays
         {
             this.checkBoxVisible.Checked = this.config.IsVisible;
             this.checkBoxClickThru.Checked = this.config.IsClickThru;
+            this.checkLock.Checked = config.IsLocked;
             this.textBoxUrl.Text = this.config.Url;
             this.nudMaxFrameRate.Value = this.config.MaxFrameRate;
             this.checkEnableGlobalHotkey.Checked = config.GlobalHotkeyEnabled;
