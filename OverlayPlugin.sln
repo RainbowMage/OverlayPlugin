@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.30723.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OverlayPlugin.Core", "OverlayPlugin.Core\OverlayPlugin.Core.csproj", "{DD6D2A9A-4AD4-47B8-A1D0-C8608EA37092}"
 EndProject
@@ -11,10 +11,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Files", "Files", "{84CCF15D
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
 		build.bat = build.bat
-		distribute.ps1 = distribute.ps1
-		full.exclude = full.exclude
+		Utils\distribute.ps1 = Utils\distribute.ps1
+		Utils\full.exclude = Utils\full.exclude
 		LICENSE.txt = LICENSE.txt
-		PS-Zip.psm1 = PS-Zip.psm1
+		Utils\PS-Zip.psm1 = Utils\PS-Zip.psm1
 		README-en.md = README-en.md
 		README.md = README.md
 	EndProjectSection
