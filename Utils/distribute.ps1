@@ -1,18 +1,17 @@
 ﻿Import-Module $PSScriptRoot\PS-Zip.psm1
 
 # ビルド
-./build.bat
-
-# バージョン取得
-$version = [System.Diagnostics.FileVersionInfo]::GetVersionInfo("BuildX86\OverlayPlugin.dll").FileVersion
+../build.bat
 
 # フォルダ名
-$buildFolderX86 = ".\BuildX86"
-$buildFolderX64 = ".\BuildX64"
-$fullFolderX86 = ".\Distribute\OverlayPlugin-" + $version + "-x86-full"
-$updateFolderX86 = ".\Distribute\OverlayPlugin-" + $version + "-x86-update"
-$fullFolderX64 = ".\Distribute\OverlayPlugin-" + $version + "-x64-full"
-$updateFolderX64 = ".\Distribute\OverlayPlugin-" + $version + "-x64-update"
+$buildFolderX86 = Join-Path $PSScriptRoot "..\BuildX86"
+$buildFolderX64 = Join-Path $PSScriptRoot "..\BuildX64"
+$dllPath = Join-Path $buildFolderX86 "\OverlayPlugin.dll"
+$version = [System.Diagnostics.FileVersionInfo]::GetVersionInfo("$dllPath").FileVersion
+$fullFolderX86 = Join-Path $PSScriptRoot ("Distribute\OverlayPlugin-" + $version + "-x86-full")
+$updateFolderX86 = Join-Path $PSScriptRoot ("Distribute\OverlayPlugin-" + $version + "-x86-update")
+$fullFolderX64 = Join-Path $PSScriptRoot ("Distribute\OverlayPlugin-" + $version + "-x64-full")
+$updateFolderX64 = Join-Path $PSScriptRoot ("Distribute\OverlayPlugin-" + $version + "-x64-update")
 
 # フォルダが既に存在するなら消去
 if ( Test-Path $fullFolderX86 -PathType Container ) {
@@ -67,5 +66,3 @@ New-ZipCompress -source $fullFolderX86 -destination "$fullFolderX86.zip"
 New-ZipCompress -source $updateFolderX86 -destination "$updateFolderX86.zip"
 New-ZipCompress -source $fullFolderX64 -destination "$fullFolderX64.zip"
 New-ZipCompress -source $updateFolderX64 -destination "$updateFolderX64.zip"
-
-pause
