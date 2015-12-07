@@ -61,8 +61,9 @@ namespace RainbowMage.HtmlRenderer
 
         }
 
-        protected override void OnScrollOffsetChanged(CefBrowser browser)
+        protected override void OnScrollOffsetChanged(CefBrowser browser, double x, double y)
         {
+
         }
     }
 
