@@ -1,0 +1,26 @@
+diff --git a/build/common.gypi b/build/common.gypi
+index 9b2e27c..00881cc 100644
+--- a/build/common.gypi
++++ b/build/common.gypi
+@@ -5641,6 +5650,8 @@
+           # should work through these at some point -- they may be removed from
+           # the RTM release in the /W4 set.
+           4456, 4457, 4458, 4459,
++          
++          4819,
+         ],
+         'msvs_settings': {
+           'VCCLCompilerTool': {
+diff --git a/build/config/compiler/BUILD.gn b/build/config/compiler/BUILD.gn
+index 92bb838..0355992 100644
+--- a/build/config/compiler/BUILD.gn
++++ b/build/config/compiler/BUILD.gn
+@@ -788,6 +794,8 @@ if (is_win) {
+     "/wd4512",  # Assignment operator could not be generated.
+     "/wd4610",  # Class can never be instantiated, constructor required.
+     "/wd4996",  # Deprecated function warning.
++    
++    "/wd4819",
+   ]
+ 
+   # VS xtree header file needs to be patched or 4702 (unreachable code

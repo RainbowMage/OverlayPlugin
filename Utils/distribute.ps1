@@ -1,14 +1,14 @@
 ﻿Import-Module $PSScriptRoot\PS-Zip.psm1
 
 # ビルド
-./build.bat
+../build.bat
 
 # バージョン取得
-$version = [System.Diagnostics.FileVersionInfo]::GetVersionInfo("BuildX86\OverlayPlugin.dll").FileVersion
+$version = [System.Diagnostics.FileVersionInfo]::GetVersionInfo("..\BuildX86\OverlayPlugin.dll").FileVersion
 
 # フォルダ名
-$buildFolderX86 = ".\BuildX86"
-$buildFolderX64 = ".\BuildX64"
+$buildFolderX86 = "..\BuildX86"
+$buildFolderX64 = "..\BuildX64"
 $fullFolderX86 = ".\Distribute\OverlayPlugin-" + $version + "-x86-full"
 $updateFolderX86 = ".\Distribute\OverlayPlugin-" + $version + "-x86-update"
 $fullFolderX64 = ".\Distribute\OverlayPlugin-" + $version + "-x64-full"
