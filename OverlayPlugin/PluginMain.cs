@@ -245,13 +245,13 @@ namespace RainbowMage.OverlayPlugin
                         var asm = LoadAssembly(pluginFile);
 
                         // IOverlayAddon を実装した public クラスを列挙し...
-                        var types = asm.GetExportedTypes().Where(t => 
-                                typeof(IOverlayAddon).IsAssignableFrom(t) && t.IsClass);
+                        var types = asm.GetExportedTypes().Where(t =>
+                                t.GetInterface(typeof(IOverlayAddon).FullName) != null && t.IsClass);
                         foreach (var type in types)
                         {
                             try
                             {
-                                if (typeof(IOverlayAddon).IsAssignableFrom(type))
+                                if (type.GetInterface(typeof(IOverlayAddon).FullName) != null)
                                 {
                                     // 各クラスの静的コンストラクタを呼び出す
                                     System.Runtime.CompilerServices.
